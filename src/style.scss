@@ -1,11 +1,16 @@
 /**
- * @linchpinagency/ui — the Linchpin admin chrome.
+ * The Linchpin admin chrome.
  *
- * Layout and brand only. Components come from @wordpress/components, and
- * every colour that is not the plugin's own brand is a `--wpds-*` design
- * token, so the ThemeProvider seed in <LinchpinAdminFrame> flows through the
- * whole screen. The `--lp-brand-*` custom properties are set on the frame
- * from `defineBrand()`.
+ * Layout and brand only. Components come from @wordpress/components and
+ * @wordpress/admin-ui, and the page header — title, subtitle, breadcrumbs,
+ * badges, actions, section navigation — is core's `Page`, which brings its
+ * own styles. What is left here is the brand bar, the two-column body, the
+ * sidebar cards and the footer.
+ *
+ * No hex values. Colour is a `--wpds-*` design token, one of the agency
+ * `--lp-color-*` properties, or one of the plugin's `--lp-brand-*`
+ * properties; the frame sets the last two. The fallbacks below exist only so
+ * a fragment rendered outside a frame still paints.
  *
  * Import once, from the consuming plugin's entry point:
  *
@@ -36,7 +41,7 @@ $lp-two-column: 1100px;
 		min-height: 56px;
 		padding: 0 20px;
 		background: linear-gradient(90deg, var(--lp-brand-deep) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep)) 100%);
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 
 		@media (max-width: $lp-tablet) {
 			padding: 0 10px;
@@ -50,7 +55,10 @@ $lp-two-column: 1100px;
 		gap: var(--wpds-dimension-gap-lg);
 	}
 
-	&__topbar-brand svg {
+	// The plugin's own mark, however it arrives: an inline SVG, an <img>, or a
+	// component of its own.
+	&__topbar-brand svg,
+	&__topbar-logo {
 		display: block;
 		height: 36px;
 		width: auto;
@@ -59,13 +67,13 @@ $lp-two-column: 1100px;
 	&__topbar-name {
 		font-size: var(--wpds-typography-font-size-lg);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 	}
 
 	&__topbar-linchpin {
 		display: inline-flex;
 		align-items: center;
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 		border-radius: var(--wpds-border-radius-xs);
 
 		svg {
@@ -79,7 +87,7 @@ $lp-two-column: 1100px;
 		}
 
 		&:focus-visible {
-			outline: var(--wpds-border-width-focus) solid #fff;
+			outline: var(--wpds-border-width-focus) solid var(--lp-color-on-brand, #fff);
 			outline-offset: 4px;
 		}
 	}
@@ -87,11 +95,21 @@ $lp-two-column: 1100px;
 	&__version {
 		padding: 2px 10px;
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.14);
-		color: #fff;
 		font-size: var(--wpds-typography-font-size-xs);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
 		letter-spacing: 0.02em;
+
+		// On the brand gradient, where the bar itself is the only safe surface.
+		&.is-on-brand {
+			background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 14%, transparent);
+			color: var(--lp-color-on-brand, #fff);
+		}
+
+		// In the page header, where design system tokens apply as usual.
+		&.is-neutral {
+			background: var(--wpds-color-background-surface-neutral);
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
 	}
 
 	&__status {
@@ -103,15 +121,15 @@ $lp-two-column: 1100px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.4);
+		background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 40%, transparent);
 	}
 
 	&__status.is-up .lp-admin__status-dot {
-		background: #4ade80;
+		background: var(--lp-color-status-up);
 	}
 
 	&__status.is-down .lp-admin__status-dot {
-		background: #f87171;
+		background: var(--lp-color-status-down);
 	}
 
 	&__shell {
@@ -120,47 +138,6 @@ $lp-two-column: 1100px;
 
 		@media (max-width: $lp-tablet) {
 			padding: 0 10px;
-		}
-	}
-
-	&__masthead {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: var(--wpds-dimension-gap-lg);
-		padding: 28px 0 12px;
-	}
-
-	&__masthead-copy {
-		min-width: 0;
-	}
-
-	&__masthead-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--wpds-dimension-gap-sm);
-	}
-
-	&__title {
-		margin: 0;
-		font-size: var(--wpds-typography-font-size-2xl);
-		font-weight: var(--wpds-typography-font-weight-emphasis);
-		line-height: var(--wpds-typography-line-height-2xl);
-		color: var(--wpds-color-foreground-content-neutral);
-	}
-
-	&__tagline {
-		margin: 6px 0 0;
-		max-width: 60ch;
-		color: var(--wpds-color-foreground-content-neutral-weak);
-	}
-
-	&__tabs {
-
-		.components-tab-panel__tabs {
-			margin-bottom: 24px;
-			border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
 		}
 	}
 
@@ -354,5 +331,17 @@ $lp-two-column: 1100px;
 		margin-top: 16px;
 		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
 		font-size: var(--wpds-typography-font-size-sm);
+	}
+}
+
+// The logo sizes itself from whatever contains it; this keeps the mark square
+// and stops either variant collapsing when nothing sets a height.
+.lp-logo {
+	display: block;
+	height: 100%;
+	width: auto;
+
+	&.is-mark {
+		aspect-ratio: 1;
 	}
 }

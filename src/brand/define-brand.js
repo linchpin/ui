@@ -7,16 +7,19 @@
  * plugin's palette is a change to its `defineBrand()` call and nothing else.
  */
 
-/** The Linchpin mark's accent, used by `<LinchpinLogo variant="primary" />`. */
-export const LINCHPIN_ACCENT = '#3FC1D0';
+/**
+ * Internal dependencies
+ */
+import { LINCHPIN_COLORS } from './colors';
 
 /**
  * The fallback palette: Linchpin's own, for a plugin that has no artwork yet.
+ * Linchpin blue seeds the design system; the mark keeps its cyan accent.
  */
 const DEFAULTS = Object.freeze( {
-	primary: '#1b7fa8',
-	deep: '#0d2b38',
-	accent: LINCHPIN_ACCENT,
+	primary: LINCHPIN_COLORS.blue,
+	deep: LINCHPIN_COLORS.black,
+	accent: LINCHPIN_COLORS.cyan,
 } );
 
 /**

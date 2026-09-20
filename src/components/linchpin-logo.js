@@ -6,17 +6,34 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { LINCHPIN_ACCENT } from '../brand/define-brand';
+import { colorVar } from '../brand/colors';
 
 /*
- * The wordmark, and the two strokes of the mark that carry the accent.
+ * The artwork, split the way the brand uses it: the mark on its own, and the
+ * mark plus the wordmark as the full lockup.
  *
- * Shipping the artwork as path data rather than an .svg file is deliberate: a
- * consuming plugin then needs no SVGR loader, no `plugin_url` lookup at
- * runtime (which is what mantle was doing), and no second copy of the mark to
- * fall out of date. The wordmark paints in `currentColor`, so the logo takes
- * the colour of whatever it sits in — white on the top bar, ink on a card.
+ * Path data rather than an .svg file is deliberate — a consuming plugin needs
+ * no SVGR loader, no `plugin_url` lookup at runtime (which is what mantle was
+ * doing) and no second copy of the mark to fall out of date.
+ *
+ * TODO: replace with the official exports from the Linchpin brand Figma
+ * (file O78uQ8sRE44ZwAjRYHSrZI: brand mark 16410-26706, full logo 15046-464).
+ * These paths were lifted from psst, which took them from the same source.
+ * The geometry is right; the export is second-hand.
  */
+
+/** The mark: two ink strokes and the two accent swooshes. */
+const MARK_INK = [
+	'M64.2723 9.71878L38.3365 35.7092C37.5903 36.4569 37.5903 37.6693 38.3365 38.4171L42.662 42.7517C43.4082 43.4995 44.618 43.4995 45.3642 42.7517L71.3001 16.7613C72.0463 16.0136 72.0463 14.8012 71.3001 14.0534L66.9745 9.71878C66.2283 8.97102 65.0185 8.97102 64.2723 9.71878Z',
+	'M54.2028 54.3172C59.3083 49.2009 60.964 41.9171 59.1698 35.3944C58.8851 34.3605 57.5905 34.0196 56.8339 34.7779L52.9665 38.6534C52.5853 39.0354 52.3875 39.5619 52.4095 40.1019C52.5433 43.4633 51.2745 46.8697 48.6004 49.3541C44.136 53.5015 37.1923 53.5943 32.6256 49.5609C27.4226 44.9645 27.2363 36.9722 32.0657 32.1326C34.5134 29.6798 37.7684 28.5195 40.9813 28.6487C41.5201 28.6707 42.0437 28.4725 42.4249 28.0905L46.2932 24.2141C47.0499 23.4558 46.7107 22.1586 45.6779 21.8733C39.169 20.0763 31.9005 21.7345 26.7949 26.8507C20.52 33.1388 19.4567 42.7003 23.603 50.0989C23.6823 50.2406 23.6594 50.4168 23.5447 50.5317L9.69847 64.4071C8.95232 65.1548 8.95232 66.3668 9.69847 67.1145L14.0235 71.4496C14.7696 72.1973 15.9791 72.1973 16.7253 71.4496L30.5715 57.5742C30.6862 57.4593 30.862 57.4363 31.0034 57.5158C38.3865 61.6699 47.9278 60.6043 54.2028 54.3172Z',
+];
+
+const MARK_ACCENT = [
+	'M75.5745 20.2764C75.4331 20.0322 75.1025 19.993 74.9038 20.1931C74.9029 20.194 74.901 20.1959 74.9 20.1969L68.2066 26.9043C68.0633 27.048 68.027 27.2662 68.114 27.4491C73.5004 38.8209 71.4998 52.8304 62.1094 62.2405C52.719 71.6506 38.739 73.6554 27.391 68.2577C27.2076 68.1705 26.9907 68.2069 26.8474 68.3505L20.1961 75.0159C19.9735 75.2389 20.0232 75.6133 20.2964 75.7703C35.7783 84.7103 55.8995 82.5486 69.1372 69.283C82.393 55.9993 84.5378 35.7994 75.5745 20.2764Z',
+	'M18.8893 18.9294C28.2797 9.51922 42.2598 7.51445 53.6077 12.9122C53.7912 12.9993 54.008 12.9629 54.1513 12.8193L60.8447 6.11188L60.8485 6.10805C61.0482 5.90796 61.0033 5.57383 60.7587 5.43214C45.2692 -3.54623 25.1155 -1.39498 11.8616 11.8868C-1.37609 25.1524 -3.53333 45.3159 5.38797 60.8303C5.54465 61.1032 5.9182 61.1539 6.14081 60.9308L12.7921 54.2655C12.9354 54.1219 12.9717 53.9036 12.8848 53.7208C7.49839 42.3489 9.49895 28.3395 18.8893 18.9294Z',
+];
+
+/** The wordmark, which only appears in the full lockup. */
 const WORDMARK = [
 	'M386.086 39.9784C385.156 37.8185 383.846 35.965 382.157 34.4208C380.468 32.8737 378.475 31.6769 376.172 30.8315C373.873 29.9862 371.296 29.5621 368.441 29.5621C365.587 29.5621 362.997 29.9862 360.668 30.8315C358.339 31.6769 356.344 32.8737 354.684 34.4208C353.024 35.965 351.729 37.8339 350.796 40.0225C349.867 42.211 349.4 44.5882 349.4 47.1569L349.356 70.339C349.356 71.3232 350.152 72.1217 351.135 72.1217H357.185C358.167 72.1217 358.964 71.3232 358.964 70.339L359.052 49.1511C359.052 46.2914 359.912 43.9276 361.628 42.0607C363.346 40.1919 365.602 39.2585 368.398 39.2585C371.195 39.2585 373.538 40.1919 375.255 42.0607C376.974 43.9267 377.832 46.2914 377.832 49.1511L377.839 70.339C377.839 71.3232 378.636 72.1217 379.618 72.1217H385.756C386.739 72.1217 387.535 71.3232 387.535 70.339L387.484 47.0688C387.484 44.5011 387.018 42.1373 386.086 39.9784Z',
 	'M338.866 19.1438C338.866 22.5808 336.085 25.3668 332.656 25.3668C329.226 25.3668 326.446 22.5808 326.446 19.1438C326.446 15.7068 329.226 12.9208 332.656 12.9208C336.085 12.9208 338.866 15.7068 338.866 19.1438Z',
@@ -28,41 +45,61 @@ const WORDMARK = [
 	'M130.355 19.1438C130.355 22.5808 127.575 25.3668 124.145 25.3668C120.715 25.3668 117.935 22.5808 117.935 19.1438C117.935 15.7068 120.715 12.9208 124.145 12.9208C127.575 12.9208 130.355 15.7068 130.355 19.1438Z',
 	'M127.202 29.5563H121.088C120.138 29.5563 119.368 30.3279 119.368 31.2796V70.4558C119.368 71.4076 120.138 72.1791 121.088 72.1791H127.202C128.152 72.1791 128.922 71.4076 128.922 70.4558V31.2796C128.922 30.3279 128.152 29.5563 127.202 29.5563Z',
 	'M108.833 10.8203H102.719C101.769 10.8203 100.999 11.5918 100.999 12.5436V70.4558C100.999 71.4076 101.769 72.1791 102.719 72.1791H108.833C109.783 72.1791 110.553 71.4076 110.553 70.4558V12.5436C110.553 11.5918 109.783 10.8203 108.833 10.8203Z',
-	'M64.2723 9.71878L38.3365 35.7092C37.5903 36.4569 37.5903 37.6693 38.3365 38.4171L42.662 42.7517C43.4082 43.4995 44.618 43.4995 45.3642 42.7517L71.3001 16.7613C72.0463 16.0136 72.0463 14.8012 71.3001 14.0534L66.9745 9.71878C66.2283 8.97102 65.0185 8.97102 64.2723 9.71878Z',
-	'M54.2028 54.3172C59.3083 49.2009 60.964 41.9171 59.1698 35.3944C58.8851 34.3605 57.5905 34.0196 56.8339 34.7779L52.9665 38.6534C52.5853 39.0354 52.3875 39.5619 52.4095 40.1019C52.5433 43.4633 51.2745 46.8697 48.6004 49.3541C44.136 53.5015 37.1923 53.5943 32.6256 49.5609C27.4226 44.9645 27.2363 36.9722 32.0657 32.1326C34.5134 29.6798 37.7684 28.5195 40.9813 28.6487C41.5201 28.6707 42.0437 28.4725 42.4249 28.0905L46.2932 24.2141C47.0499 23.4558 46.7107 22.1586 45.6779 21.8733C39.169 20.0763 31.9005 21.7345 26.7949 26.8507C20.52 33.1388 19.4567 42.7003 23.603 50.0989C23.6823 50.2406 23.6594 50.4168 23.5447 50.5317L9.69847 64.4071C8.95232 65.1548 8.95232 66.3668 9.69847 67.1145L14.0235 71.4496C14.7696 72.1973 15.9791 72.1973 16.7253 71.4496L30.5715 57.5742C30.6862 57.4593 30.862 57.4363 31.0034 57.5158C38.3865 61.6699 47.9278 60.6043 54.2028 54.3172Z',
 ];
 
-const MARK_ACCENT = [
-	'M75.5745 20.2764C75.4331 20.0322 75.1025 19.993 74.9038 20.1931C74.9029 20.194 74.901 20.1959 74.9 20.1969L68.2066 26.9043C68.0633 27.048 68.027 27.2662 68.114 27.4491C73.5004 38.8209 71.4998 52.8304 62.1094 62.2405C52.719 71.6506 38.739 73.6554 27.391 68.2577C27.2076 68.1705 26.9907 68.2069 26.8474 68.3505L20.1961 75.0159C19.9735 75.2389 20.0232 75.6133 20.2964 75.7703C35.7783 84.7103 55.8995 82.5486 69.1372 69.283C82.393 55.9993 84.5378 35.7994 75.5745 20.2764Z',
-	'M18.8893 18.9294C28.2797 9.51922 42.2598 7.51445 53.6077 12.9122C53.7912 12.9993 54.008 12.9629 54.1513 12.8193L60.8447 6.11188L60.8485 6.10805C61.0482 5.90796 61.0033 5.57383 60.7587 5.43214C45.2692 -3.54623 25.1155 -1.39498 11.8616 11.8868C-1.37609 25.1524 -3.53333 45.3159 5.38797 60.8303C5.54465 61.1032 5.9182 61.1539 6.14081 60.9308L12.7921 54.2655C12.9354 54.1219 12.9717 53.9036 12.8848 53.7208C7.49839 42.3489 9.49895 28.3395 18.8893 18.9294Z',
-];
+/*
+ * Both variants are drawn from one coordinate system, so the mark sits
+ * identically in either. The mark's own box is the bounding box of its four
+ * paths, rounded outward so no control point clips.
+ */
+const VIEW_BOX = {
+	full: '0 0 388 90',
+	mark: '-4 -4 89 89',
+};
 
 /**
  * The Linchpin logo.
  *
+ * Two variants, matching the brand: `full` is the lockup — mark plus wordmark
+ * — and `mark` is the mark alone, for somewhere too tight for the lockup.
+ *
+ * Colour comes from custom properties, never from a hex in this file.
+ * `tone="brand"` paints the ink in Linchpin blue and the swooshes in the
+ * brand cyan; `tone="mono"` paints everything in `currentColor`, which is what
+ * the top bar wants — the logo then takes the colour of the bar it sits on.
+ * A host overrides either by setting `--lp-logo-ink` or `--lp-logo-accent`.
+ *
  * @param {Object}  props              Props.
- * @param {string}  [props.variant]    `mono` paints everything in `currentColor`; `primary` gives the mark its accent.
- * @param {string}  [props.accent]     Override the accent colour.
+ * @param {string}  [props.variant]    `full` (default) or `mark`.
+ * @param {string}  [props.tone]       `brand` (default) or `mono`.
  * @param {string}  [props.className]  Extra class names.
  * @param {string}  [props.title]      Accessible name. Omit for a decorative mark.
  * @param {boolean} [props.decorative] Hide from assistive technology. Defaults to true when there is no title.
  * @return {Element} The logo.
  */
 export default function LinchpinLogo( {
-	variant = 'mono',
-	accent = LINCHPIN_ACCENT,
+	variant = 'full',
+	tone = 'brand',
 	className,
 	title,
 	decorative,
 	...props
 } ) {
 	const isDecorative = decorative ?? ! title;
-	const markFill = variant === 'primary' ? accent : 'currentColor';
+	const isMono = tone === 'mono';
+	const ink = isMono
+		? 'currentColor'
+		: `var( --lp-logo-ink, ${ colorVar( 'blue' ) } )`;
+	const accent = isMono
+		? 'currentColor'
+		: `var( --lp-logo-accent, ${ colorVar( 'cyan' ) } )`;
 
 	return (
 		<svg
-			className={ className }
-			viewBox="0 0 388 90"
+			className={ [ 'lp-logo', `is-${ variant }`, className ]
+				.filter( Boolean )
+				.join( ' ' ) }
+			viewBox={ VIEW_BOX[ variant ] ?? VIEW_BOX.full }
 			xmlns="http://www.w3.org/2000/svg"
 			role={ isDecorative ? undefined : 'img' }
 			aria-hidden={ isDecorative ? 'true' : undefined }
@@ -70,11 +107,15 @@ export default function LinchpinLogo( {
 			focusable="false"
 			{ ...props }
 		>
-			{ WORDMARK.map( ( d ) => (
-				<path key={ d.slice( 0, 12 ) } d={ d } fill="currentColor" />
+			{ variant === 'full' &&
+				WORDMARK.map( ( d ) => (
+					<path key={ d.slice( 0, 12 ) } d={ d } fill={ ink } />
+				) ) }
+			{ MARK_INK.map( ( d ) => (
+				<path key={ d.slice( 0, 12 ) } d={ d } fill={ ink } />
 			) ) }
 			{ MARK_ACCENT.map( ( d ) => (
-				<path key={ d.slice( 0, 12 ) } d={ d } fill={ markFill } />
+				<path key={ d.slice( 0, 12 ) } d={ d } fill={ accent } />
 			) ) }
 		</svg>
 	);

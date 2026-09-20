@@ -14,13 +14,8 @@
 
 export { default as LinchpinAdminFrame } from './components/admin-frame';
 export { default as LinchpinAdminTopBar } from './components/admin-top-bar';
-export { default as LinchpinAdminMasthead } from './components/admin-masthead';
+export { default as LinchpinAdminPage } from './components/admin-page';
 export { default as LinchpinAdminLayout } from './components/admin-layout';
-export {
-	default as LinchpinAdminTabs,
-	tabFromUrl,
-	rememberTab,
-} from './components/admin-tabs';
 export { default as LinchpinNotices } from './components/notices';
 export { default as LinchpinAdminFooter } from './components/admin-footer';
 export { default as LinchpinLogo } from './components/linchpin-logo';
@@ -31,12 +26,20 @@ export { default as FeatureListCard } from './components/cards/feature-list-card
 export { default as AboutLinchpinCard } from './components/cards/about-linchpin-card';
 export { default as AboutLinchpinPage } from './components/about-linchpin-page';
 
+export { sectionNavigation, currentSection } from './utils/navigation';
+
 export {
 	default as usePlatformStatus,
 	statusLabel,
 } from './hooks/use-platform-status';
 
-export { defineBrand, brandStyle, LINCHPIN_ACCENT } from './brand/define-brand';
+export { defineBrand, brandStyle } from './brand/define-brand';
+export {
+	LINCHPIN_COLORS,
+	LINCHPIN_ACCENT,
+	colorVar,
+	colorVars,
+} from './brand/colors';
 export { linchpinLinks } from './brand/links';
 
 export { AdminContext, useAdminContext } from './context';

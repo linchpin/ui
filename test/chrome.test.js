@@ -10,11 +10,13 @@ import {
 	AboutLinchpinCard,
 	AboutLinchpinPage,
 	defineBrand,
+	LINCHPIN_COLORS,
 	LinchpinAdminFooter,
 	LinchpinAdminFrame,
 	LinchpinAdminLayout,
-	LinchpinAdminMasthead,
+	LinchpinAdminPage,
 	LinchpinAdminTopBar,
+	LinchpinLogo,
 	VersionBadge,
 } from '../src';
 
@@ -47,6 +49,30 @@ describe( 'LinchpinAdminFrame', () => {
 		);
 	} );
 
+	it( 'publishes the agency palette too, so no component needs a hex', () => {
+		const { container } = render( <Frame>screen</Frame> );
+		const frame = container.querySelector( '.lp-admin' );
+
+		expect( frame.style.getPropertyValue( '--lp-color-blue' ) ).toBe(
+			LINCHPIN_COLORS.blue
+		);
+		expect( frame.style.getPropertyValue( '--lp-color-cyan' ) ).toBe(
+			LINCHPIN_COLORS.cyan
+		);
+	} );
+
+	it( 'defaults a brandless plugin to Linchpin blue', () => {
+		const { container } = render(
+			<LinchpinAdminFrame plugin={ PLUGIN }>screen</LinchpinAdminFrame>
+		);
+
+		expect(
+			container
+				.querySelector( '.lp-admin' )
+				.style.getPropertyValue( '--lp-brand-primary' )
+		).toBe( LINCHPIN_COLORS.blue );
+	} );
+
 	it( 'keeps the top bar outside the gutter and the screen inside it', () => {
 		const { container } = render(
 			<Frame topBar={ <div data-testid="bar" /> }>
@@ -74,6 +100,53 @@ describe( 'LinchpinAdminFrame', () => {
 } );
 
 describe( 'LinchpinAdminTopBar', () => {
+	it( 'shows the plugin logo when it has one', () => {
+		render(
+			<Frame
+				topBar={
+					<LinchpinAdminTopBar
+						logo={ <svg data-testid="plugin-logo" /> }
+					/>
+				}
+			/>
+		);
+
+		expect( screen.getByTestId( 'plugin-logo' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Psst' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'accepts a URL for a logo the plugin ships, and names it', () => {
+		render(
+			<Frame topBar={ <LinchpinAdminTopBar logo="/psst/logo.svg" /> } />
+		);
+
+		expect( screen.getByRole( 'img', { name: 'Psst' } ) ).toHaveAttribute(
+			'src',
+			'/psst/logo.svg'
+		);
+	} );
+
+	it( 'falls back to the name only when there is no logo at all', () => {
+		render( <Frame topBar={ <LinchpinAdminTopBar /> } /> );
+
+		expect( screen.getByText( 'Psst' ) ).toBeInTheDocument();
+	} );
+
+	it( 'takes the logo from the frame identity as well as from props', () => {
+		render(
+			<LinchpinAdminFrame
+				plugin={ { ...PLUGIN, logo: '/psst/from-identity.svg' } }
+				brand={ BRAND }
+				topBar={ <LinchpinAdminTopBar /> }
+			/>
+		);
+
+		expect( screen.getByRole( 'img', { name: 'Psst' } ) ).toHaveAttribute(
+			'src',
+			'/psst/from-identity.svg'
+		);
+	} );
+
 	it( 'shows the version and links to Linchpin with the plugin tagged', () => {
 		render( <Frame topBar={ <LinchpinAdminTopBar /> } /> );
 
@@ -86,12 +159,6 @@ describe( 'LinchpinAdminTopBar', () => {
 		);
 	} );
 
-	it( 'falls back to the plugin name when there is no logo', () => {
-		render( <Frame topBar={ <LinchpinAdminTopBar /> } /> );
-
-		expect( screen.getByText( 'Psst' ) ).toBeInTheDocument();
-	} );
-
 	it( 'leaves the status dot off unless asked', () => {
 		const { container } = render(
 			<Frame topBar={ <LinchpinAdminTopBar /> } />
@@ -101,23 +168,66 @@ describe( 'LinchpinAdminTopBar', () => {
 	} );
 } );
 
-describe( 'LinchpinAdminMasthead', () => {
-	it( 'titles the screen after the plugin and renders its actions', () => {
+describe( 'LinchpinAdminPage', () => {
+	it( 'titles the page after the plugin and renders the full header', () => {
 		render(
 			<Frame>
-				<LinchpinAdminMasthead description="One-time secrets.">
-					<button>Share a secret</button>
-				</LinchpinAdminMasthead>
+				<LinchpinAdminPage
+					subTitle="One-time secrets."
+					actions={ <button>Share a secret</button> }
+				>
+					body
+				</LinchpinAdminPage>
 			</Frame>
 		);
 
-		expect(
-			screen.getByRole( 'heading', { level: 1, name: 'Psst' } )
-		).toBeInTheDocument();
+		expect( screen.getByText( 'Psst' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'One-time secrets.' ) ).toBeInTheDocument();
 		expect(
 			screen.getByRole( 'button', { name: 'Share a secret' } )
 		).toBeInTheDocument();
+	} );
+
+	it( 'badges the version without being asked, and drops it when told', () => {
+		const { rerender } = render(
+			<Frame>
+				<LinchpinAdminPage>body</LinchpinAdminPage>
+			</Frame>
+		);
+		expect( screen.getByText( 'v2.1.0' ) ).toBeInTheDocument();
+
+		rerender(
+			<Frame>
+				<LinchpinAdminPage badges={ null }>body</LinchpinAdminPage>
+			</Frame>
+		);
+		expect( screen.queryByText( 'v2.1.0' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders section navigation as links, with the current one marked', () => {
+		render(
+			<Frame>
+				<LinchpinAdminPage
+					navigation={ {
+						items: [
+							{ label: 'Settings', href: '?tab=settings' },
+							{ label: 'Secrets', href: '?tab=secrets' },
+						],
+						currentHref: '?tab=secrets',
+						ariaLabel: 'Sections',
+					} }
+				>
+					body
+				</LinchpinAdminPage>
+			</Frame>
+		);
+
+		expect(
+			screen.getByRole( 'link', { name: 'Settings' } )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'link', { name: 'Secrets' } )
+		).toHaveAttribute( 'aria-current', 'page' );
 	} );
 } );
 
@@ -146,6 +256,64 @@ describe( 'LinchpinAdminLayout', () => {
 
 		expect(
 			screen.getByRole( 'complementary', { name: 'About Psst' } )
+		).toBeInTheDocument();
+	} );
+} );
+
+describe( 'LinchpinLogo', () => {
+	it( 'draws the wordmark only in the full lockup', () => {
+		const { container: full } = render( <LinchpinLogo variant="full" /> );
+		const { container: mark } = render( <LinchpinLogo variant="mark" /> );
+
+		expect( full.querySelectorAll( 'path' ) ).toHaveLength( 14 );
+		expect( mark.querySelectorAll( 'path' ) ).toHaveLength( 4 );
+	} );
+
+	it( 'crops the viewBox to the mark', () => {
+		const { container } = render( <LinchpinLogo variant="mark" /> );
+
+		expect( container.querySelector( 'svg' ) ).toHaveAttribute(
+			'viewBox',
+			'-4 -4 89 89'
+		);
+	} );
+
+	it( 'paints from custom properties, never a hex', () => {
+		const { container } = render( <LinchpinLogo /> );
+		const fills = [ ...container.querySelectorAll( 'path' ) ].map(
+			( path ) => path.getAttribute( 'fill' )
+		);
+
+		expect( fills.every( ( fill ) => fill.startsWith( 'var(' ) ) ).toBe(
+			true
+		);
+		expect(
+			fills.some( ( fill ) => fill.includes( '--lp-logo-ink' ) )
+		).toBe( true );
+		expect(
+			fills.some( ( fill ) => fill.includes( '--lp-logo-accent' ) )
+		).toBe( true );
+	} );
+
+	it( 'takes the surrounding colour when mono, for the brand bar', () => {
+		const { container } = render( <LinchpinLogo tone="mono" /> );
+		const fills = [ ...container.querySelectorAll( 'path' ) ].map(
+			( path ) => path.getAttribute( 'fill' )
+		);
+
+		expect( new Set( fills ) ).toEqual( new Set( [ 'currentColor' ] ) );
+	} );
+
+	it( 'is hidden from assistive technology unless it is named', () => {
+		const { container, rerender } = render( <LinchpinLogo /> );
+		expect( container.querySelector( 'svg' ) ).toHaveAttribute(
+			'aria-hidden',
+			'true'
+		);
+
+		rerender( <LinchpinLogo title="Linchpin" /> );
+		expect(
+			screen.getByRole( 'img', { name: 'Linchpin' } )
 		).toBeInTheDocument();
 	} );
 } );
