@@ -9,7 +9,8 @@ per repository.
 It is a thin layer **on top of** core. Components come from `@wordpress/components`,
 `@wordpress/ui` and `@wordpress/admin-ui`; what lives here is the arrangement, the brand
 contract and the agency copy. It is not a design system and does not re-implement buttons,
-cards, form controls or tables.
+cards, form controls or tables — and the page header, with its breadcrumbs, subtitle, badges
+and section navigation, is core's `Page`, wrapped rather than rebuilt.
 
 ## Where to start
 

@@ -10,6 +10,7 @@ import { ThemeProvider } from '@wordpress/theme';
  */
 import { AdminContext } from '../context';
 import { brandStyle, defineBrand } from '../brand/define-brand';
+import { colorVars } from '../brand/colors';
 import { linchpinLinks } from '../brand/links';
 
 /**
@@ -24,7 +25,9 @@ import { linchpinLinks } from '../brand/links';
  *    so snackbars and popovers portalled out of this tree read the same
  *    values — which also means exactly one frame may exist per document.
  * 2. Publish identity, brand and links on context, so the rest of the chrome
- *    stops taking the same props at every level.
+ *    stops taking the same props at every level, and set both the agency
+ *    palette (`--lp-color-*`) and the plugin's brand (`--lp-brand-*`) as
+ *    custom properties, so nothing below has to carry a hex value.
  * 3. Undo wp-admin's `#wpcontent` padding, so the brand bar runs edge to edge,
  *    then restore the gutter inside the shell. Pass the bar as `topBar` rather
  *    than as a child: it is the one element that must sit outside the gutter,
@@ -32,7 +35,7 @@ import { linchpinLinks } from '../brand/links';
  *    instead of in every plugin's stylesheet.
  *
  * @param {Object}  props                Props.
- * @param {Object}  props.plugin         Identity: `{ name, slug, version }`.
+ * @param {Object}  props.plugin         Identity: `{ name, slug, version, logo }`.
  * @param {Object}  [props.brand]        A brand from `defineBrand()`.
  * @param {Object}  [props.links]        Links from `linchpinLinks()`. Derived from the slug when omitted.
  * @param {Element} [props.topBar]       Usually a `<LinchpinAdminTopBar />`. Rendered edge to edge.
@@ -65,7 +68,7 @@ export default function LinchpinAdminFrame( {
 			plugin,
 			brand: nextBrand,
 			links: links ?? linchpinLinks( { plugin: plugin.slug } ),
-			style: brandStyle( nextBrand ),
+			style: { ...colorVars(), ...brandStyle( nextBrand ) },
 		};
 	}, [ plugin, brand, links ] );
 

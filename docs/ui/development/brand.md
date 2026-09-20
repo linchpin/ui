@@ -33,6 +33,27 @@ in its own stylesheet.
 the top bar is a fixed brand gradient, so following the user's profile colour puts a
 stranger's accent directly beneath the plugin's own. Mantle made the same call.
 
+## The agency palette
+
+A plugin's brand is one thing; Linchpin's own colours are another. The palette lives in
+`src/brand/colors.js` — Linchpin blue `#3FC1D0` and Linchpin black `#031E1E` — and the frame
+publishes it as `--lp-color-*` alongside the plugin's `--lp-brand-*`. The logo paints from it,
+a plugin that names no brand inherits it, and a host can override any of it in one place.
+
+Linchpin blue reads as a cyan, and there is exactly one of it. An earlier draft of this
+package carried a second, invented navy under the name `blue` and called `#3FC1D0` the accent;
+if you find that anywhere, it is wrong.
+
+## The logo's artwork
+
+`src/components/logo-artwork.js` is generated from the brand file by
+`scripts/import-logo.mjs` — export the `style=Primary` member of each variant set and re-run
+it. The script reads the fills to decide which paths are ink and which are the ring, which is
+why the Primary style specifically is the one to export. Every tone shares that geometry.
+
+Nothing in the library carries a hex. Where a value is unavoidable — white on the brand bar —
+it appears as the fallback inside a `var()`, so the property still wins.
+
 ## Custom properties
 
 `brandStyle()` kebab-cases the keys, so the brand above reaches CSS as:

@@ -5,7 +5,7 @@ import {
 	AboutLinchpinPage,
 	defineBrand,
 	LinchpinAdminFrame,
-	LinchpinAdminMasthead,
+	LinchpinAdminPage,
 	LinchpinAdminTopBar,
 } from '@linchpinagency/ui';
 
@@ -39,8 +39,9 @@ function Page( { plugin } ) {
 			brand={ BRAND }
 			topBar={ <LinchpinAdminTopBar /> }
 		>
-			<LinchpinAdminMasthead title="About" />
-			<AboutLinchpinPage />
+			<LinchpinAdminPage title="About" badges={ null }>
+				<AboutLinchpinPage />
+			</LinchpinAdminPage>
 		</LinchpinAdminFrame>
 	);
 }

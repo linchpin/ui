@@ -1,11 +1,16 @@
 /**
- * @linchpinagency/ui — the Linchpin admin chrome.
+ * The Linchpin admin chrome.
  *
- * Layout and brand only. Components come from @wordpress/components, and
- * every colour that is not the plugin's own brand is a `--wpds-*` design
- * token, so the ThemeProvider seed in <LinchpinAdminFrame> flows through the
- * whole screen. The `--lp-brand-*` custom properties are set on the frame
- * from `defineBrand()`.
+ * Layout and brand only. Components come from @wordpress/components and
+ * @wordpress/admin-ui, and the page header — title, subtitle, breadcrumbs,
+ * badges, actions, section navigation — is core's `Page`, which brings its
+ * own styles. What is left here is the brand bar, the two-column body, the
+ * sidebar cards and the footer.
+ *
+ * No hex values. Colour is a `--wpds-*` design token, one of the agency
+ * `--lp-color-*` properties, or one of the plugin's `--lp-brand-*`
+ * properties; the frame sets the last two. The fallbacks below exist only so
+ * a fragment rendered outside a frame still paints.
  *
  * Import once, from the consuming plugin's entry point:
  *
@@ -17,6 +22,9 @@
 
 $lp-tablet: 782px;
 $lp-two-column: 1100px;
+$lp-three-column: 1400px;
+$lp-nav-width: 240px;
+$lp-aside-width: 300px;
 
 .lp-admin {
 	// wp-admin pads #wpcontent by 20px (10px on small screens). Pull the frame
@@ -36,7 +44,7 @@ $lp-two-column: 1100px;
 		min-height: 56px;
 		padding: 0 20px;
 		background: linear-gradient(90deg, var(--lp-brand-deep) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep)) 100%);
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 
 		@media (max-width: $lp-tablet) {
 			padding: 0 10px;
@@ -50,7 +58,10 @@ $lp-two-column: 1100px;
 		gap: var(--wpds-dimension-gap-lg);
 	}
 
-	&__topbar-brand svg {
+	// The plugin's own mark, however it arrives: an inline SVG, an <img>, or a
+	// component of its own.
+	&__topbar-brand svg,
+	&__topbar-logo {
 		display: block;
 		height: 36px;
 		width: auto;
@@ -59,13 +70,13 @@ $lp-two-column: 1100px;
 	&__topbar-name {
 		font-size: var(--wpds-typography-font-size-lg);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 	}
 
 	&__topbar-linchpin {
 		display: inline-flex;
 		align-items: center;
-		color: #fff;
+		color: var(--lp-color-on-brand, #fff);
 		border-radius: var(--wpds-border-radius-xs);
 
 		svg {
@@ -79,7 +90,7 @@ $lp-two-column: 1100px;
 		}
 
 		&:focus-visible {
-			outline: var(--wpds-border-width-focus) solid #fff;
+			outline: var(--wpds-border-width-focus) solid var(--lp-color-on-brand, #fff);
 			outline-offset: 4px;
 		}
 	}
@@ -87,11 +98,21 @@ $lp-two-column: 1100px;
 	&__version {
 		padding: 2px 10px;
 		border-radius: 999px;
-		background: rgba(255, 255, 255, 0.14);
-		color: #fff;
 		font-size: var(--wpds-typography-font-size-xs);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
 		letter-spacing: 0.02em;
+
+		// On the brand gradient, where the bar itself is the only safe surface.
+		&.is-on-brand {
+			background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 14%, transparent);
+			color: var(--lp-color-on-brand, #fff);
+		}
+
+		// In the page header, where design system tokens apply as usual.
+		&.is-neutral {
+			background: var(--wpds-color-background-surface-neutral);
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
 	}
 
 	&__status {
@@ -103,15 +124,15 @@ $lp-two-column: 1100px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.4);
+		background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 40%, transparent);
 	}
 
 	&__status.is-up .lp-admin__status-dot {
-		background: #4ade80;
+		background: var(--lp-color-status-up);
 	}
 
 	&__status.is-down .lp-admin__status-dot {
-		background: #f87171;
+		background: var(--lp-color-status-down);
 	}
 
 	&__shell {
@@ -123,63 +144,148 @@ $lp-two-column: 1100px;
 		}
 	}
 
-	&__masthead {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: var(--wpds-dimension-gap-lg);
-		padding: 28px 0 12px;
-	}
-
-	&__masthead-copy {
-		min-width: 0;
-	}
-
-	&__masthead-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--wpds-dimension-gap-sm);
-	}
-
-	&__title {
-		margin: 0;
-		font-size: var(--wpds-typography-font-size-2xl);
-		font-weight: var(--wpds-typography-font-weight-emphasis);
-		line-height: var(--wpds-typography-line-height-2xl);
-		color: var(--wpds-color-foreground-content-neutral);
-	}
-
-	&__tagline {
-		margin: 6px 0 0;
-		max-width: 60ch;
-		color: var(--wpds-color-foreground-content-neutral-weak);
-	}
-
-	&__tabs {
-
-		.components-tab-panel__tabs {
-			margin-bottom: 24px;
-			border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
-		}
-	}
-
 	&__body {
 		display: grid;
 		gap: 24px;
 		align-items: start;
+		grid-template-columns: minmax(0, 1fr);
+
+		// The columns a screen actually has. Anything absent is not rendered,
+		// so there is no empty track to collapse.
+		&.has-nav {
+			grid-template-columns: $lp-nav-width minmax(0, 1fr);
+		}
 
 		&.has-sidebar {
-			grid-template-columns: minmax(0, 1fr) 300px;
+			grid-template-columns: minmax(0, 1fr) $lp-aside-width;
+		}
 
-			@media (max-width: $lp-two-column) {
-				grid-template-columns: minmax(0, 1fr);
+		&.has-nav.has-sidebar {
+			grid-template-columns: $lp-nav-width minmax(0, 1fr) $lp-aside-width;
+		}
+
+		// The help column is the first to go: it is context, not the work.
+		@media (max-width: $lp-three-column) {
+
+			&.has-nav.has-sidebar {
+				grid-template-columns: $lp-nav-width minmax(0, 1fr);
 			}
 		}
 
-		&.is-full-width {
-			grid-template-columns: minmax(0, 1fr);
+		@media (max-width: $lp-two-column) {
+
+			&.has-sidebar {
+				grid-template-columns: minmax(0, 1fr);
+			}
+
+			&.has-nav.has-sidebar {
+				grid-template-columns: $lp-nav-width minmax(0, 1fr);
+			}
 		}
+
+		// Below tablet the menu stacks above the screen rather than squeezing
+		// it: 240px of nav beside 300px of content helps nobody.
+		@media (max-width: $lp-tablet) {
+
+			&.has-nav,
+			&.has-nav.has-sidebar {
+				grid-template-columns: minmax(0, 1fr);
+			}
+		}
+	}
+
+	&__nav {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-md);
+		min-width: 0;
+	}
+
+	&__nav-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-xs);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+		}
+	}
+
+	&__nav-item {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-sm);
+		// `sm`, matching every Button in the design system. `md` here leaves
+		// the rows visibly rounder than the buttons beside them.
+		border-radius: var(--wpds-border-radius-sm);
+		padding: var(--wpds-dimension-padding-sm) var(--wpds-dimension-padding-md);
+		color: var(--wpds-color-foreground-content-neutral);
+		text-decoration: none;
+
+		&:hover {
+			background-color: var(--wpds-color-background-surface-neutral-weak);
+		}
+
+		/*
+		 * wp-admin rings every `a:focus` with a box-shadow, on `:focus` rather
+		 * than `:focus-visible` — so clicking a row leaves a ring behind until
+		 * something else is clicked. Drop it, and put the ring back where it
+		 * belongs: on keyboard focus only.
+		 */
+		&:focus {
+			box-shadow: none;
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+			outline-offset: calc(-1 * var(--wpds-border-width-focus));
+		}
+
+		// The current page, not a pressed button — so the styling hangs off
+		// the same attribute assistive technology reads.
+		&[aria-current="page"] {
+			background-color: var(--wpds-color-background-interactive-brand-strong);
+			color: var(--wpds-color-foreground-interactive-brand-strong);
+		}
+
+		&[aria-disabled="true"] {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
+	&__nav-label {
+		min-width: 0;
+	}
+
+	&__nav-icon {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+
+		/*
+		 * Icons carry no fill of their own, so they paint black by default and
+		 * would stay black on the selected row's brand background. Inheriting
+		 * means one rule covers every icon — ours and @wordpress/icons alike —
+		 * and the inverted row gets an inverted icon for free.
+		 */
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__nav-badge {
+		margin-left: auto;
+		font-size: var(--wpds-typography-font-size-xs);
+		color: inherit;
+	}
+
+	&__nav-footer {
+		margin-top: auto;
 	}
 
 	&__main {
@@ -354,5 +460,17 @@ $lp-two-column: 1100px;
 		margin-top: 16px;
 		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
 		font-size: var(--wpds-typography-font-size-sm);
+	}
+}
+
+// The logo sizes itself from whatever contains it; this keeps the mark square
+// and stops either variant collapsing when nothing sets a height.
+.lp-logo {
+	display: block;
+	height: 100%;
+	width: auto;
+
+	&.is-mark {
+		aspect-ratio: 1;
 	}
 }

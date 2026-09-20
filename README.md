@@ -18,7 +18,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 ## What this is
 
 Every Linchpin plugin was building the same admin screen: a branded top bar with the plugin's
-logo, its version and the Linchpin mark; a masthead; tabs; a two-column body with a help
+logo, its version and the Linchpin mark; a page header; tabs; a two-column body with a help
 sidebar; an About Linchpin card. Mantle, Psst and linchpin-blocks each arrived at that
 arrangement separately, and each carried its own copy of it.
 
@@ -27,7 +27,11 @@ come from `@wordpress/components`, `@wordpress/ui` and `@wordpress/admin-ui`, an
 here is the Linchpin-specific chrome and the brand contract that makes a plugin look like
 ours.
 
-It is not a design system. It does not re-implement buttons, cards, form controls or tables.
+It is not a design system. It does not re-implement buttons, cards, form controls or tables,
+and it does not rebuild the page header: `<LinchpinAdminPage>` wraps core's `Page`, so the
+[full header](https://wordpress.github.io/gutenberg/?path=/story/admin-ui-page--full-header)
+— breadcrumbs, title, subtitle, badges, actions and section navigation — is the one WordPress
+is standardising on.
 
 ## Install
 
@@ -45,15 +49,16 @@ and `@wordpress/dependency-extraction-webpack-plugin` bundles rather than extern
 ```jsx
 import {
 	AboutLinchpinCard,
+	currentSection,
 	defineBrand,
 	HelpCard,
+	LinchpinAdminFooter,
 	LinchpinAdminFrame,
 	LinchpinAdminLayout,
-	LinchpinAdminMasthead,
-	LinchpinAdminTabs,
+	LinchpinAdminPage,
 	LinchpinAdminTopBar,
 	LinchpinNotices,
-	LinchpinAdminFooter,
+	sectionNavigation,
 } from '@linchpinagency/ui';
 import '@linchpinagency/ui/style.css';
 
@@ -65,6 +70,12 @@ const BRAND = defineBrand( {
 
 const PLUGIN = { name: 'Psst', slug: 'psst', version: window.psstAdmin.version };
 
+const SECTIONS = [
+	{ name: 'settings', label: 'Settings' },
+	{ name: 'secrets', label: 'Secrets' },
+	{ name: 'health', label: 'Health' },
+];
+
 function App() {
 	return (
 		<LinchpinAdminFrame
@@ -72,27 +83,29 @@ function App() {
 			brand={ BRAND }
 			topBar={ <LinchpinAdminTopBar logo={ <PsstLogo /> } /> }
 		>
-			<LinchpinAdminMasthead description="One-time secrets, encrypted in the browser.">
-				<Button variant="primary" href={ createUrl }>Share a secret</Button>
-			</LinchpinAdminMasthead>
+			<LinchpinAdminPage
+				subTitle="One-time secrets, encrypted in the browser."
+				navigation={ sectionNavigation( { sections: SECTIONS } ) }
+				actions={
+					<Button variant="primary" href={ createUrl }>
+						Share a secret
+					</Button>
+				}
+			>
+				<LinchpinNotices />
 
-			<LinchpinNotices />
-
-			<LinchpinAdminTabs tabs={ TABS }>
-				{ ( tab ) => (
-					<LinchpinAdminLayout
-						label="About Psst"
-						sidebar={
-							<>
-								<HelpCard />
-								<AboutLinchpinCard />
-							</>
-						}
-					>
-						<View tab={ tab } />
-					</LinchpinAdminLayout>
-				) }
-			</LinchpinAdminTabs>
+				<LinchpinAdminLayout
+					label="About Psst"
+					sidebar={
+						<>
+							<HelpCard />
+							<AboutLinchpinCard />
+						</>
+					}
+				>
+					<View section={ currentSection( { sections: SECTIONS } ) } />
+				</LinchpinAdminLayout>
+			</LinchpinAdminPage>
 
 			<LinchpinAdminFooter />
 		</LinchpinAdminFrame>
@@ -113,9 +126,10 @@ wp_enqueue_style(
 
 ## Two rules worth knowing before you start
 
-**No hex in a component.** Colour comes from a `--wpds-*` design token or from the
-`--lp-brand-*` custom properties the frame sets out of `defineBrand()`. A plugin recolours
-itself by changing its brand object, nothing else.
+**No hex in a component.** Colour comes from a `--wpds-*` design token, from the agency
+palette the frame publishes as `--lp-color-*`, or from the `--lp-brand-*` properties it sets
+out of `defineBrand()`. A plugin recolours itself by changing its brand object, nothing else;
+Linchpin blue is the default when it names nothing.
 
 **The About Linchpin copy is fixed.** `<AboutLinchpinPage>` and `<AboutLinchpinCard>` take no
 copy props. The wording is marketing, it gets revised, and the point of the component is that

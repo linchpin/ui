@@ -1,19 +1,16 @@
 /**
  * Internal dependencies
  */
-import {
-	brandStyle,
-	defineBrand,
-	LINCHPIN_ACCENT,
-} from '../src/brand/define-brand';
+import { brandStyle, defineBrand } from '../src/brand/define-brand';
+import { colorVar, LINCHPIN_COLORS } from '../src/brand/colors';
 import { linchpinLinks } from '../src/brand/links';
 
 describe( 'defineBrand', () => {
 	it( 'fills the Linchpin palette when a plugin names nothing', () => {
 		const brand = defineBrand();
 
-		expect( brand.primary ).toEqual( expect.any( String ) );
-		expect( brand.accent ).toBe( LINCHPIN_ACCENT );
+		expect( brand.primary ).toBe( LINCHPIN_COLORS.blue );
+		expect( brand.accent ).toBe( LINCHPIN_COLORS.blue );
 	} );
 
 	it( 'flattens the top bar rather than inventing a second stop', () => {
@@ -87,5 +84,20 @@ describe( 'linchpinLinks', () => {
 
 	it( 'requires a slug, because every link is built from it', () => {
 		expect( () => linchpinLinks() ).toThrow( /plugin slug is required/ );
+	} );
+} );
+
+describe( 'colorVar', () => {
+	it( 'references the property and carries the palette value as a fallback', () => {
+		expect( colorVar( 'blue' ) ).toBe(
+			`var( --lp-color-blue, ${ LINCHPIN_COLORS.blue } )`
+		);
+	} );
+
+	it( 'refuses a colour the palette does not define', () => {
+		expect( () => colorVar( 'chartreuse' ) ).toThrow( /unknown colour/ );
+
+		// There is one Linchpin blue, and it is not called cyan.
+		expect( () => colorVar( 'cyan' ) ).toThrow( /unknown colour/ );
 	} );
 } );
