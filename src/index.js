@@ -35,12 +35,7 @@ export {
 } from './hooks/use-platform-status';
 
 export { defineBrand, brandStyle } from './brand/define-brand';
-export {
-	LINCHPIN_COLORS,
-	LINCHPIN_ACCENT,
-	colorVar,
-	colorVars,
-} from './brand/colors';
+export { LINCHPIN_COLORS, colorVar, colorVars } from './brand/colors';
 export { linchpinLinks } from './brand/links';
 
 export { AdminContext, useAdminContext } from './context';

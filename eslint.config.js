@@ -29,4 +29,9 @@ export default [
 			'@wordpress/i18n-text-domain': 'off',
 		},
 	},
+	{
+		// Build scripts are run from a terminal and report to it.
+		files: [ 'scripts/**/*.mjs' ],
+		rules: { 'no-console': 'off' },
+	},
 ];

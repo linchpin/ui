@@ -4,10 +4,13 @@
 import { LinchpinLogo } from '@linchpinagency/ui';
 
 /**
- * The Linchpin logo, in the two forms the brand uses: the full lockup, and
- * the mark on its own. Colour comes from custom properties — `--lp-logo-ink`
- * and `--lp-logo-accent`, defaulting to Linchpin blue and the brand cyan — so
- * a host recolours the logo without touching the component.
+ * The Linchpin logo, generated from the brand file by
+ * `scripts/import-logo.mjs`. Two variants — the full lockup and the brandmark
+ * — and the brand's four tones plus a `mono` one for surfaces whose colour
+ * the logo should simply inherit.
+ *
+ * Every tone resolves to `--lp-color-*`; `--lp-logo-ink` and
+ * `--lp-logo-accent` override either half.
  */
 export default {
 	title: 'Brand/Logo',
@@ -15,35 +18,56 @@ export default {
 	parameters: { layout: 'centered' },
 };
 
-export const FullLockup = {
-	name: 'Full lockup',
-	render: () => (
-		<div style={ { height: '48px' } }>
-			<LinchpinLogo variant="full" title="Linchpin" />
+/**
+ * @param {Object} props           Props.
+ * @param {string} props.tone      The tone to show.
+ * @param {string} [props.surface] Background to show it against.
+ * @return {Element} Both variants in one tone.
+ */
+function Pair( { tone, surface = 'transparent' } ) {
+	return (
+		<div
+			style={ {
+				display: 'flex',
+				alignItems: 'center',
+				gap: '32px',
+				padding: '24px',
+				background: surface,
+			} }
+		>
+			<div style={ { height: '40px' } }>
+				<LinchpinLogo variant="full" tone={ tone } title="Linchpin" />
+			</div>
+			<div style={ { height: '56px' } }>
+				<LinchpinLogo variant="mark" tone={ tone } title="Linchpin" />
+			</div>
 		</div>
-	),
+	);
+}
+
+export const Primary = {
+	name: 'Primary — black ink, Linchpin blue ring',
+	render: () => <Pair tone="primary" />,
 };
 
-export const Mark = {
-	render: () => (
-		<div style={ { height: '64px' } }>
-			<LinchpinLogo variant="mark" title="Linchpin" />
-		</div>
-	),
+export const OnDark = {
+	name: 'On dark — white ink, Linchpin blue ring',
+	render: () => <Pair tone="on-dark" surface="#031E1E" />,
+};
+
+export const White = {
+	render: () => <Pair tone="white" surface="#031E1E" />,
+};
+
+export const Black = {
+	render: () => <Pair tone="black" />,
 };
 
 export const Mono = {
-	name: 'Mono, on a brand surface',
+	name: 'Mono — inherits the surrounding colour',
 	render: () => (
-		<div
-			style={ {
-				background: '#082318',
-				color: '#fff',
-				padding: '24px',
-				height: '32px',
-			} }
-		>
-			<LinchpinLogo tone="mono" title="Linchpin" />
+		<div style={ { color: '#6d3efb' } }>
+			<Pair tone="mono" />
 		</div>
 	),
 };
@@ -53,12 +77,11 @@ export const Recoloured = {
 	render: () => (
 		<div
 			style={ {
-				height: '48px',
 				'--lp-logo-ink': '#6d3efb',
 				'--lp-logo-accent': '#ffd60a',
 			} }
 		>
-			<LinchpinLogo title="Linchpin" />
+			<Pair tone="primary" />
 		</div>
 	),
 };

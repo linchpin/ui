@@ -14,12 +14,12 @@ import { LINCHPIN_COLORS } from './colors';
 
 /**
  * The fallback palette: Linchpin's own, for a plugin that has no artwork yet.
- * Linchpin blue seeds the design system; the mark keeps its cyan accent.
+ * Linchpin blue seeds the design system, on a Linchpin black bar.
  */
 const DEFAULTS = Object.freeze( {
 	primary: LINCHPIN_COLORS.blue,
 	deep: LINCHPIN_COLORS.black,
-	accent: LINCHPIN_COLORS.cyan,
+	accent: LINCHPIN_COLORS.blue,
 } );
 
 /**

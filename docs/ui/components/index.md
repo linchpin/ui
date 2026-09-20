@@ -105,7 +105,7 @@ screen rather than squeezing it.
 
 | Export | Notes |
 | --- | --- |
-| `<LinchpinLogo>` | Two variants: `full` (the lockup) and `mark` (the mark alone). Two tones: `brand` paints the ink in Linchpin blue and the swooshes in the brand cyan, `mono` paints everything in `currentColor` — which is what the top bar wants. Path data ships inside the package, so there is no SVGR loader and no runtime `plugin_url` lookup. Recolour with `--lp-logo-ink` and `--lp-logo-accent`. |
+| `<LinchpinLogo>` | Two variants — `full` (the lockup) and `mark` (the brandmark) — and five tones: the brand's `primary`, `on-dark`, `white` and `black`, plus `mono`, which paints in `currentColor` so the logo inherits the colour of the bar it sits on. Artwork is generated from the brand file, so there is no SVGR loader and no runtime `plugin_url` lookup. Recolour with `--lp-logo-ink` and `--lp-logo-accent`. |
 | `<VersionBadge>` | Adds the `v`, once. Renders nothing without a version. |
 
 ## Helpers

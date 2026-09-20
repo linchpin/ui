@@ -5,7 +5,6 @@
  * whatever `defineBrand()` is given. A plugin that names nothing inherits
  * these, and the Linchpin logo always uses them.
  *
- * Values come from the linchpin.com palette (`themes/linchpin/theme.json`).
  * Nothing in the library may hardcode a colour: a component reaches for one of
  * these custom properties, a `--wpds-*` design token, or a `--lp-brand-*`
  * property the frame set from the plugin's brand.
@@ -15,21 +14,21 @@
  * The palette, as hex. One definition, referenced everywhere.
  */
 export const LINCHPIN_COLORS = Object.freeze( {
-	/** Linchpin blue. The default ink for the logo and the default brand seed. */
-	blue: '#1B4475',
-	/** The mark's accent. `primary` in the linchpin.com palette. */
-	cyan: '#3fc1d0',
+	/**
+	 * Linchpin blue — the primary brand colour, and the mark's own.
+	 *
+	 * It reads as a cyan, and was briefly carried in this file under that
+	 * name beside an invented navy. There is one blue, and this is it.
+	 */
+	blue: '#3FC1D0',
 	/** Linchpin black, for ink on a light surface. */
-	black: '#031e1e',
+	black: '#031E1E',
 	/** Foreground on a brand-coloured surface, such as the top bar. */
-	onBrand: '#ffffff',
+	onBrand: '#FFFFFF',
 	/** Platform status, used only by the opt-in status dot. */
-	statusUp: '#4ade80',
-	statusDown: '#f87171',
+	statusUp: '#4ADE80',
+	statusDown: '#F87171',
 } );
-
-/** @deprecated Use `LINCHPIN_COLORS.cyan`, or the `--lp-color-cyan` property. */
-export const LINCHPIN_ACCENT = LINCHPIN_COLORS.cyan;
 
 /**
  * The palette as `--lp-color-*` custom properties.
@@ -43,13 +42,20 @@ export const LINCHPIN_ACCENT = LINCHPIN_COLORS.cyan;
 export function colorVars() {
 	return {
 		'--lp-color-blue': LINCHPIN_COLORS.blue,
-		'--lp-color-cyan': LINCHPIN_COLORS.cyan,
 		'--lp-color-black': LINCHPIN_COLORS.black,
 		'--lp-color-on-brand': LINCHPIN_COLORS.onBrand,
 		'--lp-color-status-up': LINCHPIN_COLORS.statusUp,
 		'--lp-color-status-down': LINCHPIN_COLORS.statusDown,
 	};
 }
+
+const PROPERTIES = {
+	blue: '--lp-color-blue',
+	black: '--lp-color-black',
+	onBrand: '--lp-color-on-brand',
+	statusUp: '--lp-color-status-up',
+	statusDown: '--lp-color-status-down',
+};
 
 /**
  * A `var()` reference with the palette value as its fallback.
@@ -62,14 +68,7 @@ export function colorVars() {
  * @return {string} A CSS `var()` expression.
  */
 export function colorVar( name ) {
-	const property = {
-		blue: '--lp-color-blue',
-		cyan: '--lp-color-cyan',
-		black: '--lp-color-black',
-		onBrand: '--lp-color-on-brand',
-		statusUp: '--lp-color-status-up',
-		statusDown: '--lp-color-status-down',
-	}[ name ];
+	const property = PROPERTIES[ name ];
 
 	if ( ! property ) {
 		throw new Error( `colorVar: unknown colour "${ name }".` );

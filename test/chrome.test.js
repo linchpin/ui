@@ -56,8 +56,8 @@ describe( 'LinchpinAdminFrame', () => {
 		expect( frame.style.getPropertyValue( '--lp-color-blue' ) ).toBe(
 			LINCHPIN_COLORS.blue
 		);
-		expect( frame.style.getPropertyValue( '--lp-color-cyan' ) ).toBe(
-			LINCHPIN_COLORS.cyan
+		expect( frame.style.getPropertyValue( '--lp-color-black' ) ).toBe(
+			LINCHPIN_COLORS.black
 		);
 	} );
 
@@ -265,17 +265,52 @@ describe( 'LinchpinLogo', () => {
 		const { container: full } = render( <LinchpinLogo variant="full" /> );
 		const { container: mark } = render( <LinchpinLogo variant="mark" /> );
 
+		// Both carry the mark and its ring; the lockup adds the wordmark.
 		expect( full.querySelectorAll( 'path' ) ).toHaveLength( 14 );
 		expect( mark.querySelectorAll( 'path' ) ).toHaveLength( 4 );
 	} );
 
-	it( 'crops the viewBox to the mark', () => {
-		const { container } = render( <LinchpinLogo variant="mark" /> );
+	it( 'uses each variant\u2019s own viewBox from the brand file', () => {
+		const { container: full } = render( <LinchpinLogo variant="full" /> );
+		const { container: mark } = render( <LinchpinLogo variant="mark" /> );
 
-		expect( container.querySelector( 'svg' ) ).toHaveAttribute(
+		expect( full.querySelector( 'svg' ) ).toHaveAttribute(
 			'viewBox',
-			'-4 -4 89 89'
+			'0 0 388 91'
 		);
+		expect( mark.querySelector( 'svg' ) ).toHaveAttribute(
+			'viewBox',
+			'0 0 81 80'
+		);
+	} );
+
+	it( 'keeps the ring Linchpin blue in the tones the brand says to', () => {
+		for ( const tone of [ 'primary', 'on-dark' ] ) {
+			const { container } = render( <LinchpinLogo tone={ tone } /> );
+			const fills = [ ...container.querySelectorAll( 'path' ) ].map(
+				( path ) => path.getAttribute( 'fill' )
+			);
+
+			expect(
+				fills.filter( ( fill ) => fill.includes( '--lp-color-blue' ) )
+			).toHaveLength( 2 );
+		}
+	} );
+
+	it( 'is single-colour in the white and black tones', () => {
+		const { container } = render( <LinchpinLogo tone="black" /> );
+		const fills = new Set(
+			[ ...container.querySelectorAll( 'path' ) ].map( ( path ) =>
+				path.getAttribute( 'fill' )
+			)
+		);
+
+		expect( fills.size ).toBe( 2 );
+		expect(
+			[ ...fills ].every( ( fill ) =>
+				fill.includes( '--lp-color-black' )
+			)
+		).toBe( true );
 	} );
 
 	it( 'paints from custom properties, never a hex', () => {
@@ -301,7 +336,9 @@ describe( 'LinchpinLogo', () => {
 			( path ) => path.getAttribute( 'fill' )
 		);
 
-		expect( new Set( fills ) ).toEqual( new Set( [ 'currentColor' ] ) );
+		expect(
+			fills.every( ( fill ) => fill.endsWith( 'currentColor )' ) )
+		).toBe( true );
 	} );
 
 	it( 'is hidden from assistive technology unless it is named', () => {

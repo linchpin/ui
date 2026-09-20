@@ -10,7 +10,7 @@ describe( 'defineBrand', () => {
 		const brand = defineBrand();
 
 		expect( brand.primary ).toBe( LINCHPIN_COLORS.blue );
-		expect( brand.accent ).toBe( LINCHPIN_COLORS.cyan );
+		expect( brand.accent ).toBe( LINCHPIN_COLORS.blue );
 	} );
 
 	it( 'flattens the top bar rather than inventing a second stop', () => {
@@ -96,5 +96,8 @@ describe( 'colorVar', () => {
 
 	it( 'refuses a colour the palette does not define', () => {
 		expect( () => colorVar( 'chartreuse' ) ).toThrow( /unknown colour/ );
+
+		// There is one Linchpin blue, and it is not called cyan.
+		expect( () => colorVar( 'cyan' ) ).toThrow( /unknown colour/ );
 	} );
 } );
