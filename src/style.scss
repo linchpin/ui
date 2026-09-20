@@ -22,6 +22,9 @@
 
 $lp-tablet: 782px;
 $lp-two-column: 1100px;
+$lp-three-column: 1400px;
+$lp-nav-width: 240px;
+$lp-aside-width: 300px;
 
 .lp-admin {
 	// wp-admin pads #wpcontent by 20px (10px on small screens). Pull the frame
@@ -145,18 +148,144 @@ $lp-two-column: 1100px;
 		display: grid;
 		gap: 24px;
 		align-items: start;
+		grid-template-columns: minmax(0, 1fr);
+
+		// The columns a screen actually has. Anything absent is not rendered,
+		// so there is no empty track to collapse.
+		&.has-nav {
+			grid-template-columns: $lp-nav-width minmax(0, 1fr);
+		}
 
 		&.has-sidebar {
-			grid-template-columns: minmax(0, 1fr) 300px;
+			grid-template-columns: minmax(0, 1fr) $lp-aside-width;
+		}
 
-			@media (max-width: $lp-two-column) {
-				grid-template-columns: minmax(0, 1fr);
+		&.has-nav.has-sidebar {
+			grid-template-columns: $lp-nav-width minmax(0, 1fr) $lp-aside-width;
+		}
+
+		// The help column is the first to go: it is context, not the work.
+		@media (max-width: $lp-three-column) {
+
+			&.has-nav.has-sidebar {
+				grid-template-columns: $lp-nav-width minmax(0, 1fr);
 			}
 		}
 
-		&.is-full-width {
-			grid-template-columns: minmax(0, 1fr);
+		@media (max-width: $lp-two-column) {
+
+			&.has-sidebar {
+				grid-template-columns: minmax(0, 1fr);
+			}
+
+			&.has-nav.has-sidebar {
+				grid-template-columns: $lp-nav-width minmax(0, 1fr);
+			}
 		}
+
+		// Below tablet the menu stacks above the screen rather than squeezing
+		// it: 240px of nav beside 300px of content helps nobody.
+		@media (max-width: $lp-tablet) {
+
+			&.has-nav,
+			&.has-nav.has-sidebar {
+				grid-template-columns: minmax(0, 1fr);
+			}
+		}
+	}
+
+	&__nav {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-md);
+		min-width: 0;
+	}
+
+	&__nav-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-xs);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			margin: 0;
+		}
+	}
+
+	&__nav-item {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-sm);
+		// `sm`, matching every Button in the design system. `md` here leaves
+		// the rows visibly rounder than the buttons beside them.
+		border-radius: var(--wpds-border-radius-sm);
+		padding: var(--wpds-dimension-padding-sm) var(--wpds-dimension-padding-md);
+		color: var(--wpds-color-foreground-content-neutral);
+		text-decoration: none;
+
+		&:hover {
+			background-color: var(--wpds-color-background-surface-neutral-weak);
+		}
+
+		/*
+		 * wp-admin rings every `a:focus` with a box-shadow, on `:focus` rather
+		 * than `:focus-visible` — so clicking a row leaves a ring behind until
+		 * something else is clicked. Drop it, and put the ring back where it
+		 * belongs: on keyboard focus only.
+		 */
+		&:focus {
+			box-shadow: none;
+			outline: none;
+		}
+
+		&:focus-visible {
+			outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+			outline-offset: calc(-1 * var(--wpds-border-width-focus));
+		}
+
+		// The current page, not a pressed button — so the styling hangs off
+		// the same attribute assistive technology reads.
+		&[aria-current="page"] {
+			background-color: var(--wpds-color-background-interactive-brand-strong);
+			color: var(--wpds-color-foreground-interactive-brand-strong);
+		}
+
+		&[aria-disabled="true"] {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
+	&__nav-label {
+		min-width: 0;
+	}
+
+	&__nav-icon {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+
+		/*
+		 * Icons carry no fill of their own, so they paint black by default and
+		 * would stay black on the selected row's brand background. Inheriting
+		 * means one rule covers every icon — ours and @wordpress/icons alike —
+		 * and the inverted row gets an inverted icon for free.
+		 */
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__nav-badge {
+		margin-left: auto;
+		font-size: var(--wpds-typography-font-size-xs);
+		color: inherit;
+	}
+
+	&__nav-footer {
+		margin-top: auto;
 	}
 
 	&__main {

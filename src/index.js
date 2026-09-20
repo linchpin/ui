@@ -16,6 +16,7 @@ export { default as LinchpinAdminFrame } from './components/admin-frame';
 export { default as LinchpinAdminTopBar } from './components/admin-top-bar';
 export { default as LinchpinAdminPage } from './components/admin-page';
 export { default as LinchpinAdminLayout } from './components/admin-layout';
+export { default as LinchpinAdminNav } from './components/admin-nav';
 export { default as LinchpinNotices } from './components/notices';
 export { default as LinchpinAdminFooter } from './components/admin-footer';
 export { default as LinchpinLogo } from './components/linchpin-logo';

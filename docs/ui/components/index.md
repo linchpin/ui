@@ -11,7 +11,8 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminFrame>` | The root. Seeds the `ThemeProvider` from the brand, publishes identity/brand/links on context, and does the wp-admin gutter dance. | `plugin`, `brand`, `links`, `topBar`, `cornerRadius`, `isRoot` |
 | `<LinchpinAdminTopBar>` | The brand bar: plugin logo left, version and Linchpin mark right. | `logo`, `logoAlt`, `version`, `status` |
 | `<LinchpinAdminPage>` | The page header and body — a wrapper around core's `Page`. | `title`, `subTitle`, `breadcrumbs`, `badges`, `visual`, `actions`, `navigation`, `headingLevel`, `hasPadding`, `components` |
-| `<LinchpinAdminLayout>` | The two-column body. One column below 1100px, or when there is no sidebar. | `sidebar`, `label` |
+| `<LinchpinAdminNav>` | The vertical section menu down the left. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
+| `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<LinchpinNotices>` | Snackbars from the `core/notices` store. | `className` |
 | `<LinchpinAdminFooter>` | The links row. | `links` |
 
@@ -47,6 +48,49 @@ const SECTIONS = [
 	<View section={ currentSection( { sections: SECTIONS } ) } />
 </LinchpinAdminPage>
 ```
+
+### Two levels of navigation
+
+A plugin with three screens needs one level: the tab strip above. A plugin with eight needs
+two — Mantle has a vertical menu for Dashboard, Client Info, Monitoring, Plugins & Themes,
+Security, Tools and Settings, **and** a tab strip inside a screen for its subsections, so
+Security carries Admin and Frontend under it.
+
+Both exist here, and they compose in that order: the menu is a column of the layout, and the
+tabs belong to the page inside it.
+
+```jsx
+<LinchpinAdminFrame plugin={ PLUGIN } brand={ BRAND } topBar={ <LinchpinAdminTopBar /> }>
+	<LinchpinAdminLayout
+		nav={
+			<LinchpinAdminNav
+				items={ SECTIONS }
+				current={ current }
+				onNavigate={ setCurrent }
+				header={ <ClientCard /> }
+			/>
+		}
+		sidebar={ <HelpCard /> }
+	>
+		<LinchpinAdminPage title="Security" navigation={ SUBSECTION_TABS }>
+			{ /* the screen */ }
+		</LinchpinAdminPage>
+	</LinchpinAdminLayout>
+</LinchpinAdminFrame>
+```
+
+Note the nesting is the other way round from a screen with no menu, where the page wraps the
+layout. Both are fine: they are independent components, and which contains which is decided
+by whether the menu should sit beside the page header or below it. Beside, for a menu.
+
+The menu is **links**, for the same reason the tabs are — with one refinement Mantle learned:
+a modified click (⌘, Ctrl, Shift, middle) is left to the browser even when `onNavigate` is
+routing in-app, or the address each row advertises becomes a lie. Pass `linkComponent` to
+render a router link instead of an `<a>`.
+
+The columns a layout renders are the ones it is given. Below 1400px the help column goes
+first, because it is context rather than the work; below 782px the menu stacks above the
+screen rather than squeezing it.
 
 ## Sidebar cards
 
