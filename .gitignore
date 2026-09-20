@@ -1,0 +1,8 @@
+node_modules/
+build-module/
+build-style/
+storybook-static/
+coverage/
+.DS_Store
+*.log
+*.tgz

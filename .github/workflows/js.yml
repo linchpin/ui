@@ -1,0 +1,65 @@
+name: JavaScript
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+
+jobs:
+    js:
+        name: JavaScript checks
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        if: >-
+            !startsWith(github.head_ref || github.ref_name, 'release-please--')
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+
+            - name: Install Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+              env:
+                  HUSKY: 0
+
+            - name: Lint JavaScript
+              if: ${{ !cancelled() }}
+              run: npm run lint:js
+
+            - name: Lint styles
+              if: ${{ !cancelled() }}
+              run: npm run lint:css
+
+            - name: Test
+              if: ${{ !cancelled() }}
+              run: npm test
+
+            - name: Build
+              if: ${{ !cancelled() }}
+              run: npm run build
+
+            # The package is consumed as a build artifact, so prove the artifact
+            # exists rather than only that the build command exited zero.
+            - name: Verify the published surface
+              if: ${{ !cancelled() }}
+              run: |
+                  test -f build-module/index.js || { echo "::error::build-module/index.js is missing"; exit 1; }
+                  test -f build-style/style.css || { echo "::error::build-style/style.css is missing"; exit 1; }
+
+            - name: Build Storybook
+              if: ${{ !cancelled() }}
+              run: npm run build-storybook

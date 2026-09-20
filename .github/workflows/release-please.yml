@@ -1,0 +1,78 @@
+name: Release
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    release-please:
+        name: Release PR
+        runs-on: ubuntu-latest
+        outputs:
+            release_created: ${{ steps.release.outputs.release_created }}
+            tag_name: ${{ steps.release.outputs.tag_name }}
+        steps:
+            - name: Create release PR or GitHub release
+              id: release
+              uses: googleapis/release-please-action@v5
+              with:
+                  token: ${{ secrets.GH_BOT_TOKEN }}
+
+    publish-npm:
+        name: Publish to npm
+        needs: release-please
+        if: ${{ needs.release-please.outputs.release_created == 'true' }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: read
+            # Trusted Publishing: npm mints a short-lived credential from this
+            # token, so there is no NPM_TOKEN secret to rotate or leak.
+            id-token: write
+        steps:
+            - name: Checkout release tag
+              uses: actions/checkout@v7
+              with:
+                  ref: ${{ needs.release-please.outputs.tag_name }}
+
+            - name: Install Node
+              uses: actions/setup-node@v7
+              with:
+                  node-version-file: '.nvmrc'
+                  registry-url: https://registry.npmjs.org
+                  cache: 'npm'
+
+            # Trusted Publishing needs npm >= 11.5.1. Node 24 ships it, but say
+            # so out loud: a silent downgrade here would fall back to looking
+            # for a token that does not exist and fail at the last step.
+            - name: Verify npm supports trusted publishing
+              run: |
+                  version="$( npm --version )"
+                  required="11.5.1"
+                  echo "npm ${version}"
+
+                  if [ "$( printf '%s\n%s\n' "$version" "$required" | sort -V | head -n1 )" != "$required" ]; then
+                    echo "::error::npm ${version} cannot use trusted publishing. Needs >= ${required}, which ships with Node 24. Check .nvmrc."
+                    exit 1
+                  fi
+
+            - name: Install dependencies
+              run: npm ci
+              env:
+                  HUSKY: 0
+
+            - name: Test
+              run: npm test
+              env:
+                  HUSKY: 0
+
+            - name: Publish
+              run: npm publish
+              env:
+                  HUSKY: 0

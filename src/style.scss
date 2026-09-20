@@ -1,0 +1,358 @@
+/**
+ * @linchpinagency/ui — the Linchpin admin chrome.
+ *
+ * Layout and brand only. Components come from @wordpress/components, and
+ * every colour that is not the plugin's own brand is a `--wpds-*` design
+ * token, so the ThemeProvider seed in <LinchpinAdminFrame> flows through the
+ * whole screen. The `--lp-brand-*` custom properties are set on the frame
+ * from `defineBrand()`.
+ *
+ * Import once, from the consuming plugin's entry point:
+ *
+ *     import '@linchpinagency/ui/style.css';
+ *
+ * `wp-components` must be a dependency of the stylesheet that loads this, so
+ * core's rules land first and ours win on specificity ties.
+ */
+
+$lp-tablet: 782px;
+$lp-two-column: 1100px;
+
+.lp-admin {
+	// wp-admin pads #wpcontent by 20px (10px on small screens). Pull the frame
+	// back so the brand bar runs edge to edge, then restore the gutter inside
+	// the shell.
+	margin: 0 0 0 -20px;
+
+	@media (max-width: $lp-tablet) {
+		margin-left: -10px;
+	}
+
+	&__topbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--wpds-dimension-gap-lg);
+		min-height: 56px;
+		padding: 0 20px;
+		background: linear-gradient(90deg, var(--lp-brand-deep) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep)) 100%);
+		color: #fff;
+
+		@media (max-width: $lp-tablet) {
+			padding: 0 10px;
+		}
+	}
+
+	&__topbar-brand,
+	&__topbar-meta {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-lg);
+	}
+
+	&__topbar-brand svg {
+		display: block;
+		height: 36px;
+		width: auto;
+	}
+
+	&__topbar-name {
+		font-size: var(--wpds-typography-font-size-lg);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		color: #fff;
+	}
+
+	&__topbar-linchpin {
+		display: inline-flex;
+		align-items: center;
+		color: #fff;
+		border-radius: var(--wpds-border-radius-xs);
+
+		svg {
+			display: block;
+			height: 22px;
+			width: auto;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: var(--wpds-border-width-focus) solid #fff;
+			outline-offset: 4px;
+		}
+	}
+
+	&__version {
+		padding: 2px 10px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.14);
+		color: #fff;
+		font-size: var(--wpds-typography-font-size-xs);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		letter-spacing: 0.02em;
+	}
+
+	&__status {
+		display: inline-flex;
+		align-items: center;
+	}
+
+	&__status-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: rgba(255, 255, 255, 0.4);
+	}
+
+	&__status.is-up .lp-admin__status-dot {
+		background: #4ade80;
+	}
+
+	&__status.is-down .lp-admin__status-dot {
+		background: #f87171;
+	}
+
+	&__shell {
+		max-width: 1240px;
+		padding: 0 20px;
+
+		@media (max-width: $lp-tablet) {
+			padding: 0 10px;
+		}
+	}
+
+	&__masthead {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: var(--wpds-dimension-gap-lg);
+		padding: 28px 0 12px;
+	}
+
+	&__masthead-copy {
+		min-width: 0;
+	}
+
+	&__masthead-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-sm);
+	}
+
+	&__title {
+		margin: 0;
+		font-size: var(--wpds-typography-font-size-2xl);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		line-height: var(--wpds-typography-line-height-2xl);
+		color: var(--wpds-color-foreground-content-neutral);
+	}
+
+	&__tagline {
+		margin: 6px 0 0;
+		max-width: 60ch;
+		color: var(--wpds-color-foreground-content-neutral-weak);
+	}
+
+	&__tabs {
+
+		.components-tab-panel__tabs {
+			margin-bottom: 24px;
+			border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
+		}
+	}
+
+	&__body {
+		display: grid;
+		gap: 24px;
+		align-items: start;
+
+		&.has-sidebar {
+			grid-template-columns: minmax(0, 1fr) 300px;
+
+			@media (max-width: $lp-two-column) {
+				grid-template-columns: minmax(0, 1fr);
+			}
+		}
+
+		&.is-full-width {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	&__main {
+		min-width: 0;
+	}
+
+	&__aside {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-lg);
+	}
+
+	&__aside-card {
+
+		p {
+			margin: 0 0 12px;
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__aside-title {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-sm);
+		margin: 0 0 12px;
+		font-size: var(--wpds-typography-font-size-md);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		color: var(--wpds-color-foreground-content-neutral);
+
+		svg {
+			fill: var(--wpds-color-foreground-interactive-brand);
+		}
+	}
+
+	&__aside-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-md);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			gap: var(--wpds-dimension-gap-sm);
+			margin: 0;
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
+	}
+
+	&__aside-icon {
+		display: inline-flex;
+		flex: 0 0 auto;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: var(--wpds-border-radius-sm);
+		background: var(--wpds-color-background-surface-brand);
+		color: var(--wpds-color-foreground-interactive-brand);
+
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__aside-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--wpds-dimension-gap-xs);
+	}
+
+	&__aside-logo {
+		display: block;
+		margin-bottom: 12px;
+		border-radius: var(--wpds-border-radius-xs);
+
+		svg {
+			display: block;
+			height: 26px;
+			width: auto;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+			outline-offset: 4px;
+		}
+	}
+
+	&__about {
+		max-width: 760px;
+
+		p {
+			margin: 0 0 16px;
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
+	}
+
+	&__about-logo {
+		display: inline-block;
+		margin-bottom: 20px;
+		border-radius: var(--wpds-border-radius-xs);
+
+		svg {
+			display: block;
+			height: 32px;
+			width: auto;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+			outline-offset: 4px;
+		}
+	}
+
+	&__about-lead {
+		font-size: var(--wpds-typography-font-size-md);
+		color: var(--wpds-color-foreground-content-neutral) !important;
+	}
+
+	&__about-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-sm);
+		margin: 0 0 24px;
+		padding: 0;
+		list-style: none;
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: var(--wpds-dimension-gap-sm);
+			margin: 0;
+			color: var(--wpds-color-foreground-content-neutral-weak);
+		}
+	}
+
+	&__about-check {
+		display: inline-flex;
+		flex: 0 0 auto;
+		color: var(--wpds-color-foreground-interactive-brand);
+
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__about-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-sm);
+	}
+
+	&__footer {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-lg);
+		padding: 24px 0 32px;
+		margin-top: 16px;
+		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
+		font-size: var(--wpds-typography-font-size-sm);
+	}
+}

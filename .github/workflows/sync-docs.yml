@@ -1,0 +1,47 @@
+name: Sync docs to WordPress
+
+on:
+    workflow_dispatch:
+        inputs:
+            dry-run:
+                description: 'Plan only, write nothing'
+                type: boolean
+                default: true
+            status:
+                description: 'Status for created or updated pages'
+                type: choice
+                options:
+                    - draft
+                    - publish
+                default: draft
+
+permissions:
+    contents: read
+
+concurrency:
+    group: docspress-sync
+    cancel-in-progress: false
+
+jobs:
+    sync:
+        name: Sync
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+            - uses: linchpin/docspress@v1
+              with:
+                  mode: publish
+                  wordpress-url: https://docs.linchpin.com
+                  wordpress-site: docs.linchpin.com
+                  wordpress-access-token: ${{ secrets.WP_ACCESS_TOKEN }}
+                  docs-dir: docs
+                  root-slug: libraries
+                  root-title: Libraries
+                  managed-path: libraries/ui
+                  create-h1: false
+                  rewrite-links: true
+                  status: ${{ inputs.status || 'draft' }}
+                  delete-mode: trash
+                  dry-run: ${{ inputs.dry-run == false && 'false' || 'true' }}

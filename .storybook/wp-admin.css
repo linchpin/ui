@@ -1,0 +1,27 @@
+/*
+ * Just enough wp-admin to make the stories honest.
+ *
+ * The chrome pulls itself left by 20px to escape #wpcontent's padding, so a
+ * canvas without that padding shows every component 20px too far left and
+ * hides the edge-to-edge trick the top bar depends on. This recreates the
+ * container, not the admin theme.
+ */
+body {
+	margin: 0;
+	background: #f0f0f1;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-size: 13px;
+	line-height: 1.4em;
+	color: #3c434a;
+}
+
+.sb-wpcontent {
+	padding-left: 20px;
+}
+
+@media (max-width: 782px) {
+
+	.sb-wpcontent {
+		padding-left: 10px;
+	}
+}
