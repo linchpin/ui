@@ -11,6 +11,9 @@
 		[ "@babel/preset-react", { "runtime": "automatic" } ]
 	],
 	"env": {
+		"module": {
+			"plugins": [ "./scripts/babel-plugin-add-js-extension.cjs" ]
+		},
 		"test": {
 			"presets": [
 				[ "@babel/preset-env", { "targets": { "node": "current" } } ],

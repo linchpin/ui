@@ -9,6 +9,7 @@ npm test               # jest + @testing-library/react
 npm run lint:js
 npm run lint:css
 npm run storybook      # builds first, then serves
+npm run verify:esm     # the built package loads under native Node ESM
 ```
 
 - [Brand contract](brand.md)
@@ -21,6 +22,34 @@ npm run storybook      # builds first, then serves
 `src/style.scss` to `build-style/style.css` with Dart Sass. The package publishes
 `build-module/`, `build-style/` and `src/`, so a consumer can take the compiled CSS or the
 SCSS source.
+
+### Relative imports get an extension at build time
+
+Source is written the WordPress way, without file extensions:
+
+```js
+export { default as LinchpinAdminFrame } from './components/admin-frame';
+```
+
+A bundler resolves that. Node's own ESM resolver does not, and since the package declares
+`"type": "module"` and points `exports` at `build-module/`, it would present as ESM Node can
+load and not be — which is exactly what `0.2.0` shipped as.
+
+`scripts/babel-plugin-add-js-extension.cjs` rewrites relative specifiers during `build:js`,
+so the source stays idiomatic and the artifact is loadable. It resolves against the
+filesystem rather than appending `.js` blindly, so a directory import becomes `/index.js` and
+an unresolvable specifier is left alone and stays a visible error. It is scoped to the
+`module` Babel env; Jest resolves extensionless imports on its own.
+
+It is local rather than a dependency on purpose. The two published plugins that do this were
+last released in 2021 and 2022.
+
+`npm run verify:esm` checks the built output — it scans for extensionless specifiers in
+either quote style, then actually imports `build-module/index.js` under native ESM. CI runs
+it after the build. Both halves matter: the plugin is unit tested, but a Babel env that
+stopped applying it would leave every unit test passing, and Babel prints single quotes for
+a node it passed through untouched versus double quotes for one it rewrote — so a scan
+written against double quotes alone passes in precisely the case it exists to catch.
 
 ## Storybook
 

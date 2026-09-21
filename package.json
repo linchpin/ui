@@ -26,6 +26,7 @@
     "build": "npm run build:js && npm run build:style",
     "build:js": "BABEL_ENV=module babel src --out-dir build-module --extensions .js,.jsx --ignore \"**/*.test.js\",\"**/test/**\",\"**/*.stories.jsx\" --copy-files --no-copy-ignored",
     "build:style": "sass --no-source-map --load-path=node_modules src/style.scss build-style/style.css",
+    "verify:esm": "node scripts/verify-esm.mjs",
     "clean": "rm -rf build-module build-style storybook-static",
     "format": "wp-scripts format",
     "lint:js": "wp-scripts lint-js",
