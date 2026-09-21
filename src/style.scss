@@ -27,12 +27,27 @@ $lp-nav-width: 240px;
 $lp-aside-width: 300px;
 
 .lp-admin {
+
+	/*
+	 * The inset between the screen and the edges of #wpcontent.
+	 *
+	 * Deliberately tighter than wp-admin's own 20px: a settings screen should
+	 * use the width it is given, and the widest element on it — a table, a
+	 * list of sites — is the one that suffers from a gutter kept for
+	 * tradition. It is not zero, because a button hard against the admin menu
+	 * reads as a rendering fault. The top bar and the shell share it, so the
+	 * plugin's mark in the bar lines up with the screen beneath it.
+	 */
+	--lp-admin-gutter: 12px;
+
 	// wp-admin pads #wpcontent by 20px (10px on small screens). Pull the frame
-	// back so the brand bar runs edge to edge, then restore the gutter inside
+	// back so the brand bar runs edge to edge, then set our own gutter inside
 	// the shell.
 	margin: 0 0 0 -20px;
 
 	@media (max-width: $lp-tablet) {
+		--lp-admin-gutter: 10px;
+
 		margin-left: -10px;
 	}
 
@@ -42,13 +57,9 @@ $lp-aside-width: 300px;
 		justify-content: space-between;
 		gap: var(--wpds-dimension-gap-lg);
 		min-height: 56px;
-		padding: 0 20px;
+		padding: 0 var(--lp-admin-gutter);
 		background: linear-gradient(90deg, var(--lp-brand-deep) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep)) 100%);
 		color: var(--lp-color-on-brand, #fff);
-
-		@media (max-width: $lp-tablet) {
-			padding: 0 10px;
-		}
 	}
 
 	&__topbar-brand,
@@ -135,13 +146,14 @@ $lp-aside-width: 300px;
 		background: var(--lp-color-status-down);
 	}
 
+	/*
+	 * No max-width. An admin screen is not an article: the person reading it
+	 * came to change a setting, and a 1240px cap on a 1800px window left
+	 * 500px of empty grey to the right of the work. Line length is the help
+	 * column's and the page body's problem, and each of them handles it.
+	 */
 	&__shell {
-		max-width: 1240px;
-		padding: 0 20px;
-
-		@media (max-width: $lp-tablet) {
-			padding: 0 10px;
-		}
+		padding: var(--lp-admin-gutter);
 	}
 
 	&__body {
@@ -288,7 +300,18 @@ $lp-aside-width: 300px;
 		margin-top: auto;
 	}
 
+	/*
+	 * A column, not a block. Two cards stacked in the main column sat flush
+	 * against each other, because nothing between them owned the gap: core's
+	 * `Card` carries no margin, and every screen that noticed added its own
+	 * one-off `marginTop`. The aside has always worked this way; so does this
+	 * now, and a screen stacks whatever it likes without spacing each pair by
+	 * hand.
+	 */
 	&__main {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-lg);
 		min-width: 0;
 	}
 
@@ -456,10 +479,161 @@ $lp-aside-width: 300px;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--wpds-dimension-gap-lg);
-		padding: 24px 0 32px;
+		padding: 24px 0 8px;
 		margin-top: 16px;
 		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
 		font-size: var(--wpds-typography-font-size-sm);
+
+		/*
+		 * wp-admin styles a bare `a` in its own blue, and paints a visited one
+		 * purple — which is what left the footer reading as four unstyled
+		 * links under a design-system screen. These are the same links every
+		 * other surface in the chrome draws, so they take the same token, and
+		 * the underline arrives on hover rather than sitting there by default.
+		 */
+		a {
+			color: var(--wpds-color-foreground-interactive-brand);
+			text-decoration: none;
+
+			&:visited {
+				color: var(--wpds-color-foreground-interactive-brand);
+			}
+
+			&:hover,
+			&:focus-visible {
+				color: var(--wpds-color-foreground-interactive-brand-active);
+				text-decoration: underline;
+			}
+
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+
+			&:focus-visible {
+				outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+				outline-offset: 2px;
+			}
+		}
+	}
+
+	/*
+	 * Breadcrumbs, as plain links. See `src/components/breadcrumbs.js` for why
+	 * this is not core's `Breadcrumbs`.
+	 */
+	&__breadcrumbs {
+
+		ol {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: var(--wpds-dimension-gap-xs);
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			font-size: var(--wpds-typography-font-size-md);
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+			gap: var(--wpds-dimension-gap-xs);
+			margin: 0;
+		}
+
+		// The current item may be a heading, when the trail carries the page
+		// heading instead of the title. wp-admin gives an h1 its own size and
+		// margins; the trail decides both.
+		h1,
+		h2,
+		h3 {
+			margin: 0;
+			padding: 0;
+			font-size: var(--wpds-typography-font-size-lg);
+			font-weight: var(--wpds-typography-font-weight-emphasis);
+			line-height: inherit;
+		}
+
+		a {
+			color: var(--wpds-color-foreground-content-neutral-weak);
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible {
+				color: var(--wpds-color-foreground-content-neutral);
+				text-decoration: underline;
+			}
+
+			&:focus {
+				box-shadow: none;
+				outline: none;
+			}
+
+			&:focus-visible {
+				outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+				outline-offset: 2px;
+			}
+		}
+	}
+
+	&__breadcrumbs-separator {
+		color: var(--wpds-color-foreground-content-neutral-weak);
+	}
+
+	&__breadcrumbs-current {
+		color: var(--wpds-color-foreground-content-neutral);
+	}
+
+	/*
+	 * The danger zone. A panel like any other, marked by its stroke and the
+	 * tinted head rather than by a wall of red: the point is that it reads
+	 * differently from the settings above it at a glance, not that it shouts.
+	 */
+	&__danger {
+		border-color: var(--wpds-color-stroke-surface-error);
+
+		.components-card__header {
+			background: var(--wpds-color-background-surface-error-weak);
+			border-bottom-color: var(--wpds-color-stroke-surface-error);
+		}
+	}
+
+	&__danger-title {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-sm);
+		margin: 0;
+		font-size: var(--wpds-typography-font-size-md);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		color: var(--wpds-color-foreground-content-error);
+
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__danger-description {
+		margin: 0 0 var(--wpds-dimension-gap-md);
+		color: var(--wpds-color-foreground-content-neutral-weak);
+	}
+
+	// `Notice` carries no margin of its own inside a card, which left the
+	// warning touching the first control.
+	&__danger .components-notice {
+		margin: 0 0 var(--wpds-dimension-gap-lg);
+	}
+
+	&__danger-controls {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-md);
+	}
+
+	&__danger-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-sm);
+		margin-top: var(--wpds-dimension-gap-lg);
 	}
 }
 
