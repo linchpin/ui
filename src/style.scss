@@ -29,25 +29,25 @@ $lp-aside-width: 300px;
 .lp-admin {
 
 	/*
-	 * The inset between the screen and the edges of #wpcontent.
+	 * The one inset on the screen.
 	 *
-	 * Deliberately tighter than wp-admin's own 20px: a settings screen should
-	 * use the width it is given, and the widest element on it — a table, a
-	 * list of sites — is the one that suffers from a gutter kept for
-	 * tradition. It is not zero, because a button hard against the admin menu
-	 * reads as a rendering fault. The top bar and the shell share it, so the
-	 * plugin's mark in the bar lines up with the screen beneath it.
+	 * Everything that meets an edge uses it: the brand bar, the page panel's
+	 * header and body, the footer, and a layout composed outside the page. So
+	 * the plugin's mark in the bar sits directly above the title beneath it,
+	 * and nothing on the screen is inset twice over.
+	 *
+	 * It is core's own `padding-lg` — the measure `Page` already leaves above
+	 * and below its header and its body — so the horizontal inset is the same
+	 * measure as the vertical one rather than a number of our own choosing
+	 * sitting next to core's.
 	 */
-	--lp-admin-gutter: 12px;
+	--lp-admin-gutter: var(--wpds-dimension-padding-lg);
 
 	// wp-admin pads #wpcontent by 20px (10px on small screens). Pull the frame
-	// back so the brand bar runs edge to edge, then set our own gutter inside
-	// the shell.
+	// back so the brand bar — and the panel beneath it — run edge to edge.
 	margin: 0 0 0 -20px;
 
 	@media (max-width: $lp-tablet) {
-		--lp-admin-gutter: 10px;
-
 		margin-left: -10px;
 	}
 
@@ -147,18 +147,56 @@ $lp-aside-width: 300px;
 	}
 
 	/*
-	 * No max-width. An admin screen is not an article: the person reading it
-	 * came to change a setting, and a 1240px cap on a 1800px window left
-	 * 500px of empty grey to the right of the work. Line length is the help
-	 * column's and the page body's problem, and each of them handles it.
+	 * The shell has no padding, and no max-width.
+	 *
+	 * No padding, because the page panel inside it is the screen: a gutter
+	 * here left a band of admin grey between the brand bar and the panel's
+	 * top edge, and on every other side it added itself to the inset the
+	 * panel already has. A screen that composes the layout *outside* the page
+	 * — a menu beside the panel, as Mantle does — has no panel against those
+	 * edges, so that one takes the gutter itself, below.
+	 *
+	 * No max-width, because an admin screen is not an article: the person
+	 * reading it came to change a setting, and a 1240px cap on a 1800px
+	 * window left 500px of empty grey to the right of the work. Line length
+	 * is the help column's and the page body's problem, and each of them
+	 * handles it.
 	 */
-	&__shell {
+	&__shell > &__body {
 		padding: var(--lp-admin-gutter);
+	}
+
+	/*
+	 * Core's `Page` pads its header and its body by 16px block and 24px
+	 * inline. With the shell's gutter outside that, a title sat 36px from the
+	 * frame's edge while the plugin's mark in the bar above it sat at 12px,
+	 * and every card in the body carried the same doubled inset. Bringing the
+	 * inline padding back to the gutter leaves the screen with one inset, the
+	 * same on all four sides.
+	 *
+	 * These are CSS module class names — a build hash, then the readable part
+	 * — so match the readable part and let the hash change with every
+	 * admin-ui build. `has-padding` is on the body only when `Page` is the one
+	 * padding it, which is exactly when we mean to change what it pads by, and
+	 * naming it alongside `content` is also what carries this past core's own
+	 * `.content.has-padding`: the runtime injects that rule into the head
+	 * after our stylesheet, so a tie on specificity is a tie we lose.
+	 */
+	&__page {
+
+		> [class*="__header"],
+		> [class*="__content"][class*="__has-padding"] {
+			padding-inline: var(--lp-admin-gutter);
+		}
 	}
 
 	&__body {
 		display: grid;
-		gap: 24px;
+
+		// The same measure as the gutter and as the stacking gap inside each
+		// column, so a card's distance to its neighbour is its distance to
+		// the edge.
+		gap: var(--wpds-dimension-gap-lg);
 		align-items: start;
 		grid-template-columns: minmax(0, 1fr);
 
@@ -479,8 +517,11 @@ $lp-aside-width: 300px;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--wpds-dimension-gap-lg);
-		padding: 24px 0 8px;
-		margin-top: 16px;
+
+		// The rule runs the full width, directly under the panel's bottom edge
+		// — nothing between the two — and the links line up with everything
+		// else on the screen.
+		padding: 24px var(--lp-admin-gutter) 8px;
 		border-top: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
 		font-size: var(--wpds-typography-font-size-sm);
 

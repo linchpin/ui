@@ -55,17 +55,21 @@ const SECTIONS = [
 
 The screen uses the width it is given. There is no max-width on the shell — an admin screen is
 not an article, and a cap left several hundred pixels of empty grey beside the work on a wide
-window. The inset from the edges of `#wpcontent` is `--lp-admin-gutter`, 12px (10px below
-782px), shared by the top bar and the shell so the plugin's mark lines up with the screen
-under it. A plugin that wants more can raise it on `.lp-admin`.
+window. The page panel runs edge to edge under the brand bar, and there is exactly one inset
+inside it: `--lp-admin-gutter`, core's `--wpds-dimension-padding-lg` (16px), which is also the
+space `Page` leaves above and below its own header and body. The top bar, the page's header
+and body, the footer, and a layout composed outside the page all take it, so the plugin's mark
+in the bar sits directly above the title beneath it and nothing is inset twice. A plugin that
+wants more can raise it on `.lp-admin`.
 
 Two spacing defaults differ from core's, both because core's assume a context this library
 does not have:
 
-- **`hasPadding` is on.** `Page` ships it off while padding its own header, so a screen that
-  takes the default gets a title indented 24px above a body flush with the panel edge, and the
-  first card jammed under the tab strip. Pass `hasPadding={ false }` for a full-bleed body — a
-  table, a data view.
+- **`hasPadding` is on, and inset by the gutter.** `Page` ships it off while padding its own
+  header, so a screen that takes the default gets an indented title above a body flush with
+  the panel edge, and the first card jammed under the tab strip. Core pads both by 24px
+  inline; the chrome brings that back to the gutter. Pass `hasPadding={ false }` for a
+  full-bleed body — a table, a data view.
 - **The main column is a flex column with a gap.** Core's `Card` carries no margin, so two
   stacked cards sat flush against each other and every screen added a one-off `marginTop`. The
   aside always worked this way; the main column does now too.
