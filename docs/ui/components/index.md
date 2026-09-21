@@ -12,7 +12,9 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminTopBar>` | The brand bar: plugin logo left, version and Linchpin mark right. | `logo`, `logoAlt`, `version`, `status` |
 | `<LinchpinAdminPage>` | The page header and body — a wrapper around core's `Page`. | `title`, `subTitle`, `breadcrumbs`, `badges`, `visual`, `actions`, `navigation`, `headingLevel`, `hasPadding`, `components` |
 | `<LinchpinAdminNav>` | The vertical section menu down the left. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
+| `<LinchpinBreadcrumbs>` | The trail above a nested screen. | `items`, `headingLevel`, `linkComponent`, `ariaLabel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
+| `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
 | `<LinchpinNotices>` | Snackbars from the `core/notices` store. | `className` |
 | `<LinchpinAdminFooter>` | The links row. | `links` |
 
@@ -47,6 +49,66 @@ const SECTIONS = [
 <LinchpinAdminPage navigation={ sectionNavigation( { sections: SECTIONS } ) }>
 	<View section={ currentSection( { sections: SECTIONS } ) } />
 </LinchpinAdminPage>
+```
+
+### Width and spacing
+
+The screen uses the width it is given. There is no max-width on the shell — an admin screen is
+not an article, and a cap left several hundred pixels of empty grey beside the work on a wide
+window. The inset from the edges of `#wpcontent` is `--lp-admin-gutter`, 12px (10px below
+782px), shared by the top bar and the shell so the plugin's mark lines up with the screen
+under it. A plugin that wants more can raise it on `.lp-admin`.
+
+Two spacing defaults differ from core's, both because core's assume a context this library
+does not have:
+
+- **`hasPadding` is on.** `Page` ships it off while padding its own header, so a screen that
+  takes the default gets a title indented 24px above a body flush with the panel edge, and the
+  first card jammed under the tab strip. Pass `hasPadding={ false }` for a full-bleed body — a
+  table, a data view.
+- **The main column is a flex column with a gap.** Core's `Card` carries no margin, so two
+  stacked cards sat flush against each other and every screen added a one-off `marginTop`. The
+  aside always worked this way; the main column does now too.
+
+### Breadcrumbs are ours, and that is not a preference
+
+`Breadcrumbs` from `@wordpress/admin-ui` renders every item through `@wordpress/route`, which
+is TanStack Router. Each link calls `useRouter()`, gets `null` without a `RouterProvider`
+above it, and takes the screen down with `Cannot read properties of null (reading 'stores')`.
+It also throws if any item but the last omits `to`, so there is no prop-shaped way out.
+
+A wp-admin settings screen served from `admin.php?page=…` has no client router, and mounting
+one so a header can draw two words and a slash is the wrong trade. `<LinchpinBreadcrumbs>`
+renders the same shape as plain links. A screen that genuinely runs a router can pass core's
+component to `breadcrumbs` instead — the prop takes any node.
+
+`Page` puts breadcrumbs *beside* the title rather than above it, so a screen showing both says
+the plugin's name twice. Pass `title={ null }` and `headingLevel={ 1 }` to let the trail carry
+the heading.
+
+### The danger zone
+
+Every plugin grows one — uninstall behaviour, reset settings, purge a log, disconnect a site —
+and each drew it differently. Psst's uninstall toggle was an ordinary card, indistinguishable
+from the settings above it; Mantle's reset was a card with a standing error notice and a
+destructive button. Mantle was right, so `<DangerZone>` is Mantle's shape with the varying
+parts as props.
+
+It stays a panel: a stroke, a tinted head and one standing warning. Enough to read differently
+at a glance, not so much that a screen with two of them looks like a failure state.
+
+It does not confirm anything on the plugin's behalf — whether an action needs a modal, a typed
+confirmation or nothing depends on what it destroys. Put the buttons in `actions`, carrying
+`isDestructive`, and own the consequences.
+
+```jsx
+<DangerZone
+	title="Uninstall"
+	description="What Psst leaves behind when the plugin is deleted."
+	warning="Deleting the plugin with this on removes every stored secret."
+>
+	<ToggleControl __nextHasNoMarginBottom label="Delete all secrets on uninstall" … />
+</DangerZone>
 ```
 
 ### Two levels of navigation
@@ -105,7 +167,7 @@ screen rather than squeezing it.
 
 | Export | Notes |
 | --- | --- |
-| `<LinchpinLogo>` | Two variants — `full` (the lockup) and `mark` (the brandmark) — and five tones: the brand's `primary`, `on-dark`, `white` and `black`, plus `mono`, which paints in `currentColor` so the logo inherits the colour of the bar it sits on. Artwork is generated from the brand file, so there is no SVGR loader and no runtime `plugin_url` lookup. Recolour with `--lp-logo-ink` and `--lp-logo-accent`. |
+| `<LinchpinLogo>` | Two variants — `full` (the lockup) and `mark` (the brandmark) — and the brand's four tones: `primary`, `on-dark`, `white` and `black`. A fifth, `mono`, paints in `currentColor` for the top bar, whose colour the plugin chose. Artwork is generated from the brand file, so there is no SVGR loader and no runtime `plugin_url` lookup. **There is no recolouring hook** — see [the brand contract](../development/brand.md). |
 | `<VersionBadge>` | Adds the `v`, once. Renders nothing without a version. |
 
 ## Helpers
