@@ -62,6 +62,13 @@ jobs:
         name: Deploy
         needs: build
         runs-on: ubuntu-latest
+        # Without this the job inherits the six-hour default, and a Pages
+        # deployment that hangs - as 6572553280 did, for far longer than the
+        # 38 seconds its build took - holds the concurrency group for the rest
+        # of the day. That matters more now the group no longer cancels:
+        # later runs queue behind a stuck deployment instead of replacing it,
+        # so a hang has to fail on its own and free the lane.
+        timeout-minutes: 10
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
