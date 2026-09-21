@@ -1,0 +1,11 @@
+<!--
+  The preview iframe is where every story actually renders, and Storybook
+  gives it no icon link of its own - so the browser falls back to asking the
+  origin root for /favicon.ico. On a project Pages site that root belongs to
+  the organisation rather than to us, so it answers 404 and every story logs
+  a console error.
+
+  The manager already points at this file; the preview needs telling too.
+  Relative, so it resolves under whatever base path the site is served from.
+-->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg" />

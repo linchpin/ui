@@ -14,9 +14,21 @@ permissions:
     pages: write
     id-token: write
 
+# One deployment at a time, and never a cancelled one.
+#
+# `cancel-in-progress: true` is right for a build and wrong for a deploy. A
+# run that is cancelled after it has opened a Pages deployment leaves that
+# deployment behind, and it ends up in `error` while the next run contends
+# with it - which is exactly what four merges in five minutes produced:
+# two failed deployments and a Deploy job that hung for minutes on a build
+# that had finished in 38 seconds.
+#
+# `false` is what GitHub's own Pages workflow uses, for this reason. Nothing
+# is wasted by it: runs queued behind the in-flight one still collapse to the
+# latest, so intermediate commits are skipped rather than deployed in turn.
 concurrency:
     group: storybook-pages
-    cancel-in-progress: true
+    cancel-in-progress: false
 
 jobs:
     build:
