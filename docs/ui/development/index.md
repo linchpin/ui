@@ -13,6 +13,7 @@ npm run storybook      # builds first, then serves
 
 - [Brand contract](brand.md)
 - [Internationalization](internationalization.md)
+- [Releasing and publishing](releasing.md)
 
 ## Build
 
