@@ -324,14 +324,31 @@ $lp-aside-width: 300px;
 		display: inline-flex;
 		flex: 0 0 auto;
 		align-items: center;
+		justify-content: center;
+
+		/*
+		 * A box, because an icon may arrive without a size of its own. An
+		 * `@wordpress/icons` export is a bare `<svg viewBox>`, which in a flex
+		 * row resolves to no width at all — the menu rendered its icons, and
+		 * every one of them was zero pixels wide. `<Icon>` sizes what it can;
+		 * this catches a plugin's own artwork, which it cannot.
+		 */
+		width: var(--wpds-dimension-size-sm);
+		height: var(--wpds-dimension-size-sm);
 
 		/*
 		 * Icons carry no fill of their own, so they paint black by default and
 		 * would stay black on the selected row's brand background. Inheriting
 		 * means one rule covers every icon — ours and @wordpress/icons alike —
 		 * and the inverted row gets an inverted icon for free.
+		 *
+		 * The artwork is fitted rather than stretched: an SVG scales its
+		 * viewBox to the box it is given, so a mark that is not square is
+		 * letterboxed instead of squashed.
 		 */
 		svg {
+			width: 100%;
+			height: 100%;
 			fill: currentcolor;
 		}
 	}

@@ -229,6 +229,36 @@ describe( 'LinchpinAdminNav', () => {
 		expect( screen.getByTestId( 'as-element' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'as-component' ) ).toBeInTheDocument();
 	} );
+
+	it( 'sizes an icon that arrives without a size of its own', () => {
+		// What `@wordpress/icons` exports: a bare `<svg viewBox>`. Rendered
+		// as-is in a flex row it resolves to no width, so the menu drew seven
+		// icons nobody could see.
+		render(
+			<Frame>
+				<LinchpinAdminNav
+					items={ [
+						{
+							name: 'a',
+							label: 'Dashboard',
+							href: '#a',
+							icon: (
+								<svg
+									data-testid="sizeless"
+									viewBox="0 0 24 24"
+								/>
+							),
+						},
+					] }
+				/>
+			</Frame>
+		);
+
+		const icon = screen.getByTestId( 'sizeless' );
+
+		expect( icon ).toHaveAttribute( 'width', '24' );
+		expect( icon ).toHaveAttribute( 'height', '24' );
+	} );
 } );
 
 describe( 'LinchpinAdminLayout with a nav', () => {

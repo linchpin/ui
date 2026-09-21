@@ -11,7 +11,7 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminFrame>` | The root. Seeds the `ThemeProvider` from the brand, publishes identity/brand/links on context, and does the wp-admin gutter dance. | `plugin`, `brand`, `links`, `topBar`, `cornerRadius`, `isRoot` |
 | `<LinchpinAdminTopBar>` | The brand bar: plugin logo left, version and Linchpin mark right. | `logo`, `logoAlt`, `version`, `status` |
 | `<LinchpinAdminPage>` | The page header and body — a wrapper around core's `Page`. | `title`, `subTitle`, `breadcrumbs`, `badges`, `visual`, `actions`, `navigation`, `headingLevel`, `hasPadding`, `components` |
-| `<LinchpinAdminNav>` | The vertical section menu down the left. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
+| `<LinchpinAdminNav>` | The vertical section menu down the left. Items may carry an icon and a badge. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
 | `<LinchpinBreadcrumbs>` | The trail above a nested screen. | `items`, `headingLevel`, `linkComponent`, `ariaLabel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
@@ -144,6 +144,23 @@ tabs belong to the page inside it.
 	</LinchpinAdminLayout>
 </LinchpinAdminFrame>
 ```
+
+Each item may carry an `icon`, which is how Mantle's menu reads at a glance:
+
+```jsx
+import { cog, grid, shield } from '@wordpress/icons';
+
+const SECTIONS = [
+	{ name: 'dashboard', label: 'Dashboard', href: '#dashboard', icon: grid },
+	{ name: 'security', label: 'Security', href: '#security', icon: shield },
+	{ name: 'settings', label: 'Settings', href: '#settings', icon: cog },
+];
+```
+
+The plugin supplies the artwork — this is the agency's chrome, not an icon set — in whatever
+form it has: an `@wordpress/icons` export, a component of its own, or a dashicon name. All
+three are sized to a 24px box and painted in the row's own colour, so the selected row gets an
+inverted icon without being told.
 
 Note the nesting is the other way round from a screen with no menu, where the page wraps the
 layout. Both are fine: they are independent components, and which contains which is decided

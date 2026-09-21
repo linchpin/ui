@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -30,11 +31,19 @@ import { useAdminContext } from '../context';
  * - **`aria-current="page"` drives the active styling**, rather than a class
  *   that could drift out of step with what assistive technology is told.
  *
+ * Every row may carry an icon, which is how Mantle's menu reads at a glance.
+ * The plugin supplies the artwork — this is the agency's chrome, not an icon
+ * set — and it arrives in whatever form the plugin has: an `@wordpress/icons`
+ * export, a component of its own, or a dashicon name. Core's `<Icon>`
+ * normalises the three and sizes the result, which a bare element does not do
+ * for itself: an `@wordpress/icons` export is an `<svg viewBox>` with no
+ * width, and a flex row gives that no space at all.
+ *
  * The design system still has no vertical navigation component; when it grows
  * one, this is the file that changes.
  *
  * @param {Object}    props                 Props.
- * @param {Array}     props.items           `[ { name, label, href, icon, disabled } ]`.
+ * @param {Array}     props.items           `[ { name, label, href, icon, badge, disabled } ]`. `icon` is an `@wordpress/icons` export, a plugin's own component, or a dashicon name.
  * @param {string}    [props.current]       The active item's `name`. Falls back to matching `currentHref`.
  * @param {string}    [props.currentHref]   The active item's `href`.
  * @param {Function}  [props.onNavigate]    Called with `( name, event )` for in-app routing. Modifier-clicks are left to the browser.
@@ -91,7 +100,7 @@ export default function LinchpinAdminNav( {
 									className="lp-admin__nav-icon"
 									aria-hidden="true"
 								>
-									{ renderIcon( item.icon ) }
+									<Icon icon={ item.icon } size={ 24 } />
 								</span>
 							) }
 							<span className="lp-admin__nav-label">
@@ -144,19 +153,4 @@ function handleClick( event, item, onNavigate ) {
 
 	event.preventDefault();
 	onNavigate( item.name ?? item.href, event );
-}
-
-/**
- * An icon given as an element, or as a component to render.
- *
- * `@wordpress/icons` exports elements, a plugin's own icons are usually
- * components, and asking every caller to normalise that is a papercut.
- *
- * @param {Element|Function} icon The icon.
- * @return {Element} Something renderable.
- */
-function renderIcon( icon ) {
-	const Icon = icon;
-
-	return typeof icon === 'function' ? <Icon /> : icon;
 }
