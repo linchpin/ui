@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.2](https://github.com/linchpin/ui/compare/v0.2.1...v0.2.2) (2026-09-21)
+
+
+### Bug Fixes 🐛
+
+* **LINCHPIN-5644:** Size menu icons that arrive without a size of their own ([bad61b0](https://github.com/linchpin/ui/commit/bad61b031703a32e8f821191a98423ff3f5f3596))
+
+
+### Changes to Existing Features 💅
+
+* **LINCHPIN-5644:** Put the bar in Linchpin blue and the ink in black ([ce4505b](https://github.com/linchpin/ui/commit/ce4505b3ab14d7923109b34b4cdb519c1079bdda))
+* **LINCHPIN-5644:** Run the page panel edge to edge and inset it once ([8dcd813](https://github.com/linchpin/ui/commit/8dcd81337af0b1c911a1c9dbf7ccb5d4eaa2f44a))
+
 ## [0.2.1](https://github.com/linchpin/ui/compare/v0.2.0...v0.2.1) (2026-09-21)
 
 
