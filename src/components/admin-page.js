@@ -24,11 +24,13 @@ import { useAdminContext } from '../context';
  * name, and the version appears as a badge unless the screen says otherwise.
  *
  * It also flips one of core's defaults. `Page` ships `hasPadding={ false }`
- * while padding its own header, so a screen that accepts the default gets a
- * title indented 24px above a body flush against the panel edge, and a tab
- * strip with the first card jammed under it. Padding the body is what the
- * header already assumes, so that is the default here; a screen that renders
- * its own full-bleed surface — a table, a data view — passes `false`.
+ * while padding its own header, so a screen that accepts the default gets an
+ * indented title above a body flush against the panel edge, and a tab strip
+ * with the first card jammed under it. Padding the body is what the header
+ * already assumes, so that is the default here; a screen that renders its own
+ * full-bleed surface — a table, a data view — passes `false`. The stylesheet
+ * brings core's 24px inline padding on both back to `--lp-admin-gutter`, so
+ * the screen has one inset rather than the chrome's and core's together.
  *
  * @param {Object}  props                Props.
  * @param {string}  [props.title]        Defaults to the frame's `plugin.name`. Pass `null` for none — a screen whose breadcrumbs carry the heading.

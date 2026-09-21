@@ -28,11 +28,12 @@ import { linchpinLinks } from '../brand/links';
  *    stops taking the same props at every level, and set both the agency
  *    palette (`--lp-color-*`) and the plugin's brand (`--lp-brand-*`) as
  *    custom properties, so nothing below has to carry a hex value.
- * 3. Undo wp-admin's `#wpcontent` padding, so the brand bar runs edge to edge,
- *    then restore the gutter inside the shell. Pass the bar as `topBar` rather
- *    than as a child: it is the one element that must sit outside the gutter,
- *    and having the frame place it is what keeps that trick in one file
- *    instead of in every plugin's stylesheet.
+ * 3. Undo wp-admin's `#wpcontent` padding, so the brand bar — and the page
+ *    panel beneath it — run edge to edge, and set the one inset the screen
+ *    uses inside them (`--lp-admin-gutter`). Pass the bar as `topBar` rather
+ *    than as a child: it is the element the trick exists for, and having the
+ *    frame place it keeps that in one file instead of in every plugin's
+ *    stylesheet.
  *
  * @param {Object}  props                Props.
  * @param {Object}  props.plugin         Identity: `{ name, slug, version, logo }`.

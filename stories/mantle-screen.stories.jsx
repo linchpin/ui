@@ -36,9 +36,9 @@ const PLUGIN = { name: 'Mantle', slug: 'mantle', version: '2.21.1' };
 
 /*
  * Mantle's own palette, shown in one story at the bottom. The rest of this
- * file leaves `brand` unset, so the screens render in Linchpin's own blue —
- * what the shape looks like before a plugin has chosen anything, which is the
- * part worth reviewing here.
+ * file leaves `brand` unset, so the screens render in Linchpin's own colours
+ * — a blue bar, black ink — which is what the shape looks like before a
+ * plugin has chosen anything, and the part worth reviewing here.
  */
 const MANTLE_BRAND = defineBrand( {
 	primary: '#c4009b',

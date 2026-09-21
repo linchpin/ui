@@ -23,7 +23,7 @@ export const LINCHPIN_COLORS = Object.freeze( {
 	blue: '#3FC1D0',
 	/** Linchpin black, for ink on a light surface. */
 	black: '#031E1E',
-	/** Foreground on a brand-coloured surface, such as the top bar. */
+	/** White, for ink on a dark one. See `onBrandFor()`. */
 	onBrand: '#FFFFFF',
 	/** Platform status, used only by the opt-in status dot. */
 	statusUp: '#4ADE80',
@@ -50,6 +50,100 @@ export function colorVars() {
 		'--lp-color-status-up': LINCHPIN_COLORS.statusUp,
 		'--lp-color-status-down': LINCHPIN_COLORS.statusDown,
 	};
+}
+
+/**
+ * The readable foreground for a brand-coloured surface.
+ *
+ * White is only the right ink on a *dark* bar. Linchpin blue reads as a
+ * bright cyan, and white on it measures 2.15:1 — not text by any standard —
+ * so a library that always painted the bar white would ship its own default
+ * brand failing contrast. Rather than leave every plugin to discover that,
+ * the brand measures its bar and picks between the palette's two
+ * foregrounds; a plugin that disagrees names `onBrand` itself.
+ *
+ * Both gradient stops are measured, because the bar carries the plugin's
+ * mark at one end and Linchpin's at the other, and the winner is whichever
+ * foreground reads better against the worse of them. Anything this cannot
+ * parse — a colour given as `rgb()`, a keyword, a custom property — leaves
+ * white, which is what the bar had before and what a dark bar wants.
+ *
+ * @param {...string} surfaces Hex colours the foreground has to sit on.
+ * @return {string} `onBrand` or `black`, from the palette.
+ */
+export function onBrandFor( ...surfaces ) {
+	const measurable = surfaces
+		.map( ( surface ) => luminance( surface ) )
+		.filter( ( value ) => value !== null );
+
+	if ( ! measurable.length ) {
+		return LINCHPIN_COLORS.onBrand;
+	}
+
+	const worst = ( foreground ) =>
+		Math.min(
+			...measurable.map( ( surface ) =>
+				contrast( luminance( foreground ), surface )
+			)
+		);
+
+	return worst( LINCHPIN_COLORS.black ) > worst( LINCHPIN_COLORS.onBrand )
+		? LINCHPIN_COLORS.black
+		: LINCHPIN_COLORS.onBrand;
+}
+
+/**
+ * WCAG 2's contrast ratio, from two relative luminances.
+ *
+ * @param {number} a One luminance.
+ * @param {number} b The other.
+ * @return {number} The ratio, between 1 and 21.
+ */
+function contrast( a, b ) {
+	return ( Math.max( a, b ) + 0.05 ) / ( Math.min( a, b ) + 0.05 );
+}
+
+/**
+ * WCAG 2's relative luminance.
+ *
+ * @param {string} color A hex colour, `#rgb` or `#rrggbb`.
+ * @return {number|null} Its luminance, or `null` if that is not a hex colour.
+ */
+function luminance( color ) {
+	const channels = parseHex( color );
+
+	if ( ! channels ) {
+		return null;
+	}
+
+	const [ r, g, b ] = channels.map( ( value ) => {
+		const channel = value / 255;
+
+		return channel <= 0.04045
+			? channel / 12.92
+			: ( ( channel + 0.055 ) / 1.055 ) ** 2.4;
+	} );
+
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * @param {string} color A hex colour, `#rgb` or `#rrggbb`.
+ * @return {Array|null} Its channels as 0–255, or `null`.
+ */
+function parseHex( color ) {
+	const match = /^#([\da-f]{3}|[\da-f]{6})$/i.exec( String( color ).trim() );
+
+	if ( ! match ) {
+		return null;
+	}
+
+	const hex =
+		match[ 1 ].length === 3
+			? match[ 1 ].replace( /./g, ( channel ) => channel + channel )
+			: match[ 1 ];
+
+	return [ 0, 2, 4 ].map( ( at ) => parseInt( hex.slice( at, at + 2 ), 16 ) );
 }
 
 const PROPERTIES = {

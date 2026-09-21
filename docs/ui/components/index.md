@@ -11,7 +11,7 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminFrame>` | The root. Seeds the `ThemeProvider` from the brand, publishes identity/brand/links on context, and does the wp-admin gutter dance. | `plugin`, `brand`, `links`, `topBar`, `cornerRadius`, `isRoot` |
 | `<LinchpinAdminTopBar>` | The brand bar: plugin logo left, version and Linchpin mark right. | `logo`, `logoAlt`, `version`, `status` |
 | `<LinchpinAdminPage>` | The page header and body — a wrapper around core's `Page`. | `title`, `subTitle`, `breadcrumbs`, `badges`, `visual`, `actions`, `navigation`, `headingLevel`, `hasPadding`, `components` |
-| `<LinchpinAdminNav>` | The vertical section menu down the left. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
+| `<LinchpinAdminNav>` | The vertical section menu down the left. Items may carry an icon and a badge. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
 | `<LinchpinBreadcrumbs>` | The trail above a nested screen. | `items`, `headingLevel`, `linkComponent`, `ariaLabel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
@@ -55,17 +55,21 @@ const SECTIONS = [
 
 The screen uses the width it is given. There is no max-width on the shell — an admin screen is
 not an article, and a cap left several hundred pixels of empty grey beside the work on a wide
-window. The inset from the edges of `#wpcontent` is `--lp-admin-gutter`, 12px (10px below
-782px), shared by the top bar and the shell so the plugin's mark lines up with the screen
-under it. A plugin that wants more can raise it on `.lp-admin`.
+window. The page panel runs edge to edge under the brand bar, and there is exactly one inset
+inside it: `--lp-admin-gutter`, core's `--wpds-dimension-padding-lg` (16px), which is also the
+space `Page` leaves above and below its own header and body. The top bar, the page's header
+and body, the footer, and a layout composed outside the page all take it, so the plugin's mark
+in the bar sits directly above the title beneath it and nothing is inset twice. A plugin that
+wants more can raise it on `.lp-admin`.
 
 Two spacing defaults differ from core's, both because core's assume a context this library
 does not have:
 
-- **`hasPadding` is on.** `Page` ships it off while padding its own header, so a screen that
-  takes the default gets a title indented 24px above a body flush with the panel edge, and the
-  first card jammed under the tab strip. Pass `hasPadding={ false }` for a full-bleed body — a
-  table, a data view.
+- **`hasPadding` is on, and inset by the gutter.** `Page` ships it off while padding its own
+  header, so a screen that takes the default gets an indented title above a body flush with
+  the panel edge, and the first card jammed under the tab strip. Core pads both by 24px
+  inline; the chrome brings that back to the gutter. Pass `hasPadding={ false }` for a
+  full-bleed body — a table, a data view.
 - **The main column is a flex column with a gap.** Core's `Card` carries no margin, so two
   stacked cards sat flush against each other and every screen added a one-off `marginTop`. The
   aside always worked this way; the main column does now too.
@@ -140,6 +144,23 @@ tabs belong to the page inside it.
 	</LinchpinAdminLayout>
 </LinchpinAdminFrame>
 ```
+
+Each item may carry an `icon`, which is how Mantle's menu reads at a glance:
+
+```jsx
+import { cog, grid, shield } from '@wordpress/icons';
+
+const SECTIONS = [
+	{ name: 'dashboard', label: 'Dashboard', href: '#dashboard', icon: grid },
+	{ name: 'security', label: 'Security', href: '#security', icon: shield },
+	{ name: 'settings', label: 'Settings', href: '#settings', icon: cog },
+];
+```
+
+The plugin supplies the artwork — this is the agency's chrome, not an icon set — in whatever
+form it has: an `@wordpress/icons` export, a component of its own, or a dashicon name. All
+three are sized to a 24px box and painted in the row's own colour, so the selected row gets an
+inverted icon without being told.
 
 Note the nesting is the other way round from a screen with no menu, where the page wraps the
 layout. Both are fine: they are independent components, and which contains which is decided
