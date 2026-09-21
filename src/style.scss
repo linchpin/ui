@@ -59,7 +59,7 @@ $lp-aside-width: 300px;
 		min-height: 56px;
 		padding: 0 var(--lp-admin-gutter);
 		background: linear-gradient(90deg, var(--lp-brand-deep) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep)) 100%);
-		color: var(--lp-color-on-brand, #fff);
+		color: var(--lp-brand-on-brand, #fff);
 	}
 
 	&__topbar-brand,
@@ -68,6 +68,14 @@ $lp-aside-width: 300px;
 		align-items: center;
 		gap: var(--wpds-dimension-gap-lg);
 	}
+
+	/*
+	 * The bar's ink is `--lp-brand-on-brand`, not the agency palette's white:
+	 * the bar is the plugin's surface, and on a light one — Linchpin's own
+	 * blue among them — white is not text. `defineBrand()` measures the
+	 * gradient and picks; the fallback here is for a fragment rendered
+	 * outside a frame, where the bar is whatever the plugin's CSS says.
+	 */
 
 	// The plugin's own mark, however it arrives: an inline SVG, an <img>, or a
 	// component of its own.
@@ -81,13 +89,13 @@ $lp-aside-width: 300px;
 	&__topbar-name {
 		font-size: var(--wpds-typography-font-size-lg);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
-		color: var(--lp-color-on-brand, #fff);
+		color: var(--lp-brand-on-brand, #fff);
 	}
 
 	&__topbar-linchpin {
 		display: inline-flex;
 		align-items: center;
-		color: var(--lp-color-on-brand, #fff);
+		color: var(--lp-brand-on-brand, #fff);
 		border-radius: var(--wpds-border-radius-xs);
 
 		svg {
@@ -101,7 +109,7 @@ $lp-aside-width: 300px;
 		}
 
 		&:focus-visible {
-			outline: var(--wpds-border-width-focus) solid var(--lp-color-on-brand, #fff);
+			outline: var(--wpds-border-width-focus) solid var(--lp-brand-on-brand, #fff);
 			outline-offset: 4px;
 		}
 	}
@@ -115,8 +123,8 @@ $lp-aside-width: 300px;
 
 		// On the brand gradient, where the bar itself is the only safe surface.
 		&.is-on-brand {
-			background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 14%, transparent);
-			color: var(--lp-color-on-brand, #fff);
+			background: color-mix(in srgb, var(--lp-brand-on-brand, #fff) 14%, transparent);
+			color: var(--lp-brand-on-brand, #fff);
 		}
 
 		// In the page header, where design system tokens apply as usual.
@@ -135,7 +143,7 @@ $lp-aside-width: 300px;
 		width: 8px;
 		height: 8px;
 		border-radius: 50%;
-		background: color-mix(in srgb, var(--lp-color-on-brand, #fff) 40%, transparent);
+		background: color-mix(in srgb, var(--lp-brand-on-brand, #fff) 40%, transparent);
 	}
 
 	&__status.is-up .lp-admin__status-dot {

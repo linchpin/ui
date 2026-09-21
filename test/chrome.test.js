@@ -63,19 +63,30 @@ describe( 'LinchpinAdminFrame', () => {
 		);
 	} );
 
-	it( 'defaults a brandless plugin to Linchpin blue', () => {
+	it( 'defaults a brandless plugin to ink on a Linchpin blue bar', () => {
 		const { container } = render(
 			<LinchpinAdminFrame plugin={ PLUGIN }>screen</LinchpinAdminFrame>
 		);
 
-		expect(
-			container
-				.querySelector( '.lp-admin' )
-				.style.getPropertyValue( '--lp-brand-primary' )
-		).toBe( LINCHPIN_COLORS.blue );
+		const frame = container.querySelector( '.lp-admin' );
+
+		// The bar is the brand colour; the design system is seeded with ink,
+		// so the buttons under it are black rather than a second cyan.
+		expect( frame.style.getPropertyValue( '--lp-brand-deep' ) ).toBe(
+			LINCHPIN_COLORS.blue
+		);
+		expect( frame.style.getPropertyValue( '--lp-brand-primary' ) ).toBe(
+			LINCHPIN_COLORS.black
+		);
+
+		// The mark on that bar is the white lockup, which is the agency's own
+		// call and not the measurement's — see `defineBrand`'s DEFAULTS.
+		expect( frame.style.getPropertyValue( '--lp-brand-on-brand' ) ).toBe(
+			LINCHPIN_COLORS.onBrand
+		);
 	} );
 
-	it( 'keeps the top bar outside the gutter and the screen inside it', () => {
+	it( 'keeps the top bar outside the shell and the screen inside it', () => {
 		const { container } = render(
 			<Frame topBar={ <div data-testid="bar" /> }>
 				<p>screen</p>

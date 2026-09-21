@@ -32,10 +32,11 @@ const PLUGIN = { name: 'Psst', slug: 'psst', version: '2.1.0' };
 /*
  * No `defineBrand()` call, and that is the example.
  *
- * A plugin that names no brand inherits Linchpin's own — blue on Linchpin
- * black — which is what a new plugin looks like on the day it is scaffolded
- * and what most of these stories should therefore show. The branded stories
- * at the bottom are where a plugin's own palette gets demonstrated.
+ * A plugin that names no brand inherits Linchpin's own — a Linchpin blue bar
+ * with black ink under it — which is what a new plugin looks like on the day
+ * it is scaffolded and what most of these stories should therefore show. The
+ * branded stories at the bottom are where a plugin's own palette gets
+ * demonstrated.
  */
 const LINCHPIN_BRAND = undefined;
 

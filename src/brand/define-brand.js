@@ -10,16 +10,33 @@
 /**
  * Internal dependencies
  */
-import { LINCHPIN_COLORS } from './colors';
+import { LINCHPIN_COLORS, onBrandFor } from './colors';
 
 /**
  * The fallback palette: Linchpin's own, for a plugin that has no artwork yet.
- * Linchpin blue seeds the design system, on a Linchpin black bar.
+ *
+ * Both agency colours, each doing the job it is for. Linchpin blue is the bar
+ * — it is the colour people recognise us by, and a banner is where a brand
+ * colour belongs. Linchpin black seeds the design system, so the buttons, the
+ * selected row and the links beneath the bar are ink rather than a second
+ * helping of the same cyan competing with it.
  */
 const DEFAULTS = Object.freeze( {
-	primary: LINCHPIN_COLORS.blue,
-	deep: LINCHPIN_COLORS.black,
+	primary: LINCHPIN_COLORS.black,
+	deep: LINCHPIN_COLORS.blue,
 	accent: LINCHPIN_COLORS.blue,
+
+	/*
+	 * White, named rather than measured.
+	 *
+	 * White on Linchpin blue is 2.15:1, which no contrast checker will pass,
+	 * and the agency has looked at it and kept it: the bar carries the two
+	 * marks and a version badge, all of them heavy enough to hold the colour,
+	 * and the white lockup is how Linchpin signs its work. That is a decision
+	 * about our own brand, which is why it is written here as one instead of
+	 * quietly overriding what `onBrandFor()` would say.
+	 */
+	onBrand: LINCHPIN_COLORS.onBrand,
 } );
 
 /**
@@ -33,6 +50,13 @@ const DEFAULTS = Object.freeze( {
  * one. A brand that gives only `deep` gets a flat bar rather than a gradient
  * invented on its behalf.
  *
+ * `onBrand` is the ink on that bar. A plugin that colours the bar and says
+ * nothing about the ink has it measured — see `onBrandFor()` — because white
+ * on a pale bar is not text, and that is a papercut no plugin should have to
+ * find for itself. Naming it is how a brand overrules the measurement, as
+ * Linchpin's own does above; it is not how a third colour gets in, because
+ * white and Linchpin black are the two the palette has.
+ *
  * Any other key becomes a custom property too, so a plugin may carry its own
  * vocabulary — `mint`, `violet` — and reach for it in its own stylesheet.
  *
@@ -40,6 +64,7 @@ const DEFAULTS = Object.freeze( {
  * @param {string} [input.primary] Seed colour for the design system.
  * @param {string} [input.deep]    Top bar gradient start.
  * @param {string} [input.deepEnd] Top bar gradient end. Defaults to `deep`.
+ * @param {string} [input.onBrand] Ink on the top bar. Measured from `deep` when a brand colours the bar without naming one.
  * @param {string} [input.accent]  Accent, for the Linchpin mark.
  * @return {Object} A frozen brand object.
  */
@@ -56,6 +81,12 @@ export function defineBrand( input = {} ) {
 
 	if ( ! brand.deepEnd ) {
 		brand.deepEnd = brand.deep;
+	}
+
+	// A brand that coloured the bar and left the ink to us gets it measured.
+	// The agency default names its own, above, and is left alone.
+	if ( ( input.deep || input.deepEnd ) && ! input.onBrand ) {
+		brand.onBrand = onBrandFor( brand.deep, brand.deepEnd );
 	}
 
 	return Object.freeze( brand );
