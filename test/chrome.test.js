@@ -9,6 +9,7 @@ import { render, screen } from '@testing-library/react';
 import {
 	AboutLinchpinCard,
 	AboutLinchpinPage,
+	DangerZone,
 	defineBrand,
 	LINCHPIN_COLORS,
 	LinchpinAdminFooter,
@@ -16,6 +17,7 @@ import {
 	LinchpinAdminLayout,
 	LinchpinAdminPage,
 	LinchpinAdminTopBar,
+	LinchpinBreadcrumbs,
 	LinchpinLogo,
 	VersionBadge,
 } from '../src';
@@ -204,6 +206,24 @@ describe( 'LinchpinAdminPage', () => {
 		expect( screen.queryByText( 'v2.1.0' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps the title when told to drop it, and drops it when told', () => {
+		const { rerender } = render(
+			<Frame>
+				<LinchpinAdminPage>body</LinchpinAdminPage>
+			</Frame>
+		);
+		expect( screen.getByText( 'Psst' ) ).toBeInTheDocument();
+
+		// `null` is "none", the same contract as `badges` — a screen whose
+		// breadcrumbs carry the heading needs it.
+		rerender(
+			<Frame>
+				<LinchpinAdminPage title={ null }>body</LinchpinAdminPage>
+			</Frame>
+		);
+		expect( screen.queryByText( 'Psst' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders section navigation as links, with the current one marked', () => {
 		render(
 			<Frame>
@@ -228,6 +248,107 @@ describe( 'LinchpinAdminPage', () => {
 		expect(
 			screen.getByRole( 'link', { name: 'Secrets' } )
 		).toHaveAttribute( 'aria-current', 'page' );
+	} );
+} );
+
+describe( 'LinchpinBreadcrumbs', () => {
+	/*
+	 * Core's `Breadcrumbs` routes every item through TanStack Router and dies
+	 * without a `RouterProvider`, which a wp-admin settings screen does not
+	 * have. These have to be plain links.
+	 */
+	it( 'links every item but the last, which is the current page', () => {
+		render(
+			<LinchpinBreadcrumbs
+				items={ [
+					{ label: 'Settings', href: '#settings' },
+					{ label: 'Psst' },
+				] }
+			/>
+		);
+
+		expect(
+			screen.getByRole( 'link', { name: 'Settings' } )
+		).toHaveAttribute( 'href', '#settings' );
+		expect( screen.queryByRole( 'link', { name: 'Psst' } ) ).toBeNull();
+		expect( screen.getByText( 'Psst' ) ).toHaveAttribute(
+			'aria-current',
+			'page'
+		);
+	} );
+
+	it( 'carries the page heading when the page has no title of its own', () => {
+		const { rerender } = render(
+			<LinchpinBreadcrumbs items={ [ { label: 'Psst' } ] } />
+		);
+		expect( screen.queryByRole( 'heading' ) ).toBeNull();
+
+		rerender(
+			<LinchpinBreadcrumbs
+				headingLevel={ 1 }
+				items={ [ { label: 'Psst' } ] }
+			/>
+		);
+		expect(
+			screen.getByRole( 'heading', { level: 1, name: 'Psst' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders nothing rather than an empty landmark', () => {
+		const { container } = render( <LinchpinBreadcrumbs items={ [] } /> );
+
+		expect( container ).toBeEmptyDOMElement();
+	} );
+} );
+
+describe( 'DangerZone', () => {
+	it( 'stands a warning above the controls without being asked', () => {
+		render(
+			<Frame>
+				<DangerZone title="Uninstall">
+					<button>Delete everything</button>
+				</DangerZone>
+			</Frame>
+		);
+
+		expect(
+			screen.getAllByText( /permanent and cannot be undone/ ).length
+		).toBeGreaterThan( 0 );
+		expect(
+			screen.getByRole( 'heading', { name: 'Uninstall' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'takes the plugin\u2019s own wording, and drops the warning entirely', () => {
+		const { rerender } = render(
+			<Frame>
+				<DangerZone warning="There is no export." />
+			</Frame>
+		);
+		expect(
+			screen.getAllByText( 'There is no export.' ).length
+		).toBeGreaterThan( 0 );
+
+		rerender(
+			<Frame>
+				<DangerZone warning={ false } />
+			</Frame>
+		);
+		expect(
+			screen.queryByText( /cannot be undone/ )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'leaves confirming to the plugin — it only places the action', () => {
+		render(
+			<Frame>
+				<DangerZone actions={ <button>Reset settings</button> } />
+			</Frame>
+		);
+
+		expect(
+			screen.getByRole( 'button', { name: 'Reset settings' } )
+		).toBeInTheDocument();
 	} );
 } );
 
@@ -305,12 +426,10 @@ describe( 'LinchpinLogo', () => {
 			)
 		);
 
-		expect( fills.size ).toBe( 2 );
-		expect(
-			[ ...fills ].every( ( fill ) =>
-				fill.includes( '--lp-color-black' )
-			)
-		).toBe( true );
+		// One value, not two that happen to resolve alike: ink and ring are
+		// the same property in these tones.
+		expect( fills.size ).toBe( 1 );
+		expect( [ ...fills ][ 0 ] ).toContain( '--lp-color-black' );
 	} );
 
 	it( 'paints from custom properties, never a hex', () => {
@@ -323,11 +442,25 @@ describe( 'LinchpinLogo', () => {
 			true
 		);
 		expect(
-			fills.some( ( fill ) => fill.includes( '--lp-logo-ink' ) )
+			fills.every( ( fill ) => fill.includes( '--lp-color-' ) )
 		).toBe( true );
+	} );
+
+	it( 'gives a host nothing to repaint the mark with', () => {
+		const { container } = render( <LinchpinLogo /> );
+		const fills = [ ...container.querySelectorAll( 'path' ) ].map(
+			( path ) => path.getAttribute( 'fill' )
+		);
+
+		// The logo identifies Linchpin. An override hook we ship is one we
+		// have endorsed, so there is not one — see docs/ui/development/brand.md.
 		expect(
-			fills.some( ( fill ) => fill.includes( '--lp-logo-accent' ) )
-		).toBe( true );
+			fills.some(
+				( fill ) =>
+					fill.includes( '--lp-logo-ink' ) ||
+					fill.includes( '--lp-logo-accent' )
+			)
+		).toBe( false );
 	} );
 
 	it( 'takes the surrounding colour when mono, for the brand bar', () => {
@@ -336,9 +469,9 @@ describe( 'LinchpinLogo', () => {
 			( path ) => path.getAttribute( 'fill' )
 		);
 
-		expect(
-			fills.every( ( fill ) => fill.endsWith( 'currentColor )' ) )
-		).toBe( true );
+		expect( fills.every( ( fill ) => fill === 'currentColor' ) ).toBe(
+			true
+		);
 	} );
 
 	it( 'is hidden from assistive technology unless it is named', () => {
