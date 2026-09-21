@@ -39,6 +39,28 @@ export default {
 					),
 				},
 			},
+
+			/*
+			 * `build-module` sits outside Vite's dependency scan, so nothing in
+			 * it is crawled and the CommonJS packages it imports — React's JSX
+			 * runtime above all — reach the browser unconverted. Naming them
+			 * here has the dev server pre-bundle them anyway.
+			 */
+			optimizeDeps: {
+				include: [
+					'react',
+					'react/jsx-runtime',
+					'react-dom',
+					'@wordpress/admin-ui',
+					'@wordpress/components',
+					'@wordpress/data',
+					'@wordpress/element',
+					'@wordpress/i18n',
+					'@wordpress/icons',
+					'@wordpress/notices',
+					'@wordpress/theme',
+				],
+			},
 		} );
 	},
 };
