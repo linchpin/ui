@@ -5,42 +5,19 @@
 			{
 				"bugfixes": true,
 				"modules": false,
-				"targets": {
-					"browsers": [
-						"defaults"
-					]
-				}
+				"targets": { "browsers": [ "defaults" ] }
 			}
 		],
-		[
-			"@babel/preset-react",
-			{
-				"runtime": "automatic"
-			}
-		]
+		[ "@babel/preset-react", { "runtime": "automatic" } ]
 	],
 	"env": {
 		"module": {
-			"plugins": [
-				"./scripts/babel-plugin-add-js-extension.cjs"
-			]
+			"plugins": [ "./scripts/babel-plugin-add-js-extension.cjs" ]
 		},
 		"test": {
 			"presets": [
-				[
-					"@babel/preset-env",
-					{
-						"targets": {
-							"node": "current"
-						}
-					}
-				],
-				[
-					"@babel/preset-react",
-					{
-						"runtime": "automatic"
-					}
-				]
+				[ "@babel/preset-env", { "targets": { "node": "current" } } ],
+				[ "@babel/preset-react", { "runtime": "automatic" } ]
 			]
 		}
 	}
