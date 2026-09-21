@@ -17,6 +17,7 @@ export { default as LinchpinAdminTopBar } from './components/admin-top-bar';
 export { default as LinchpinAdminPage } from './components/admin-page';
 export { default as LinchpinAdminLayout } from './components/admin-layout';
 export { default as LinchpinAdminNav } from './components/admin-nav';
+export { default as LinchpinBreadcrumbs } from './components/breadcrumbs';
 export { default as LinchpinNotices } from './components/notices';
 export { default as LinchpinAdminFooter } from './components/admin-footer';
 export { default as LinchpinLogo } from './components/linchpin-logo';
@@ -26,6 +27,7 @@ export { default as HelpCard } from './components/cards/help-card';
 export { default as FeatureListCard } from './components/cards/feature-list-card';
 export { default as AboutLinchpinCard } from './components/cards/about-linchpin-card';
 export { default as AboutLinchpinPage } from './components/about-linchpin-page';
+export { default as DangerZone } from './components/danger-zone';
 
 export { sectionNavigation, currentSection } from './utils/navigation';
 

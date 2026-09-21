@@ -40,7 +40,7 @@ export default function AboutLinchpinCard( { className } ) {
 					rel="noreferrer"
 					aria-label={ __( 'Linchpin (opens in a new tab)' ) }
 				>
-					<LinchpinLogo variant="primary" />
+					<LinchpinLogo tone="primary" />
 				</a>
 				<p>{ aboutBlurb( plugin?.name ) }</p>
 				<Button

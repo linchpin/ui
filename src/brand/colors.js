@@ -34,8 +34,11 @@ export const LINCHPIN_COLORS = Object.freeze( {
  * The palette as `--lp-color-*` custom properties.
  *
  * `<LinchpinAdminFrame>` sets these alongside the plugin's own `--lp-brand-*`
- * properties, so a screen can reference the agency palette in its own CSS and
- * a host can override one of them in a single place.
+ * properties, so a screen can reference the agency palette in its own CSS
+ * rather than copying a hex out of this file. They are published for
+ * reference, not as a recolouring hook: the frame writes them inline on its
+ * own element, which is where the agency's colours are decided. A plugin that
+ * wants a colour of its own names one in `defineBrand()`.
  *
  * @return {Object} CSS custom properties keyed by name.
  */
@@ -60,9 +63,9 @@ const PROPERTIES = {
 /**
  * A `var()` reference with the palette value as its fallback.
  *
- * Components paint with these rather than with hex, so a host that sets
- * `--lp-color-blue` higher up recolours them, and a component rendered outside
- * a frame still has something to paint with.
+ * Components paint with these rather than with hex, so the palette has one
+ * definition and a component rendered outside a frame still has something to
+ * paint with.
  *
  * @param {string} name A key of `LINCHPIN_COLORS`.
  * @return {string} A CSS `var()` expression.

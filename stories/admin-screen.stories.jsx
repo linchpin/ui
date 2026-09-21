@@ -1,8 +1,13 @@
 /**
  * WordPress dependencies
  */
-import { Breadcrumbs } from '@wordpress/admin-ui';
-import { Button, Card, CardBody, CardHeader } from '@wordpress/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	ToggleControl,
+} from '@wordpress/components';
 import { external, link, lock, trash } from '@wordpress/icons';
 
 /**
@@ -10,6 +15,7 @@ import { external, link, lock, trash } from '@wordpress/icons';
  */
 import {
 	AboutLinchpinCard,
+	DangerZone,
 	defineBrand,
 	FeatureListCard,
 	HelpCard,
@@ -18,11 +24,23 @@ import {
 	LinchpinAdminLayout,
 	LinchpinAdminPage,
 	LinchpinAdminTopBar,
+	LinchpinBreadcrumbs,
 } from '@linchpinagency/ui';
 
 const PLUGIN = { name: 'Psst', slug: 'psst', version: '2.1.0' };
 
-const BRAND = defineBrand( {
+/*
+ * No `defineBrand()` call, and that is the example.
+ *
+ * A plugin that names no brand inherits Linchpin's own — blue on Linchpin
+ * black — which is what a new plugin looks like on the day it is scaffolded
+ * and what most of these stories should therefore show. The branded stories
+ * at the bottom are where a plugin's own palette gets demonstrated.
+ */
+const LINCHPIN_BRAND = undefined;
+
+/** Psst's own palette, for the story that shows a plugin branding itself. */
+const PSST_BRAND = defineBrand( {
 	primary: '#318873',
 	deep: '#082318',
 	deepEnd: '#164a3b',
@@ -53,18 +71,30 @@ const HOW_IT_WORKS = [
 	},
 ];
 
-/** A stand-in for the plugin's own mark. */
-function PsstLogo() {
+/**
+ * A stand-in for the plugin's own mark.
+ *
+ * It paints from the brand's custom properties rather than a hex of its own,
+ * so it follows whichever brand the story mounts.
+ *
+ * @return {Element} The mark.
+ */
+function PluginLogo() {
 	return (
 		<svg viewBox="0 0 120 32" aria-hidden="true" focusable="false">
-			<rect width="120" height="32" rx="6" fill="#5beece" />
+			<rect
+				width="120"
+				height="32"
+				rx="6"
+				fill="var( --lp-brand-primary )"
+			/>
 			<text
 				x="12"
 				y="22"
 				fontFamily="system-ui, sans-serif"
 				fontSize="16"
 				fontWeight="700"
-				fill="#082318"
+				fill="var( --lp-brand-deep )"
 			>
 				psst
 			</text>
@@ -91,25 +121,29 @@ export default {
 
 /**
  * @param {Object}  props           Props.
+ * @param {Object}  [props.brand]   The plugin's brand. Omit for Linchpin's own.
  * @param {boolean} [props.status]  Show the platform status dot.
  * @param {boolean} [props.sidebar] Render the help column.
- * @param {boolean} [props.crumbs]  Render breadcrumbs above the title.
+ * @param {boolean} [props.crumbs]  Swap the title for a breadcrumb trail.
  * @param {boolean} [props.logo]    Give the plugin a logo.
+ * @param {boolean} [props.danger]  Render the danger zone under the settings.
  * @return {Element} A composed screen.
  */
 function Screen( {
+	brand = LINCHPIN_BRAND,
 	status = false,
 	sidebar = true,
 	crumbs = false,
 	logo = true,
+	danger = false,
 } ) {
 	return (
 		<LinchpinAdminFrame
 			plugin={ PLUGIN }
-			brand={ BRAND }
+			brand={ brand }
 			topBar={
 				<LinchpinAdminTopBar
-					logo={ logo ? <PsstLogo /> : undefined }
+					logo={ logo ? <PluginLogo /> : undefined }
 					status={ status }
 				/>
 			}
@@ -117,11 +151,16 @@ function Screen( {
 			<LinchpinAdminPage
 				subTitle="One-time secrets, encrypted in the browser. The server never sees the contents, and neither does this screen."
 				navigation={ NAVIGATION }
+				// `Page` puts breadcrumbs beside the title, not above it, so a
+				// screen that shows both says the plugin's name twice. The
+				// trail carries the heading instead.
+				title={ crumbs ? null : undefined }
 				breadcrumbs={
 					crumbs ? (
-						<Breadcrumbs
+						<LinchpinBreadcrumbs
+							headingLevel={ 1 }
 							items={ [
-								{ label: 'Settings', to: '#settings' },
+								{ label: 'Settings', href: '#settings' },
 								{ label: 'Psst' },
 							] }
 						/>
@@ -174,6 +213,30 @@ function Screen( {
 							</p>
 						</CardBody>
 					</Card>
+
+					{ danger && (
+						<DangerZone
+							title="Uninstall"
+							description="What Psst leaves behind when the plugin is deleted."
+							actions={
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									isDestructive
+								>
+									Delete everything now
+								</Button>
+							}
+						>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label="Delete all secrets and settings on uninstall"
+								help="Secrets are ephemeral by definition. The two pages stay either way."
+								checked
+								onChange={ () => {} }
+							/>
+						</DangerZone>
+					) }
 				</LinchpinAdminLayout>
 			</LinchpinAdminPage>
 
@@ -185,7 +248,7 @@ function Screen( {
 export const Default = { render: () => <Screen /> };
 
 export const FullHeader = {
-	name: 'Full header (breadcrumbs, title, subtitle, tabs)',
+	name: 'Full header (breadcrumbs, subtitle, tabs)',
 	render: () => <Screen crumbs />,
 };
 
@@ -202,4 +265,19 @@ export const WithoutSidebar = {
 export const WithoutPluginLogo = {
 	name: 'Without a plugin logo (name fallback)',
 	render: () => <Screen logo={ false } />,
+};
+
+export const WithDangerZone = {
+	name: 'With a danger zone',
+	render: () => <Screen danger />,
+};
+
+/**
+ * The same screen once the plugin names a brand. Nothing below the top bar
+ * was told about the colour: `primary` seeds the design system, so the
+ * buttons, the tab strip and the card icons follow it.
+ */
+export const BrandedPsst = {
+	name: 'Branded by the plugin (Psst)',
+	render: () => <Screen brand={ PSST_BRAND } danger />,
 };

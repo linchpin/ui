@@ -40,7 +40,7 @@ export default function AboutLinchpinPage( { className } ) {
 						target="_blank"
 						rel="noreferrer"
 					>
-						<LinchpinLogo variant="primary" title={ copy.title } />
+						<LinchpinLogo tone="primary" title={ copy.title } />
 					</a>
 
 					<p className="lp-admin__about-lead">{ copy.lead }</p>

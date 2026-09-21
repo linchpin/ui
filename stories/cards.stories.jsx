@@ -8,21 +8,19 @@ import { lock, link, trash } from '@wordpress/icons';
  */
 import {
 	AboutLinchpinCard,
-	defineBrand,
 	FeatureListCard,
 	HelpCard,
 	LinchpinAdminFrame,
 } from '@linchpinagency/ui';
 
 const PLUGIN = { name: 'Psst', slug: 'psst', version: '2.1.0' };
-const BRAND = defineBrand( { primary: '#318873', deep: '#082318' } );
 
 export default {
 	title: 'Chrome/Sidebar cards',
 	decorators: [
 		( Story ) => (
 			<div className="sb-wpcontent">
-				<LinchpinAdminFrame plugin={ PLUGIN } brand={ BRAND }>
+				<LinchpinAdminFrame plugin={ PLUGIN }>
 					<div
 						className="lp-admin__aside"
 						style={ { maxWidth: '300px', paddingTop: '24px' } }

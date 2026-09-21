@@ -39,9 +39,13 @@ const TONES = {
  * — and `mark` is the brandmark alone, for somewhere too tight for the
  * lockup.
  *
- * Colour never comes from a hex here. Each tone resolves to the agency
- * palette's custom properties, and a host overrides either half by setting
- * `--lp-logo-ink` or `--lp-logo-accent`.
+ * Colour never comes from a hex here, and it never comes from the host
+ * either. Each tone resolves to the agency palette's own custom properties,
+ * and there is deliberately no `--lp-logo-ink` / `--lp-logo-accent` pair to
+ * paint over them with. The logo identifies Linchpin; a site that recolours
+ * it is misattributing our work, and an escape hatch we ship is one we have
+ * endorsed. A screen that needs the mark in a single colour asks for the
+ * `white` or `black` tone, which the brand actually defines.
  *
  * The artwork is generated from the brand file by `scripts/import-logo.mjs`.
  * When the brand changes, re-export and re-run it rather than editing paths.
@@ -66,8 +70,7 @@ export default function LinchpinLogo( {
 	const colors = TONES[ tone ] ?? TONES.primary;
 	const isDecorative = decorative ?? ! title;
 
-	const ink = `var( --lp-logo-ink, ${ colors.ink } )`;
-	const accent = `var( --lp-logo-accent, ${ colors.accent } )`;
+	const { ink, accent } = colors;
 
 	return (
 		<svg
