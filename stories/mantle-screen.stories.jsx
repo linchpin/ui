@@ -6,6 +6,7 @@ import {
 	Card,
 	CardBody,
 	ToggleControl,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import {
 	cog,
@@ -33,7 +34,13 @@ import {
 
 const PLUGIN = { name: 'Mantle', slug: 'mantle', version: '2.21.1' };
 
-const BRAND = defineBrand( {
+/*
+ * Mantle's own palette, shown in one story at the bottom. The rest of this
+ * file leaves `brand` unset, so the screens render in Linchpin's own blue —
+ * what the shape looks like before a plugin has chosen anything, which is the
+ * part worth reviewing here.
+ */
+const MANTLE_BRAND = defineBrand( {
 	primary: '#c4009b',
 	deep: '#c4009b',
 	deepEnd: '#7d2bd6',
@@ -118,9 +125,10 @@ export default {
  * @param {Object}  props          Props.
  * @param {string}  [props.start]  The section to open on.
  * @param {boolean} [props.aside]  Render the help column as well.
+ * @param {Object}  [props.brand]  The plugin's brand. Omit for Linchpin's own.
  * @return {Element} The screen.
  */
-function Screen( { start = 'security', aside = false } ) {
+function Screen( { start = 'security', aside = false, brand } ) {
 	const [ current, setCurrent ] = useState( start );
 	const section = SECTIONS.find( ( item ) => item.name === current );
 	const tabs = SUBSECTIONS[ current ];
@@ -128,7 +136,7 @@ function Screen( { start = 'security', aside = false } ) {
 	return (
 		<LinchpinAdminFrame
 			plugin={ PLUGIN }
-			brand={ BRAND }
+			brand={ brand }
 			topBar={ <LinchpinAdminTopBar status /> }
 		>
 			<LinchpinAdminLayout
@@ -152,29 +160,34 @@ function Screen( { start = 'security', aside = false } ) {
 									items: tabs,
 									currentHref: tabs[ 0 ].href,
 									ariaLabel: `${ section.label } sections`,
-							  }
+								}
 							: undefined
 					}
 				>
 					<Card>
 						<CardBody>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								label="Enable Security Features"
-								help="Master toggle to enable all security features."
-								checked
-								onChange={ () => {} }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								label="Restrict User REST API Access"
-								help="Only allow logged-in users to access user information via the REST API."
-								checked={ false }
-								onChange={ () => {} }
-							/>
-							<Button __next40pxDefaultSize variant="primary">
-								Save Settings
-							</Button>
+							{ /* `__nextHasNoMarginBottom` removes the legacy
+							     margin, so the gap between controls is the
+							     screen's to set. */ }
+							<VStack spacing={ 4 } alignment="left">
+								<ToggleControl
+									__nextHasNoMarginBottom
+									label="Enable Security Features"
+									help="Master toggle to enable all security features."
+									checked
+									onChange={ () => {} }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									label="Restrict User REST API Access"
+									help="Only allow logged-in users to access user information via the REST API."
+									checked={ false }
+									onChange={ () => {} }
+								/>
+								<Button __next40pxDefaultSize variant="primary">
+									Save Settings
+								</Button>
+							</VStack>
 						</CardBody>
 					</Card>
 				</LinchpinAdminPage>
@@ -196,4 +209,14 @@ export const MenuOnly = {
 export const MenuAndHelpColumn = {
 	name: 'Menu, tabs and a help column',
 	render: () => <Screen start="plugins" aside />,
+};
+
+/**
+ * The same menu once the plugin names a brand. The selected row, the toggles
+ * and the save button all follow `primary`; only the top bar reads `deep` and
+ * `deepEnd`.
+ */
+export const BrandedMantle = {
+	name: 'Branded by the plugin (Mantle)',
+	render: () => <Screen start="plugins" brand={ MANTLE_BRAND } />,
 };

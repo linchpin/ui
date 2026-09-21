@@ -6,11 +6,12 @@ import { LinchpinLogo } from '@linchpinagency/ui';
 /**
  * The Linchpin logo, generated from the brand file by
  * `scripts/import-logo.mjs`. Two variants — the full lockup and the brandmark
- * — and the brand's four tones plus a `mono` one for surfaces whose colour
- * the logo should simply inherit.
+ * — in the four styles the brand defines.
  *
- * Every tone resolves to `--lp-color-*`; `--lp-logo-ink` and
- * `--lp-logo-accent` override either half.
+ * Colour is not a prop you can pass a value to, and there is no custom
+ * property for painting over it. Pick the tone that suits the surface: the
+ * two-colour pair on anything that can carry the ring, and the single-colour
+ * pair where it cannot.
  */
 export default {
 	title: 'Brand/Logo',
@@ -56,32 +57,11 @@ export const OnDark = {
 };
 
 export const White = {
+	name: 'Full white — for a surface that cannot carry the ring',
 	render: () => <Pair tone="white" surface="#031E1E" />,
 };
 
 export const Black = {
+	name: 'Full black — for a surface that cannot carry the ring',
 	render: () => <Pair tone="black" />,
-};
-
-export const Mono = {
-	name: 'Mono — inherits the surrounding colour',
-	render: () => (
-		<div style={ { color: '#6d3efb' } }>
-			<Pair tone="mono" />
-		</div>
-	),
-};
-
-export const Recoloured = {
-	name: 'Recoloured by a host',
-	render: () => (
-		<div
-			style={ {
-				'--lp-logo-ink': '#6d3efb',
-				'--lp-logo-accent': '#ffd60a',
-			} }
-		>
-			<Pair tone="primary" />
-		</div>
-	),
 };

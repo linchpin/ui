@@ -9,7 +9,12 @@ import {
 	LinchpinAdminTopBar,
 } from '@linchpinagency/ui';
 
-const BRAND = defineBrand( { primary: '#318873', deep: '#082318', deepEnd: '#164a3b' } );
+/** Psst's own palette, for the story that shows the page inside a branded plugin. */
+const PSST_BRAND = defineBrand( {
+	primary: '#318873',
+	deep: '#082318',
+	deepEnd: '#164a3b',
+} );
 
 /**
  * The standard About page. Every plugin renders this same copy — only the
@@ -28,15 +33,16 @@ export default {
 };
 
 /**
- * @param {Object} props      Props.
- * @param {Object} props.plugin Identity.
+ * @param {Object} props         Props.
+ * @param {Object} props.plugin  Identity.
+ * @param {Object} [props.brand] The plugin's brand. Omit for Linchpin's own.
  * @return {Element} The page in a frame.
  */
-function Page( { plugin } ) {
+function Page( { plugin, brand } ) {
 	return (
 		<LinchpinAdminFrame
 			plugin={ plugin }
-			brand={ BRAND }
+			brand={ brand }
 			topBar={ <LinchpinAdminTopBar /> }
 		>
 			<LinchpinAdminPage title="About" badges={ null }>
@@ -55,6 +61,23 @@ export const Default = {
 export const InAnotherPlugin = {
 	name: 'In another plugin',
 	render: () => (
-		<Page plugin={ { name: 'Mantle', slug: 'mantle', version: '2.22.1' } } />
+		<Page
+			plugin={ { name: 'Mantle', slug: 'mantle', version: '2.22.1' } }
+		/>
+	),
+};
+
+/**
+ * The same page, unchanged, inside a plugin that has named its own colours.
+ * The copy and the layout are the library's; only the chrome around them
+ * moves.
+ */
+export const Branded = {
+	name: 'Branded by the plugin (Psst)',
+	render: () => (
+		<Page
+			plugin={ { name: 'Psst', slug: 'psst', version: '2.1.0' } }
+			brand={ PSST_BRAND }
+		/>
 	),
 };
