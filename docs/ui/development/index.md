@@ -42,8 +42,34 @@ release-please owns the version, the changelog and the tag. Commit with conventi
 scoped to the ClickUp key (`feat(LINCHPIN-5639): …`), merge the release PR, and the publish
 job runs on the tag.
 
-npm auth is **Trusted Publishing (OIDC)** — no token secret. The first publish of a brand new
-package cannot use it, because trusted publishing is configured on a package that already
-exists: publish `0.1.0` once from a workstation, then register this repository and
-`.github/workflows/release-please.yml` as the trusted publisher on npmjs.com, and every
-release after that is tokenless.
+npm auth is **Trusted Publishing (OIDC)** — no token secret, and npm attaches provenance by
+itself, which is why `publishConfig` does not ask for it. Asking for it would break the one
+publish that cannot run in CI: the first.
+
+### The one-time first publish
+
+Trusted publishing is configured *on a package*, so a package that does not exist yet cannot
+have a trusted publisher. Once, from a workstation:
+
+```bash
+git checkout main && git pull
+npm whoami                 # must be a member of @linchpinagency
+npm ci
+npm publish --access public    # add --otp=<code> if your npm account has 2FA on writes
+```
+
+`prepack` cleans and rebuilds, so the tarball is never a stale `build-module/`. Check what it
+will contain first with `npm pack --dry-run`.
+
+Then on npmjs.com, under the package's **Settings → Trusted publisher**, add:
+
+| Field | Value |
+| --- | --- |
+| Provider | GitHub Actions |
+| Organization or user | `linchpin` |
+| Repository | `ui` |
+| Workflow filename | `release-please.yml` |
+| Environment | *(leave empty — the publish job does not use one)* |
+
+After that, merging a release PR publishes on its own and no one needs npm credentials
+again.
