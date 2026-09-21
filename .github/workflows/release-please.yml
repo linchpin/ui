@@ -4,7 +4,32 @@ on:
     push:
         branches:
             - main
+    # Two manual jobs, neither of which the automatic path can do.
+    #
+    # `tag` republishes a version that is already tagged. The automatic path
+    # fires on the single push where release-please reports `release_created`,
+    # so a publish that fails for a reason outside the code — the registry was
+    # down, the package did not exist yet — strands that version: the tag and
+    # the GitHub release exist, and re-running the job just re-runs
+    # release-please, which now finds nothing to do.
+    #
+    # `bootstrap` covers the very first publish of a package. npm's trusted
+    # publishing cannot create a package that does not exist: the trusted
+    # publisher record lives in the package's own settings, and `npm trust`
+    # says so outright — "The package you're configuring must already exist on
+    # the npm registry." So package one has to authenticate some other way,
+    # exactly once, and every publish after it is OIDC again.
     workflow_dispatch:
+        inputs:
+            tag:
+                description: 'Tag to publish, e.g. v0.2.0. Leave empty to only refresh the release PR.'
+                required: false
+                type: string
+            bootstrap:
+                description: 'First publish only: authenticate with the NPM_TOKEN secret because no trusted publisher can exist yet.'
+                required: false
+                default: false
+                type: boolean
 
 permissions:
     contents: write
@@ -13,6 +38,9 @@ permissions:
 jobs:
     release-please:
         name: Release PR
+        # A manual publish is republishing something release-please already
+        # cut, so there is nothing for it to do and its output is unused.
+        if: ${{ github.event_name == 'push' }}
         runs-on: ubuntu-latest
         outputs:
             release_created: ${{ steps.release.outputs.release_created }}
@@ -27,19 +55,31 @@ jobs:
     publish-npm:
         name: Publish to npm
         needs: release-please
-        if: ${{ needs.release-please.outputs.release_created == 'true' }}
+        # `always()` because the dispatch path skips release-please entirely,
+        # and a skipped dependency would otherwise skip this too.
+        if: >-
+            ${{
+              always() && (
+                ( github.event_name == 'push' && needs.release-please.outputs.release_created == 'true' )
+                || ( github.event_name == 'workflow_dispatch' && inputs.tag != '' )
+              )
+            }}
         runs-on: ubuntu-latest
         timeout-minutes: 15
         permissions:
             contents: read
             # Trusted Publishing: npm mints a short-lived credential from this
-            # token, so there is no NPM_TOKEN secret to rotate or leak.
+            # token, so there is no NPM_TOKEN secret to rotate or leak. Also
+            # what signs the provenance attestation, including on the token
+            # path below — a bootstrap publish is still provenanced.
             id-token: write
+        env:
+            RELEASE_TAG: ${{ inputs.tag || needs.release-please.outputs.tag_name }}
         steps:
             - name: Checkout release tag
               uses: actions/checkout@v7
               with:
-                  ref: ${{ needs.release-please.outputs.tag_name }}
+                  ref: ${{ inputs.tag || needs.release-please.outputs.tag_name }}
 
             - name: Install Node
               uses: actions/setup-node@v7
@@ -62,6 +102,57 @@ jobs:
                     exit 1
                   fi
 
+            # The registry answers this without authentication, so we can tell
+            # the two failure modes apart before spending a build on them. A
+            # missing package plus no bootstrap flag is the one that produced a
+            # bare `404 Not Found - PUT` on v0.2.0, which reads like a
+            # permissions problem and is not one.
+            - name: Check the package exists on the registry
+              id: registry
+              run: |
+                  # `status` is read-only in zsh, so this uses a name that
+                  # survives anyone pasting the block into their own shell.
+                  name="$( node -p "require('./package.json').name" )"
+                  http_code="$( curl -sS -o /dev/null -w '%{http_code}' "https://registry.npmjs.org/$( echo "${name}" | sed 's|/|%2F|' )" )"
+                  echo "${name} → HTTP ${http_code}"
+
+                  if [ "${http_code}" = "200" ]; then
+                    echo "exists=true" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+
+                  if [ "${http_code}" != "404" ]; then
+                    echo "::error::Unexpected HTTP ${http_code} from the registry for ${name}. Not publishing into an unknown state."
+                    exit 1
+                  fi
+
+                  echo "exists=false" >> "$GITHUB_OUTPUT"
+
+                  if [ "${{ inputs.bootstrap }}" = "true" ]; then
+                    echo "::notice::${name} does not exist yet. Bootstrapping with NPM_TOKEN."
+                    exit 0
+                  fi
+
+                  echo "::error::${name} has never been published, so trusted publishing cannot authenticate: the trusted publisher record lives in a package's settings and npm refuses to create one for a package that does not exist. Re-run this workflow with tag=${RELEASE_TAG} and bootstrap=true, after adding an NPM_TOKEN secret with write access to the scope. Then register the trusted publisher and delete the secret."
+                  exit 1
+
+            - name: Verify the bootstrap token
+              if: ${{ inputs.bootstrap }}
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  if [ -z "${NODE_AUTH_TOKEN}" ]; then
+                    echo "::error::bootstrap=true but no NPM_TOKEN secret is set on this repository. Mint a granular token with write access to the @linchpinagency scope and add it, or publish the first version from a workstation with: npm publish --no-provenance"
+                    exit 1
+                  fi
+
+                  if ! who="$( npm whoami 2>&1 )"; then
+                    echo "::error::NPM_TOKEN does not authenticate against the registry: ${who}. It is expired, revoked, or not an npm token."
+                    exit 1
+                  fi
+
+                  echo "Authenticated to npm as ${who}"
+
             - name: Install dependencies
               run: npm ci
               env:
@@ -72,7 +163,30 @@ jobs:
               env:
                   HUSKY: 0
 
+            # No NODE_AUTH_TOKEN on the normal path: npm authenticates over
+            # OIDC and attaches provenance itself. The bootstrap path supplies
+            # a token and keeps provenance, because `id-token: write` is what
+            # signs the attestation and that is granted either way.
             - name: Publish
-              run: npm publish
               env:
                   HUSKY: 0
+                  NODE_AUTH_TOKEN: ${{ inputs.bootstrap && secrets.NPM_TOKEN || '' }}
+              run: npm publish
+
+            - name: Summarise
+              run: |
+                  {
+                    echo "Published \`$( node -p "require('./package.json').name" )@$( node -p "require('./package.json').version" )\` from \`${RELEASE_TAG}\`."
+                    if [ "${{ inputs.bootstrap }}" = "true" ]; then
+                      echo
+                      echo "This was a **bootstrap publish** authenticated with \`NPM_TOKEN\`. Two things to do now:"
+                      echo
+                      echo '1. Register the trusted publisher so later releases need no secret:'
+                      echo
+                      echo '   ```'
+                      echo '   npm trust github @linchpinagency/ui --repo linchpin/ui --file release-please.yml --allow-publish'
+                      echo '   ```'
+                      echo
+                      echo '2. Delete the `NPM_TOKEN` secret from this repository.'
+                    fi
+                  } >> "$GITHUB_STEP_SUMMARY"
