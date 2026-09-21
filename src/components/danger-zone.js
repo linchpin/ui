@@ -76,7 +76,18 @@ export default function DangerZone( {
 				) }
 
 				{ notice && (
-					<Notice status={ status } isDismissible={ false }>
+					/*
+					 * Rendered, not announced. `Notice` speaks its children
+					 * on mount and `error` speaks them assertively, but this
+					 * describes a risk rather than reporting an event. An
+					 * empty `spokenMessage` is core's way to opt out.
+					 */
+					<Notice
+						status={ status }
+						isDismissible={ false }
+						politeness="polite"
+						spokenMessage=""
+					>
 						{ notice }
 					</Notice>
 				) }

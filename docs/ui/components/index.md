@@ -14,6 +14,7 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminNav>` | The vertical section menu down the left. Items may carry an icon and a badge. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
 | `<LinchpinBreadcrumbs>` | The trail above a nested screen. | `items`, `headingLevel`, `linkComponent`, `ariaLabel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
+| `<SettingsCard>` | A section of a settings screen: heading, one sentence, controls. | `title`, `description`, `headingLevel`, `actions`, `size` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
 | `<LinchpinNotices>` | Snackbars from the `core/notices` store. | `className` |
 | `<LinchpinAdminFooter>` | The links row. | `links` |
@@ -90,6 +91,29 @@ component to `breadcrumbs` instead — the prop takes any node.
 the plugin's name twice. Pass `title={ null }` and `headingLevel={ 1 }` to let the trail carry
 the heading.
 
+### Settings sections
+
+`<SettingsCard>` is the most-repeated shape on any settings screen — a heading, a sentence
+saying what the section is for, and the controls — and it was the last one every plugin still
+built by hand out of a `Card`, a `CardHeader` with an `h2` and a `p`, and a `CardBody`.
+
+It is a composition, not a new primitive. Core's `Card` does the drawing. What the component
+adds is the heading arrangement, an `actions` slot in the header, and the rule that controls
+in the body are spaced from each other — the `> * + *` margin every screen was rediscovering.
+
+`headingLevel` defaults to `2`, which is right under `<LinchpinAdminPage>`'s `h1`. A card
+nested under a section that already has an `h2` passes `3`.
+
+```jsx
+<SettingsCard
+	title="Expiration"
+	description="Which lifetimes a sender may choose, and which is pre-selected."
+>
+	<CheckboxControl … />
+	<SelectControl … />
+</SettingsCard>
+```
+
 ### The danger zone
 
 Every plugin grows one — uninstall behaviour, reset settings, purge a log, disconnect a site —
@@ -99,7 +123,16 @@ destructive button. Mantle was right, so `<DangerZone>` is Mantle's shape with t
 parts as props.
 
 It stays a panel: a stroke, a tinted head and one standing warning. Enough to read differently
-at a glance, not so much that a screen with two of them looks like a failure state.
+at a glance, not so much that a screen with two of them looks like a failure state. The stroke
+is the design system's *strong* error token at 2px, on all four sides — at 1px in the ordinary
+error colour the panel read as a card with a faintly pink header rather than as the one
+section on the screen that can destroy something.
+
+The standing warning is rendered but **not announced**. `Notice` speaks its children on mount,
+and an `error` status speaks them assertively, so the panel interrupted a screen reader on
+every page load to read a sentence that had not changed and was already on screen. It
+describes a risk; it does not report an event. Announcing belongs to whatever the plugin's
+destructive action actually does.
 
 It does not confirm anything on the plugin's behalf — whether an action needs a modal, a typed
 confirmation or nothing depends on what it destroys. Put the buttons in `actions`, carrying
