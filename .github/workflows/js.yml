@@ -60,6 +60,13 @@ jobs:
                   test -f build-module/index.js || { echo "::error::build-module/index.js is missing"; exit 1; }
                   test -f build-style/style.css || { echo "::error::build-style/style.css is missing"; exit 1; }
 
+            # The plugin that adds the extensions is unit tested, but what ships
+            # is the build output, and a Babel env that stopped applying it
+            # would leave every unit test passing.
+            - name: Verify the built ESM is resolvable by Node
+              if: ${{ !cancelled() }}
+              run: npm run verify:esm
+
             - name: Build Storybook
               if: ${{ !cancelled() }}
               run: npm run build-storybook
