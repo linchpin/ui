@@ -7,7 +7,7 @@ import '@wordpress/theme/design-tokens.css';
 /**
  * Internal dependencies
  */
-import '../src/style.scss';
+import '../src/chrome.scss';
 import './wp-admin.css';
 
 /** @type {import('@storybook/react-vite').Preview} */

@@ -4,6 +4,24 @@
 import { render, screen } from '@testing-library/react';
 
 /**
+ * WordPress dependencies
+ */
+import { speak } from '@wordpress/a11y';
+
+/*
+ * `speak()` writes to a live region, which is the thing under test for the
+ * danger zone's standing warning: it should not be announced at all.
+ */
+jest.mock( '@wordpress/a11y', () => ( {
+	...jest.requireActual( '@wordpress/a11y' ),
+	speak: jest.fn(),
+} ) );
+
+beforeEach( () => {
+	speak.mockClear();
+} );
+
+/**
  * Internal dependencies
  */
 import {
@@ -19,6 +37,7 @@ import {
 	LinchpinAdminTopBar,
 	LinchpinBreadcrumbs,
 	LinchpinLogo,
+	SettingsCard,
 	VersionBadge,
 } from '../src';
 
@@ -361,6 +380,24 @@ describe( 'DangerZone', () => {
 			screen.getByRole( 'button', { name: 'Reset settings' } )
 		).toBeInTheDocument();
 	} );
+
+	it( 'does not announce the standing warning', () => {
+		// It describes a risk rather than reporting an event, and an `error`
+		// notice would otherwise interrupt a screen reader on page load to
+		// read a sentence already on screen.
+		render(
+			<Frame>
+				<DangerZone>controls</DangerZone>
+			</Frame>
+		);
+
+		expect(
+			screen.getByText(
+				'These actions are permanent and cannot be undone.'
+			)
+		).toBeInTheDocument();
+		expect( speak ).not.toHaveBeenCalled();
+	} );
 } );
 
 describe( 'LinchpinAdminLayout', () => {
@@ -377,6 +414,20 @@ describe( 'LinchpinAdminLayout', () => {
 		).not.toBeNull();
 	} );
 
+	it( 'does not open a second main landmark inside wp-admin', () => {
+		// admin-header.php already wraps a plugin screen in
+		// `<div id="wpbody" role="main">`, so a <main> here would be a
+		// nested one.
+		const { container } = render(
+			<Frame>
+				<LinchpinAdminLayout>main</LinchpinAdminLayout>
+			</Frame>
+		);
+
+		expect( container.querySelector( 'main' ) ).toBeNull();
+		expect( container.querySelector( '.lp-admin__main' ) ).not.toBeNull();
+	} );
+
 	it( 'labels the aside for assistive technology', () => {
 		render(
 			<Frame>
@@ -388,6 +439,90 @@ describe( 'LinchpinAdminLayout', () => {
 
 		expect(
 			screen.getByRole( 'complementary', { name: 'About Psst' } )
+		).toBeInTheDocument();
+	} );
+} );
+
+describe( 'SettingsCard', () => {
+	it( 'renders the heading, the description and the controls', () => {
+		render(
+			<Frame>
+				<SettingsCard
+					title="Expiration"
+					description="Which lifetimes a sender may choose."
+				>
+					<button>A control</button>
+				</SettingsCard>
+			</Frame>
+		);
+
+		expect(
+			screen.getByRole( 'heading', { level: 2, name: 'Expiration' } )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Which lifetimes a sender may choose.' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'button', { name: 'A control' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'takes a heading level, for a card nested under one', () => {
+		render(
+			<Frame>
+				<SettingsCard title="Turnstile" headingLevel={ 3 }>
+					body
+				</SettingsCard>
+			</Frame>
+		);
+
+		expect(
+			screen.getByRole( 'heading', { level: 3, name: 'Turnstile' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'renders no header at all when given nothing to put in one', () => {
+		const { container } = render(
+			<Frame>
+				<SettingsCard>body</SettingsCard>
+			</Frame>
+		);
+
+		expect(
+			container.querySelector( '.components-card__header' )
+		).toBeNull();
+		expect( screen.getByText( 'body' ) ).toBeInTheDocument();
+	} );
+
+	it( "renders no body when a screen hides a section's controls", () => {
+		const { container } = render(
+			<Frame>
+				<SettingsCard title="Sign in page" />
+			</Frame>
+		);
+
+		expect(
+			container.querySelector( '.components-card__body' )
+		).toBeNull();
+		expect(
+			screen.getByRole( 'heading', { name: 'Sign in page' } )
+		).toBeInTheDocument();
+	} );
+
+	it( 'puts actions in the header', () => {
+		render(
+			<Frame>
+				<SettingsCard
+					title="Pages"
+					actions={ <button>Create a page</button> }
+				>
+					body
+				</SettingsCard>
+			</Frame>
+		);
+
+		expect(
+			screen.getByRole( 'button', { name: 'Create a page' } )
 		).toBeInTheDocument();
 	} );
 } );

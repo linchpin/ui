@@ -1,13 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	ToggleControl,
-} from '@wordpress/components';
+import { Button, ToggleControl } from '@wordpress/components';
 import { external, link, lock, trash } from '@wordpress/icons';
 
 /**
@@ -25,6 +19,7 @@ import {
 	LinchpinAdminPage,
 	LinchpinAdminTopBar,
 	LinchpinBreadcrumbs,
+	SettingsCard,
 } from '@linchpinagency/ui';
 
 const PLUGIN = { name: 'Psst', slug: 'psst', version: '2.1.0' };
@@ -203,17 +198,15 @@ function Screen( {
 						) : undefined
 					}
 				>
-					<Card>
-						<CardHeader>
-							<h2>Pages</h2>
-						</CardHeader>
-						<CardBody>
-							<p>
-								The plugin&rsquo;s own screen goes here. The
-								library owns everything around it.
-							</p>
-						</CardBody>
-					</Card>
+					<SettingsCard
+						title="Pages"
+						description="Secret links point at the viewer page; the form lives on the create page."
+					>
+						<p>
+							The plugin&rsquo;s own screen goes here. The library
+							owns everything around it.
+						</p>
+					</SettingsCard>
 
 					{ danger && (
 						<DangerZone

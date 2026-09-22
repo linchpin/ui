@@ -59,6 +59,7 @@ import {
 	LinchpinAdminTopBar,
 	LinchpinNotices,
 	sectionNavigation,
+	SettingsCard,
 } from '@linchpinagency/ui';
 import '@linchpinagency/ui/style.css';
 

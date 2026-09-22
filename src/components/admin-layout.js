@@ -7,6 +7,10 @@
  * one that is absent is simply not rendered rather than left as an empty
  * track.
  *
+ * The middle column is a `<div>`, not a `<main>`: wp-admin already emits
+ * `<div id="wpbody" role="main">` around a plugin screen, so a `<main>` here
+ * would nest a second main landmark inside it. The class is unchanged.
+ *
  * Which of the two navigation levels a screen uses is a separate decision:
  * `nav` here is the top level (Mantle's Dashboard / Security / Tools), and
  * `<LinchpinAdminPage navigation>` is the tab strip for a screen's own
@@ -41,7 +45,7 @@ export default function LinchpinAdminLayout( {
 	return (
 		<div className={ classes }>
 			{ nav }
-			<main className="lp-admin__main">{ children }</main>
+			<div className="lp-admin__main">{ children }</div>
 			{ sidebar && (
 				<aside className="lp-admin__aside" aria-label={ label }>
 					{ sidebar }

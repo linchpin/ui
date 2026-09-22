@@ -58,7 +58,8 @@ jobs:
               if: ${{ !cancelled() }}
               run: |
                   test -f build-module/index.js || { echo "::error::build-module/index.js is missing"; exit 1; }
-                  test -f build-style/style.css || { echo "::error::build-style/style.css is missing"; exit 1; }
+                  test -f build-style/chrome.css || { echo "::error::build-style/chrome.css is missing"; exit 1; }
+                  test ! -f build-style/style.css || { echo "::error::build-style/style.css is back; wp-scripts splits any module with that filename out of the consuming plugin bundle"; exit 1; }
 
             # The plugin that adds the extensions is unit tested, but what ships
             # is the build output, and a Babel env that stopped applying it

@@ -18,6 +18,11 @@
  *
  * `wp-components` must be a dependency of the stylesheet that loads this, so
  * core's rules land first and ours win on specificity ties.
+ *
+ * The file is `chrome.scss`, not `style.scss`: @wordpress/scripts routes any
+ * module named `style.css` into a separate `style-<entry>.css`, which takes
+ * the chrome out of the bundle the consuming plugin enqueues. The
+ * `./style.css` and `./style.scss` specifiers still resolve here.
  */
 
 $lp-tablet: 782px;
@@ -152,6 +157,28 @@ $lp-aside-width: 300px;
 
 	&__status.is-down .lp-admin__status-dot {
 		background: var(--lp-color-status-down);
+	}
+
+	/*
+	 * Snackbars, placed — the component renders the class, so the stylesheet
+	 * owns where they go.
+	 *
+	 * Core's `.components-snackbar-list` is a full-width, click-through
+	 * strip: pin it to the bottom and centre the snackbars inside it.
+	 * Centring the strip only slides its full width sideways, and the
+	 * centring has to reach the notice container because core's wrappers are
+	 * full width too. The z-index is core's; nothing here should lower it.
+	 */
+	&__notices {
+		position: fixed;
+		bottom: var(--wpds-dimension-gap-lg);
+		left: 0;
+		width: 100%;
+
+		.components-snackbar-list__notice-container {
+			display: flex;
+			justify-content: center;
+		}
 	}
 
 	/*
@@ -470,6 +497,48 @@ $lp-aside-width: 300px;
 		}
 	}
 
+	/*
+	 * A settings section. The heading and its sentence share the header with
+	 * any actions; the body spaces its controls from each other, which is
+	 * the part every screen was adding by hand.
+	 */
+	&__settings-card {
+
+		.components-card__header {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: var(--wpds-dimension-gap-md);
+		}
+	}
+
+	&__settings-card-heading {
+		min-width: 0;
+	}
+
+	&__settings-card-title {
+		margin: 0;
+		font-size: var(--wpds-typography-font-size-md);
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+		color: var(--wpds-color-foreground-content-neutral);
+	}
+
+	&__settings-card-description {
+		margin: 4px 0 0;
+		color: var(--wpds-color-foreground-content-neutral-weak);
+	}
+
+	&__settings-card-actions {
+		display: flex;
+		flex: 0 0 auto;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-sm);
+	}
+
+	&__settings-card .components-card__body > * + * {
+		margin-top: 16px;
+	}
+
 	&__about {
 		max-width: 760px;
 
@@ -656,11 +725,15 @@ $lp-aside-width: 300px;
 	 * differently from the settings above it at a glance, not that it shouts.
 	 */
 	&__danger {
-		border-color: var(--wpds-color-stroke-surface-error);
+
+		// The strong error stroke at 2px, on all four sides: at 1px in the
+		// ordinary error colour this read as a card with a pink header
+		// rather than the one section that can destroy something.
+		border: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
 
 		.components-card__header {
 			background: var(--wpds-color-background-surface-error-weak);
-			border-bottom-color: var(--wpds-color-stroke-surface-error);
+			border-bottom: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
 		}
 	}
 

@@ -13,8 +13,10 @@
   "module": "build-module/index.js",
   "exports": {
     ".": "./build-module/index.js",
-    "./style.css": "./build-style/style.css",
-    "./style.scss": "./src/style.scss",
+    "./style.css": "./build-style/chrome.css",
+    "./chrome.css": "./build-style/chrome.css",
+    "./style.scss": "./src/chrome.scss",
+    "./chrome.scss": "./src/chrome.scss",
     "./package.json": "./package.json"
   },
   "files": [
@@ -25,7 +27,7 @@
   "scripts": {
     "build": "npm run build:js && npm run build:style",
     "build:js": "BABEL_ENV=module babel src --out-dir build-module --extensions .js,.jsx --ignore \"**/*.test.js\",\"**/test/**\",\"**/*.stories.jsx\" --copy-files --no-copy-ignored",
-    "build:style": "sass --no-source-map --load-path=node_modules src/style.scss build-style/style.css",
+    "build:style": "sass --no-source-map --load-path=node_modules src/chrome.scss build-style/chrome.css",
     "verify:esm": "node scripts/verify-esm.mjs",
     "clean": "rm -rf build-module build-style storybook-static",
     "format": "wp-scripts format",
@@ -65,6 +67,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "@wordpress/a11y": "^4.55.0",
     "@wordpress/admin-ui": "^2.10.0",
     "@wordpress/components": "^40.1.0",
     "@wordpress/data": "^10.55.0",

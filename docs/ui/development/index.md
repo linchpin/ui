@@ -19,7 +19,7 @@ npm run verify:esm     # the built package loads under native Node ESM
 ## Build
 
 `build:js` compiles `src/` to ESM in `build-module/` with Babel, and `build:style` compiles
-`src/style.scss` to `build-style/style.css` with Dart Sass. The package publishes
+`src/chrome.scss` to `build-style/chrome.css` with Dart Sass (not `style.css` — see [Installation](../getting-started/installation.md#the-stylesheet)). The package publishes
 `build-module/`, `build-style/` and `src/`, so a consumer can take the compiled CSS or the
 SCSS source.
 
