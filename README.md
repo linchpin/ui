@@ -5,7 +5,7 @@ Linchpin's admin component library for WordPress plugins — the chrome and the 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 <!-- x-release-please-start-version -->
-## Latest Release: 0.2.2
+## Latest Release: 0.3.0
 <!-- x-release-please-end -->
 
 | Workflow | Status |

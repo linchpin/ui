@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/linchpin/ui/compare/v0.2.2...v0.3.0) (2026-09-22)
+
+
+### Features ✨
+
+* **LINCHPIN-5639:** Add a settings card, place notices and rename the stylesheet ([9e54579](https://github.com/linchpin/ui/commit/9e5457933c1ad238a2dc605f87ba77c16bf38539))
+* **LINCHPIN-5639:** Add a settings card, place notices and rename the stylesheet ([023ad92](https://github.com/linchpin/ui/commit/023ad92fad3d91a0fdbd1e4096b5034fa079e18e))
+
 ## [0.2.2](https://github.com/linchpin/ui/compare/v0.2.1...v0.2.2) (2026-09-21)
 
 

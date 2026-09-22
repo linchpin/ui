@@ -1,6 +1,6 @@
 {
   "name": "@linchpinagency/ui",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Linchpin's admin component library for WordPress plugins — the chrome and the brand, on top of @wordpress/admin-ui.",
   "author": "Linchpin <sayhi@linchpin.com>",
   "license": "GPL-2.0-or-later",
