@@ -232,7 +232,7 @@ screen rather than squeezing it.
 | `brandStyle()` | A brand as `--lp-brand-*` custom properties. |
 | `linchpinLinks()` | The standard links, UTM-tagged with the plugin slug. |
 | `useAdminContext()` | Identity, brand and links from the nearest frame. |
-| `usePlatformStatus()` | Polls status.linchpin.com. Opt-in; reports `unknown` rather than `down` when a request fails. |
+| `usePlatformStatus()` | Polls status.linchpin.com. Opt-in; any monitor down reads as `down`, and a failed request or a summary without a `down` count as `unknown`, never `down`. |
 | `sectionNavigation()` | Builds `Page`'s `navigation` config, varying one query argument and keeping the rest of the URL. |
 | `currentSection()` | Which section the URL asks for, falling back to the first. |
 | `LINCHPIN_COLORS`, `colorVar()`, `colorVars()` | The agency palette, and the `--lp-color-*` properties that carry it. |

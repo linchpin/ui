@@ -47,7 +47,7 @@ export default function usePlatformStatus( enabled = false ) {
 				const data = await response.json();
 
 				if ( ! cancelled ) {
-					setStatus( data?.status === 'up' ? 'up' : 'down' );
+					setStatus( platformStatusFrom( data ) );
 				}
 			} catch ( error ) {
 				if ( ! cancelled && error.name !== 'AbortError' ) {
@@ -73,6 +73,26 @@ export default function usePlatformStatus( enabled = false ) {
  * @param {string} status One of `up`, `down`, `loading`, `unknown`.
  * @return {string} An accessible label.
  */
+/**
+ * Read the status page's summary into one of `up`, `down` or `unknown`.
+ *
+ * The endpoint reports counts of monitors, `{ up, down, monitors, … }`, not a
+ * status string. Any monitor down is `down`; a summary without a numeric
+ * `down` is `unknown`, for the same reason a failed request is.
+ *
+ * @param {Object} data Parsed response from the status endpoint.
+ * @return {string} `up`, `down` or `unknown`.
+ */
+export function platformStatusFrom( data ) {
+	const down = data?.down;
+
+	if ( typeof down !== 'number' || ! Number.isFinite( down ) ) {
+		return 'unknown';
+	}
+
+	return down === 0 ? 'up' : 'down';
+}
+
 export function statusLabel( status ) {
 	if ( status === 'up' ) {
 		return __( 'All systems operational' );
