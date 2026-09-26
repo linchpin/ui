@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1](https://github.com/linchpin/ui/compare/v0.3.0...v0.3.1) (2026-09-26)
+
+
+### Bug Fixes 🐛
+
+* **LINCHPIN-5724:** Fix the platform status dot, and keep the top bar inside a phone screen ([df1a0ad](https://github.com/linchpin/ui/commit/df1a0ad2289ae6a063ea61ceb65a0537c0b21f6e))
+* **LINCHPIN-5724:** Keep the top bar inside a phone screen ([8d57b62](https://github.com/linchpin/ui/commit/8d57b62b7a6e8eca8715fd980cac2d9aff512660))
+* **LINCHPIN-5724:** Read the platform status from the monitor counts ([ae0edd3](https://github.com/linchpin/ui/commit/ae0edd30cf496a5f90891124f26ac69b80798490))
+
 ## [0.3.0](https://github.com/linchpin/ui/compare/v0.2.2...v0.3.0) (2026-09-22)
 
 
