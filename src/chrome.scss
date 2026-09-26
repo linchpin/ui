@@ -91,6 +91,28 @@ $lp-aside-width: 300px;
 		width: auto;
 	}
 
+	/*
+	 * On a phone the plugin's mark, the status, the version and the Linchpin
+	 * mark do not fit side by side at full size, and the brand block would
+	 * not shrink below its logo's natural width -- so the Linchpin mark ran
+	 * off the right edge. Let the brand give way, and take the logo down to
+	 * the height of the marks beside it.
+	 */
+	@media (max-width: $lp-tablet) {
+
+		&__topbar-brand {
+			min-width: 0;
+		}
+
+		&__topbar-brand svg,
+		&__topbar-logo {
+			height: 24px;
+			max-width: 100%;
+			object-fit: contain;
+			object-position: left center;
+		}
+	}
+
 	&__topbar-name {
 		font-size: var(--wpds-typography-font-size-lg);
 		font-weight: var(--wpds-typography-font-weight-emphasis);
