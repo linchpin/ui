@@ -245,6 +245,34 @@ $lp-aside-width: 300px;
 		> [class*="__content"][class*="__has-padding"] {
 			padding-inline: var(--lp-admin-gutter);
 		}
+
+		/*
+		 * Core's header is sticky at `inset-block-start: 0`, which assumes the
+		 * page is its own scroll container, as it is in the site editor. In
+		 * wp-admin the document scrolls, so the header pinned itself under
+		 * the fixed admin bar. Pin it below the bar instead, by the height
+		 * core publishes for it (32px, 46px under 782px).
+		 */
+		> [class*="__header"] {
+			inset-block-start: var(--wp-admin--admin-bar--height, 0);
+
+			// At this width the admin bar is `position: absolute` and scrolls
+			// away with the page, so there is nothing to clear.
+			@media screen and (max-width: 600px) {
+				inset-block-start: 0;
+			}
+		}
+
+		/*
+		 * The header's `z-index: 1` is only a tie with anything positioned in
+		 * the body -- a DataViews table head is sticky at `z-index: 1` too --
+		 * and the body comes later in the document, so it painted over the
+		 * header as it scrolled beneath it. Its own stacking context keeps
+		 * everything in the body under the header, whatever it sets.
+		 */
+		> :not([class*="__header"]) {
+			isolation: isolate;
+		}
 	}
 
 	&__body {
@@ -756,6 +784,28 @@ $lp-aside-width: 300px;
 		.components-card__header {
 			background: var(--wpds-color-background-surface-error-weak);
 			border-bottom: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
+		}
+
+		/*
+		 * Corners. The legacy `Card` draws its border as a 1px box-shadow
+		 * ring outside a 7px radius, which reads as 8px -- the design
+		 * system's `Card` radius. With a real border in place of the ring,
+		 * the panel rounds at that token directly and the ring goes, or it
+		 * showed as a grey line around the red one with tighter corners than
+		 * every card beside it. The head's top corners sit inside the border,
+		 * so they round by the radius less its width.
+		 *
+		 * Doubled up on `.components-card` because the runtime injects the
+		 * card's own rules after this stylesheet, and a tie would go to them.
+		 */
+		&.components-card {
+			border-radius: var(--wpds-border-radius-lg);
+			box-shadow: none;
+
+			.components-card__header:first-of-type {
+				border-start-start-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
+				border-start-end-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
+			}
 		}
 	}
 
