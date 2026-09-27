@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.2](https://github.com/linchpin/ui/compare/v0.3.1...v0.3.2) (2026-09-27)
+
+
+### Bug Fixes 🐛
+
+* **LINCHPIN-5725:** Keep the page header below the admin bar ([f555aa5](https://github.com/linchpin/ui/commit/f555aa51b2af083c38ea85905da420fd044baf16))
+* **LINCHPIN-5725:** Keep the page header below the admin bar, and round DangerZone like the design-system Card ([b11a8c4](https://github.com/linchpin/ui/commit/b11a8c4270fa9f6a809a4547c5d70dddf6b31913))
+* **LINCHPIN-5725:** Round DangerZone like the design-system Card ([d293918](https://github.com/linchpin/ui/commit/d293918e3aabbcdcc82b90dd126d4230cc012205))
+
 ## [0.3.1](https://github.com/linchpin/ui/compare/v0.3.0...v0.3.1) (2026-09-26)
 
 
