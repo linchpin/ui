@@ -785,6 +785,28 @@ $lp-aside-width: 300px;
 			background: var(--wpds-color-background-surface-error-weak);
 			border-bottom: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
 		}
+
+		/*
+		 * Corners. The legacy `Card` draws its border as a 1px box-shadow
+		 * ring outside a 7px radius, which reads as 8px -- the design
+		 * system's `Card` radius. With a real border in place of the ring,
+		 * the panel rounds at that token directly and the ring goes, or it
+		 * showed as a grey line around the red one with tighter corners than
+		 * every card beside it. The head's top corners sit inside the border,
+		 * so they round by the radius less its width.
+		 *
+		 * Doubled up on `.components-card` because the runtime injects the
+		 * card's own rules after this stylesheet, and a tie would go to them.
+		 */
+		&.components-card {
+			border-radius: var(--wpds-border-radius-lg);
+			box-shadow: none;
+
+			.components-card__header:first-of-type {
+				border-start-start-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
+				border-start-end-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
+			}
+		}
 	}
 
 	&__danger-title {
