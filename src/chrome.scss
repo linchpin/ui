@@ -245,6 +245,34 @@ $lp-aside-width: 300px;
 		> [class*="__content"][class*="__has-padding"] {
 			padding-inline: var(--lp-admin-gutter);
 		}
+
+		/*
+		 * Core's header is sticky at `inset-block-start: 0`, which assumes the
+		 * page is its own scroll container, as it is in the site editor. In
+		 * wp-admin the document scrolls, so the header pinned itself under
+		 * the fixed admin bar. Pin it below the bar instead, by the height
+		 * core publishes for it (32px, 46px under 782px).
+		 */
+		> [class*="__header"] {
+			inset-block-start: var(--wp-admin--admin-bar--height, 0);
+
+			// At this width the admin bar is `position: absolute` and scrolls
+			// away with the page, so there is nothing to clear.
+			@media screen and (max-width: 600px) {
+				inset-block-start: 0;
+			}
+		}
+
+		/*
+		 * The header's `z-index: 1` is only a tie with anything positioned in
+		 * the body -- a DataViews table head is sticky at `z-index: 1` too --
+		 * and the body comes later in the document, so it painted over the
+		 * header as it scrolled beneath it. Its own stacking context keeps
+		 * everything in the body under the header, whatever it sets.
+		 */
+		> :not([class*="__header"]) {
+			isolation: isolate;
+		}
 	}
 
 	&__body {
