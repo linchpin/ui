@@ -25,6 +25,9 @@
  * `./style.css` and `./style.scss` specifiers still resolve here.
  */
 
+// Notices stand alone (see notice.scss) and come along with the chrome.
+@use "notice";
+
 $lp-tablet: 782px;
 $lp-two-column: 1100px;
 $lp-three-column: 1400px;

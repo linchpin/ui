@@ -17,6 +17,8 @@
     "./chrome.css": "./build-style/chrome.css",
     "./style.scss": "./src/chrome.scss",
     "./chrome.scss": "./src/chrome.scss",
+    "./notice.css": "./build-style/notice.css",
+    "./notice.scss": "./src/notice.scss",
     "./package.json": "./package.json"
   },
   "files": [
@@ -27,7 +29,7 @@
   "scripts": {
     "build": "npm run build:js && npm run build:style",
     "build:js": "BABEL_ENV=module babel src --out-dir build-module --extensions .js,.jsx --ignore \"**/*.test.js\",\"**/test/**\",\"**/*.stories.jsx\" --copy-files --no-copy-ignored",
-    "build:style": "sass --no-source-map --load-path=node_modules src/chrome.scss build-style/chrome.css",
+    "build:style": "node scripts/build-style.mjs",
     "verify:esm": "node scripts/verify-esm.mjs",
     "clean": "rm -rf build-module build-style storybook-static",
     "format": "wp-scripts format",
@@ -79,6 +81,7 @@
     "@wordpress/theme": "^2.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sass": "^1.95.0",

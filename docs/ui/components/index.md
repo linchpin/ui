@@ -16,6 +16,7 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<SettingsCard>` | A section of a settings screen: heading, one sentence, controls. | `title`, `description`, `headingLevel`, `actions`, `size` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
+| `<LinchpinNotice>` | A notice: the plugin's mark, what it says, and its actions in a column of their own. Also renderable from PHP. | `icon`, `eyebrow`, `title`, `status`, `tone`, `surface`, `variant`, `actions`, `onDismiss` |
 | `<LinchpinNotices>` | Snackbars from the `core/notices` store. | `className` |
 | `<LinchpinAdminFooter>` | The links row. | `links` |
 
@@ -207,6 +208,103 @@ render a router link instead of an `<a>`.
 The columns a layout renders are the ones it is given. Below 1400px the help column goes
 first, because it is context rather than the work; below 782px the menu stacks above the
 screen rather than squeezing it.
+
+## Notices
+
+`<LinchpinNotice>` is the one shape for every message a plugin raises, in its own screens and
+in wp-admin's notice area alike: the plugin's mark on a brand tile at the left, the content
+beside it, and the actions in a column of their own on the right. The column drops beneath the
+content when the notice is too narrow for it — a phone, a sidebar — by a container query on
+the notice itself, not the viewport.
+
+Every part of the content is optional, and the point is to give only what the notice needs:
+
+| Prop | What it is | Leave it out when |
+| --- | --- | --- |
+| `eyebrow` | Who is speaking, small, above the title. | The title or the sentence already says so. "Linchpin" over "Linchpin can handle these updates" is the same word twice. |
+| `title` | The point of the notice. | One sentence says everything. |
+| `status` | A chip beside the title: *Needs an answer*, *Action needed*. | Nothing is waiting on the reader. |
+| children | The detail. | The title is the whole message. |
+| `actions` | Buttons, in the right-hand column. | There is nothing to do. |
+| `onDismiss` | Shows the dismiss button in the corner. | It must stay until it is answered. |
+
+Tone is never a stripe down one edge. `tone` (`info`, `success`, `warning`, `error`) sets the
+chip's colour; `surface="tinted"` also gives the notice the tone's background — use it for a
+notice that is waiting on the reader. A plain `error` notice draws its whole border in the
+error stroke. `variant="banner"` is the full-bleed strip under a plugin's top bar: no corners,
+no side strokes, inset by the frame's gutter.
+
+`icon` is the mark on the tile. It defaults to the Linchpin mark; a plugin passes its own, in
+white, and the tile paints it on the brand gradient (`--lp-brand-deep` to `--lp-brand-deep-end`).
+`icon={ false }` drops the tile.
+
+```jsx
+<LinchpinNotice
+	title="Linchpin can handle these updates for you"
+	actions={ <Button variant="primary">Ask Linchpin to handle it</Button> }
+	onDismiss={ dismiss }
+>
+	Each update is tested before it is applied.
+</LinchpinNotice>
+
+<LinchpinNotice
+	variant="banner"
+	surface="tinted"
+	tone="warning"
+	icon={ <img src={ markUrl } alt="" /> }
+	title="Mantle is not connected to the API"
+	actions={ <Button variant="primary" href={ reconnectUrl }>Reconnect this site</Button> }
+	onDismiss={ dismiss }
+>
+	Monitoring and plugin reporting are switched off until this site reconnects.
+</LinchpinNotice>
+```
+
+A notice present when the screen renders is read with the screen, so nothing is announced. A
+message that appears because of something the reader just did is a snackbar from
+`core/notices`, which `<LinchpinNotices>` renders.
+
+### Rendering a notice from PHP
+
+`admin_notices` output renders on every wp-admin screen, most of which load no plugin bundle,
+so the notice is also a markup contract with a standalone stylesheet. Compile
+`@linchpinagency/ui/notice.scss` (or enqueue `notice.css`) into the stylesheet the plugin loads
+admin-wide, and print:
+
+```html
+<div class="notice lp-notice is-card is-tone-warning is-tinted is-dismissible">
+	<div class="lp-notice__inner">
+		<span class="lp-notice__icon" aria-hidden="true"><img src="…/mark-white.svg" alt=""></span>
+		<div class="lp-notice__content">
+			<p class="lp-notice__eyebrow">…</p>
+			<div class="lp-notice__heading">
+				<h2 class="lp-notice__title">…</h2>
+				<span class="lp-notice__status">…</span>
+			</div>
+			<div class="lp-notice__body"><p>…</p></div>
+		</div>
+		<div class="lp-notice__actions"><a class="button button-primary" href="…">…</a></div>
+	</div>
+</div>
+```
+
+Leave out any part the notice doesn't need. `notice` is core's class and keeps core's handling:
+the notice moves under the screen's heading, and with `is-dismissible` core appends its own
+dismiss button, which the stylesheet puts in the corner. A notice that renders its own
+`.notice-dismiss` (one posting a form, say) adds `has-dismiss` instead, so core doesn't add a
+second. wp-admin's `.button-primary` takes the brand's primary colour, and other `.button`s are
+outlined in it.
+
+Outside a frame nothing sets `--lp-brand-*`, so a PHP notice paints in Linchpin's palette
+unless the plugin sets them on its notices:
+
+```scss
+.lp-notice.is-brand-mantle {
+	--lp-brand-primary: #c900ae;
+	--lp-brand-deep: #c900ae;
+	--lp-brand-deep-end: #7d58c6;
+}
+```
 
 ## Sidebar cards
 

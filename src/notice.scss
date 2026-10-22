@@ -1,0 +1,337 @@
+/**
+ * Notices — `<LinchpinNotice>`, and the same markup rendered from PHP.
+ *
+ * A notice is the plugin's mark on a brand tile, the content beside it, and
+ * the actions in a column of their own on the right. Every part of the
+ * content is optional — eyebrow, title, status chip, body — so a notice
+ * carries only what it has to say, and nothing says the plugin's name twice.
+ * Tone is a chip and, on a tinted surface, the background; never a stripe
+ * down one edge.
+ *
+ * This file stands alone. `admin_notices` output renders on every wp-admin
+ * screen, most of which load no plugin bundle and sit outside any frame, so
+ * nothing here may depend on the frame having run: every design token has a
+ * fallback, and the brand properties fall back to Linchpin's own. The token
+ * fallbacks are injected at build time by @wordpress/theme's PostCSS plugin
+ * (scripts/build-style.mjs), so consume `@linchpinagency/ui/notice.css`, not
+ * this source, in the stylesheet a plugin enqueues admin-wide; `chrome.css`
+ * includes it for the frame.
+ *
+ * The markup contract, for PHP:
+ *
+ *     <div class="notice lp-notice is-card is-tone-warning is-tinted">
+ *       <div class="lp-notice__inner">
+ *         <span class="lp-notice__icon" aria-hidden="true"><img …></span>
+ *         <div class="lp-notice__content">
+ *           <p class="lp-notice__eyebrow">…</p>
+ *           <div class="lp-notice__heading">
+ *             <h2 class="lp-notice__title">…</h2>
+ *             <span class="lp-notice__status">…</span>
+ *           </div>
+ *           <div class="lp-notice__body"><p>…</p></div>
+ *         </div>
+ *         <div class="lp-notice__actions">…</div>
+ *       </div>
+ *     </div>
+ *
+ * `notice` is core's class, and keeps core's handling: the notice is moved
+ * under the screen's heading, and with `is-dismissible` core appends its own
+ * dismiss button, which this places in the corner.
+ */
+
+.lp-notice {
+	--lp-notice-surface: var(--wpds-color-background-surface-neutral-strong);
+	--lp-notice-stroke: var(--wpds-color-stroke-surface-neutral);
+	--lp-notice-ink: var(--wpds-color-foreground-content-neutral);
+	--lp-notice-ink-weak: var(--wpds-color-foreground-content-neutral-weak);
+	--lp-notice-chip: var(--wpds-color-background-surface-neutral-weak);
+	--lp-notice-chip-ink: var(--wpds-color-foreground-content-neutral);
+	--lp-notice-tile: linear-gradient(135deg, var(--lp-brand-deep, #3fc1d0) 0%, var(--lp-brand-deep-end, var(--lp-brand-deep, #3fc1d0)) 100%);
+	--lp-notice-tile-ink: var(--lp-brand-on-brand, #fff);
+	--lp-notice-accent: var(--lp-brand-primary, #031e1e);
+	--lp-notice-accent-ink: var(--lp-color-on-brand, #fff);
+	--lp-notice-gap: var(--wpds-dimension-gap-md);
+	--lp-notice-padding: var(--wpds-dimension-padding-lg);
+	--lp-notice-icon-size: 32px;
+
+	background: var(--lp-notice-surface);
+	border: var(--wpds-border-width-xs) solid var(--lp-notice-stroke);
+	border-radius: var(--wpds-border-radius-lg);
+	box-shadow: none;
+	box-sizing: border-box;
+	color: var(--lp-notice-ink);
+	container: lp-notice / inline-size;
+	font-size: var(--wpds-typography-font-size-md);
+	line-height: 1.5;
+	padding: var(--lp-notice-padding);
+	position: relative;
+
+	// Room for the dismiss button in the corner, whoever renders it.
+	&.has-dismiss,
+	&.is-dismissible {
+		padding-inline-end: calc(var(--lp-notice-padding) + 32px);
+	}
+
+	/*
+	 * The full-bleed strip under a plugin's top bar: no corners, no side
+	 * strokes, inset by the frame's gutter so its content lines up with the
+	 * page beneath it.
+	 */
+	&.is-banner {
+		--lp-notice-padding: var(--lp-admin-gutter, var(--wpds-dimension-padding-lg));
+
+		border-radius: 0;
+		border-width: 0 0 var(--wpds-border-width-xs);
+	}
+
+	&.is-tone-info {
+		--lp-notice-chip: var(--wpds-color-background-surface-info);
+		--lp-notice-chip-ink: var(--wpds-color-foreground-content-info);
+	}
+
+	&.is-tone-success {
+		--lp-notice-chip: var(--wpds-color-background-surface-success);
+		--lp-notice-chip-ink: var(--wpds-color-foreground-content-success);
+	}
+
+	&.is-tone-warning {
+		--lp-notice-chip: var(--wpds-color-background-surface-warning);
+		--lp-notice-chip-ink: var(--wpds-color-foreground-content-warning);
+	}
+
+	// An error is the one tone the plain card states in its stroke, all the
+	// way round: it is the notice that is holding something up.
+	&.is-tone-error {
+		--lp-notice-stroke: var(--wpds-color-stroke-surface-error-strong);
+		--lp-notice-chip: var(--wpds-color-background-surface-error);
+		--lp-notice-chip-ink: var(--wpds-color-foreground-content-error);
+	}
+
+	// Tinted: the tone's weak surface and its stroke. A chip on the tint
+	// would be the same colour twice, so it goes back to neutral.
+	&.is-tinted {
+		--lp-notice-chip: var(--wpds-color-background-surface-neutral-strong);
+		--lp-notice-chip-ink: var(--lp-notice-ink);
+
+		&.is-tone-info {
+			--lp-notice-surface: var(--wpds-color-background-surface-info-weak);
+			--lp-notice-stroke: var(--wpds-color-stroke-surface-info);
+		}
+
+		&.is-tone-success {
+			--lp-notice-surface: var(--wpds-color-background-surface-success-weak);
+			--lp-notice-stroke: var(--wpds-color-stroke-surface-success);
+		}
+
+		&.is-tone-warning {
+			--lp-notice-surface: var(--wpds-color-background-surface-warning-weak);
+			--lp-notice-stroke: var(--wpds-color-stroke-surface-warning);
+		}
+
+		&.is-tone-error {
+			--lp-notice-surface: var(--wpds-color-background-surface-error-weak);
+			--lp-notice-stroke: var(--wpds-color-stroke-surface-error);
+		}
+	}
+}
+
+.lp-notice__inner {
+	align-items: flex-start;
+	display: flex;
+	gap: var(--lp-notice-gap) var(--wpds-dimension-gap-lg);
+}
+
+.lp-notice__icon {
+	align-items: center;
+	background: var(--lp-notice-tile);
+	border-radius: var(--wpds-border-radius-md);
+	color: var(--lp-notice-tile-ink);
+	display: flex;
+	flex: none;
+	height: var(--lp-notice-icon-size);
+	justify-content: center;
+	width: var(--lp-notice-icon-size);
+
+	> img,
+	> svg {
+		display: block;
+		height: 18px;
+		max-width: 20px;
+		width: auto;
+	}
+}
+
+// A zero basis keeps the content beside the tile when the row wraps: only
+// the actions, which ask for the whole width, move to a line of their own.
+.lp-notice__content {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.lp-notice__actions {
+	align-items: center;
+	align-self: center;
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	gap: var(--wpds-dimension-gap-sm);
+	justify-content: flex-end;
+	max-width: 50%;
+}
+
+/*
+ * A narrow notice — a phone, a sidebar, a modal — has no room for a column
+ * of actions, so they drop beneath the content and line up with it.
+ */
+@container lp-notice (max-width: 560px) {
+
+	.lp-notice__inner {
+		flex-wrap: wrap;
+	}
+
+	.lp-notice__actions {
+		flex-basis: 100%;
+		justify-content: flex-start;
+		max-width: none;
+	}
+
+	// Under the content, not under the tile.
+	.lp-notice__icon ~ .lp-notice__actions {
+		flex-basis: calc(100% - var(--lp-notice-icon-size) - var(--wpds-dimension-gap-lg));
+		margin-inline-start: auto;
+	}
+}
+
+// Selectors start at `.lp-notice` to outrank core's `.notice p` and the
+// `.wrap h2` a notice is moved under.
+.lp-notice .lp-notice__eyebrow {
+	color: var(--lp-notice-ink-weak);
+	font-size: var(--wpds-typography-font-size-sm);
+	font-weight: var(--wpds-typography-font-weight-emphasis);
+	line-height: 16px;
+	margin: 0 0 2px;
+	padding: 0;
+}
+
+.lp-notice .lp-notice__heading {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wpds-dimension-gap-xs) var(--wpds-dimension-gap-sm);
+	margin: 0 0 var(--wpds-dimension-gap-xs);
+}
+
+.lp-notice .lp-notice__title {
+	color: var(--lp-notice-ink);
+	font-size: var(--wpds-typography-font-size-lg);
+	font-weight: var(--wpds-typography-font-weight-emphasis);
+	line-height: 1.4;
+	margin: 0;
+	padding: 0;
+}
+
+.lp-notice .lp-notice__status {
+	background: var(--lp-notice-chip);
+	border-radius: 999px;
+	color: var(--lp-notice-chip-ink);
+	font-size: var(--wpds-typography-font-size-xs);
+	font-weight: 500;
+	line-height: 18px;
+	padding: 0 var(--wpds-dimension-padding-sm);
+	white-space: nowrap;
+}
+
+.lp-notice .lp-notice__body {
+
+	> * {
+		margin: 0;
+		padding: 0;
+	}
+
+	> * + * {
+		margin-top: var(--wpds-dimension-gap-xs);
+	}
+
+	code {
+		background: var(--wpds-color-background-surface-neutral-weak);
+		border-radius: var(--wpds-border-radius-sm);
+		font-size: var(--wpds-typography-font-size-sm);
+		padding: 1px 6px;
+	}
+}
+
+// The heading carries its own space below; a lone body line needs none.
+.lp-notice .lp-notice__heading:last-child,
+.lp-notice .lp-notice__eyebrow:last-child {
+	margin-bottom: 0;
+}
+
+/*
+ * The dismiss button: the component's own, or the one core appends to a
+ * `.notice.is-dismissible`. Either way, the top corner.
+ */
+.lp-notice .lp-notice__dismiss,
+.lp-notice .notice-dismiss {
+	inset-block-start: calc(var(--lp-notice-padding) - 6px);
+	inset-inline-end: calc(var(--lp-notice-padding) - 8px);
+	position: absolute;
+}
+
+/*
+ * wp-admin's own buttons, for notices rendered from PHP. A primary action
+ * takes the brand's primary colour, the way it does inside the frame, where
+ * the design system's buttons already follow it.
+ */
+.lp-notice .button-primary {
+	background: var(--lp-notice-accent);
+	border-color: var(--lp-notice-accent);
+	color: var(--lp-notice-accent-ink);
+
+	&:hover,
+	&:focus {
+		background: color-mix(in srgb, var(--lp-notice-accent) 85%, #fff);
+		border-color: color-mix(in srgb, var(--lp-notice-accent) 85%, #fff);
+		color: var(--lp-notice-accent-ink);
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1px var(--lp-notice-surface), 0 0 0 3px var(--lp-notice-accent);
+	}
+}
+
+// The other buttons are outlined in it, as the design system's secondary
+// buttons are, rather than in the admin colour scheme's blue.
+.lp-notice .button:not(.button-primary):not(.button-link) {
+	background: var(--lp-notice-surface);
+	border-color: var(--lp-notice-accent);
+	color: var(--lp-notice-accent);
+
+	&:hover,
+	&:focus {
+		background: color-mix(in srgb, var(--lp-notice-accent) 8%, var(--lp-notice-surface));
+		border-color: var(--lp-notice-accent);
+		color: var(--lp-notice-accent);
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1px var(--lp-notice-surface), 0 0 0 3px var(--lp-notice-accent);
+	}
+}
+
+// Core's `.notice` brings a 4px left border, a shadow and its own padding.
+// Doubled up so the notice's own geometry wins whatever loads last.
+.notice.lp-notice {
+	background: var(--lp-notice-surface);
+	border: var(--wpds-border-width-xs) solid var(--lp-notice-stroke);
+	box-shadow: none;
+	padding: var(--lp-notice-padding);
+
+	&.has-dismiss,
+	&.is-dismissible {
+		padding-inline-end: calc(var(--lp-notice-padding) + 32px);
+	}
+
+	&.is-banner {
+		border-width: 0 0 var(--wpds-border-width-xs);
+	}
+}
