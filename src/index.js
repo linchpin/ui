@@ -15,6 +15,12 @@
 export { default as LinchpinAdminFrame } from './components/admin-frame';
 export { default as LinchpinAdminTopBar } from './components/admin-top-bar';
 export { default as LinchpinAdminPage } from './components/admin-page';
+export {
+	PageHeaderActions,
+	PageHeaderBadges,
+	PageHeaderSubTitle,
+	usePageSections,
+} from './components/page-header';
 export { default as LinchpinAdminLayout } from './components/admin-layout';
 export { default as LinchpinAdminNav } from './components/admin-nav';
 export { default as LinchpinBreadcrumbs } from './components/breadcrumbs';

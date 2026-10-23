@@ -227,6 +227,15 @@ $lp-aside-width: 300px;
 	}
 
 	/*
+	 * Where a screen's `<PageHeaderActions>`, badges or subtitle land. The
+	 * target holds a portal, so it must not be a box of its own: its children
+	 * take part in the header's own row and gap as if placed there directly.
+	 */
+	&__header-fill {
+		display: contents;
+	}
+
+	/*
 	 * Core's `Page` pads its header and its body by 16px block and 24px
 	 * inline. With the shell's gutter outside that, a title sat 36px from the
 	 * frame's edge while the plugin's mark in the bar above it sat at 12px,
