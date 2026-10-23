@@ -236,6 +236,26 @@ $lp-aside-width: 300px;
 	}
 
 	/*
+	 * What `<MenuButton description>` says before the options: a short
+	 * paragraph at the top of the menu, set apart from the items below it.
+	 */
+	&__menu-button-description {
+		border-block-end: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		color: var(--wpds-color-foreground-content-neutral-weak);
+		font-size: var(--wpds-typography-font-size-sm);
+		line-height: var(--wpds-typography-line-height-sm);
+		// The menu lays its items out on a grid of named columns, so span the
+		// whole row rather than land in the first, padding-wide track. Then
+		// a width of its own, because the menu shrinks to fit its widest item
+		// and the paragraph would otherwise wrap a word to a line; the menu's
+		// own maximum width still caps it on a narrow screen.
+		grid-column: 1 / -1;
+		inline-size: 36ch;
+		margin: 0 0 var(--wpds-dimension-gap-xs);
+		padding: var(--wpds-dimension-padding-sm) var(--wpds-dimension-padding-md);
+	}
+
+	/*
 	 * Core's `Page` pads its header and its body by 16px block and 24px
 	 * inline. With the shell's gutter outside that, a title sat 36px from the
 	 * frame's edge while the plugin's mark in the bar above it sat at 12px,
