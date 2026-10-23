@@ -15,6 +15,7 @@
 export { default as LinchpinAdminFrame } from './components/admin-frame';
 export { default as LinchpinAdminTopBar } from './components/admin-top-bar';
 export { default as LinchpinAdminPage } from './components/admin-page';
+export { default as PageFullBleed } from './components/page-full-bleed';
 export {
 	PageHeaderActions,
 	PageHeaderBadges,

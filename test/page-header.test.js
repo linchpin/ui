@@ -16,6 +16,7 @@ import {
 	LinchpinAdminPage,
 	PageHeaderActions,
 	PageHeaderBadges,
+	PageFullBleed,
 	PageHeaderSubTitle,
 	usePageSections,
 } from '../src';
@@ -291,5 +292,19 @@ describe( 'usePageSections', () => {
 		render( <Probe /> );
 
 		expect( drawn ).toBe( false );
+	} );
+} );
+
+describe( 'PageFullBleed', () => {
+	it( 'wraps its content in the full-bleed region', () => {
+		const { container } = render(
+			<PageFullBleed>
+				<table aria-label="Inventory" />
+			</PageFullBleed>
+		);
+
+		expect(
+			container.querySelector( '.lp-admin__full-bleed' )
+		).toContainElement( screen.getByRole( 'table' ) );
 	} );
 } );
