@@ -6,7 +6,6 @@
 	"packages": {
 		".": {
 			"bump-minor-pre-major": true,
-			"release-as": "1.0.0",
 			"name": "ui",
 			"extra-files": [
 				"README.md",
