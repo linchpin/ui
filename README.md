@@ -195,6 +195,29 @@ wp_enqueue_style(
 );
 ```
 
+## The page contract
+
+Every screen built on this package follows eight rules. The components carry most of them, so a new screen gets them without anyone having to remember them.
+
+1. **The page panel is the surface.** Settings sections sit straight on the page, set apart by space and a rule (`SettingsSection`). A card is for peers in a grid, and nothing bordered goes inside a card.
+2. **One left edge.** Title, tabs, section headings, fields and a table's toolbar all start on the page gutter. Data views run full bleed.
+3. **The header owns the verbs.** The screen's actions go in the header, right-aligned. Its status is a header badge, and its intro sentence is the subtitle (`PageHeaderActions`, `PageHeaderBadges`, `PageHeaderSubTitle`, or the page's own props). The body never starts with a toolbar row.
+4. **One Save.** A settings screen saves from the header with one label, disabled until something changes, and reports the result as a snackbar (`PageSaveAction`). There is no save button per section and no Back button.
+5. **Gaps, not margins.** Every group of siblings is a `Stack` with a token gap. Components never set their own outer margin.
+6. **One choice, one control.** Mutually exclusive answers are a `MenuButton`, a `RadioGroupControl` or a `SelectControl`, never a row of buttons.
+7. **Headings follow the page.** The page title is the `h1`, each section an `h2` and a group inside one an `h3`. `SettingsSection` renders the heading, so a screen cannot skip a level.
+8. **One notice.** `LinchpinNotice` wherever a notice is shown, with the actions in the right-hand column beside the dismiss. A fact about the whole install goes in `LinchpinGlobalNotices` once, never on each screen that depends on it. The result of something the person just did is a snackbar.
+
+The spacing between things, all existing `--wpds-*` tokens:
+
+| Between | Token | |
+|---|---|---|
+| A heading and its description | `--wpds-dimension-gap-xs` | 4px |
+| Buttons in a row, header actions | `--wpds-dimension-gap-sm` | 8px |
+| The page edge and everything on it | `--lp-admin-gutter` | 16px |
+| One field and the next | `--wpds-dimension-gap-lg` | 16px |
+| One section and the next, with a rule | `--wpds-dimension-gap-2xl` | 32px |
+
 ## Two rules worth knowing before you start
 
 **No hex in a component.** Colour comes from a `--wpds-*` design token, from the agency
@@ -207,6 +230,18 @@ copy props. The wording is marketing, it gets revised, and the point of the comp
 a revision reaches every plugin through a version bump instead of one pull request per
 repository. `<HelpCard>` is the exception and takes props — support routing genuinely differs
 per plugin.
+
+## Upgrading to 1.0
+
+1.0 moves the library onto `@wordpress/ui` and gives screens a way into their header. Most of it is additive. The changes a plugin can notice:
+
+- **`@wordpress/ui` 0.25 or later is a peer dependency.** Install it alongside the other `@wordpress/*` packages. With `@wordpress/admin-ui` 3, `@wordpress/components` 43 and `@wordpress/theme` 3, npm resolves one copy of it.
+- **`SettingsCard` is drawn with `@wordpress/ui`'s `Card`.** Its padding, radius and stroke now match the cards around it, and its `size` prop is ignored. It is deprecated in favour of `SettingsSection`, flat or with `surface="card"`.
+- **`DangerZone`, `HelpCard`, `FeatureListCard`, `AboutLinchpinCard`, `AboutLinchpinPage`** and `LinchpinNotice`'s dismiss button are drawn with `@wordpress/ui`, and keep the same props. Links that open a new tab now say so to screen readers.
+- **`LinchpinAdminFrame` turns on `@wordpress/ui`'s compat overlay slot**, so menus, popovers and tooltips stack above the page. WordPress already does this wherever `wp-components` is enqueued.
+- **Section tabs size to their label.** They keep the 44px height and drop the 44px minimum width.
+- **Below 782px, `LinchpinAdminNav` folds** behind one control naming the open screen.
+- **New:** `PageHeaderActions`, `PageHeaderBadges`, `PageHeaderSubTitle`, `usePageSections`, `SettingsSection`, `PageSaveAction`, `useUnsavedChangesWarning`, `MenuButton`, `LinchpinGlobalNotices`, `useSessionDismissals`, `useAdminChrome`, `retitle` and `markCurrentMenuItem`.
 
 ## Development
 
