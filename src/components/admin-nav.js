@@ -2,7 +2,9 @@
  * WordPress dependencies
  */
 import { Icon } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useEffect, useId, useRef, useState } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -66,22 +68,69 @@ export default function LinchpinAdminNav( {
 	className,
 } ) {
 	const { plugin } = useAdminContext();
+	const [ isOpen, setIsOpen ] = useState( false );
+	const listId = useId();
+	const toggleRef = useRef();
+
+	// Escape folds an open menu and hands focus back to the control that
+	// opened it, the way a disclosure should.
+	useEffect( () => {
+		if ( ! isOpen ) {
+			return undefined;
+		}
+
+		const close = ( event ) => {
+			if ( 'Escape' === event.key ) {
+				setIsOpen( false );
+				toggleRef.current?.focus();
+			}
+		};
+
+		document.addEventListener( 'keydown', close );
+
+		return () => document.removeEventListener( 'keydown', close );
+	}, [ isOpen ] );
 
 	const isCurrent = ( item ) =>
 		current !== undefined
 			? item.name === current
 			: item.href === currentHref;
 
+	const currentItem = items.find( isCurrent );
+
 	return (
 		<nav
-			className={ [ 'lp-admin__nav', className ]
+			className={ [ 'lp-admin__nav', isOpen && 'is-open', className ]
 				.filter( Boolean )
 				.join( ' ' ) }
 			aria-label={ ariaLabel ?? plugin?.name ?? __( 'Sections' ) }
 		>
+			{ /*
+			 * On a narrow screen the menu folds behind this one control, so
+			 * the screen itself leads instead of the whole menu above it.
+			 * The stylesheet shows it only there.
+			 */ }
+			<button
+				ref={ toggleRef }
+				type="button"
+				className="lp-admin__nav-toggle"
+				aria-expanded={ isOpen }
+				aria-controls={ listId }
+				onClick={ () => setIsOpen( ! isOpen ) }
+			>
+				<span className="lp-admin__nav-toggle-label">
+					{ sprintf(
+						/* translators: %s: the open screen's name. */
+						__( 'Menu: %s' ),
+						currentItem?.label ?? plugin?.name ?? ''
+					) }
+				</span>
+				<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 } />
+			</button>
+
 			{ header && <div className="lp-admin__nav-header">{ header }</div> }
 
-			<ul className="lp-admin__nav-list">
+			<ul className="lp-admin__nav-list" id={ listId }>
 				{ items.map( ( item ) => (
 					<li key={ item.name ?? item.href }>
 						<Link
@@ -91,9 +140,10 @@ export default function LinchpinAdminNav( {
 								isCurrent( item ) ? 'page' : undefined
 							}
 							aria-disabled={ item.disabled ? 'true' : undefined }
-							onClick={ ( event ) =>
-								handleClick( event, item, onNavigate )
-							}
+							onClick={ ( event ) => {
+								handleClick( event, item, onNavigate );
+								setIsOpen( false );
+							} }
 						>
 							{ item.icon && (
 								<span

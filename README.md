@@ -184,6 +184,12 @@ A settings screen sits on a page panel that is already a surface, so its section
 
 `MenuButton` is built on `Menu` and `Button` from `@wordpress/ui`, so the plugin needs `@wordpress/ui` 0.25 or later. `LinchpinAdminFrame` opts into `@wordpress/ui`'s compat overlay slot, so menus and popovers stack above core's `Page` even where `wp-components` isn't enqueued.
 
+### Screens that change without a reload
+
+WordPress names the screen in the browser title and highlights it in its own admin menu, but only for the screen the page loaded on. A plugin that switches screens in place calls `useAdminChrome( screenTitle )` from whatever renders the current screen. The browser title and the WordPress menu then follow, under `AdminRouter` or the plugin's own routing. The menu item marked current is the submenu link whose query arguments the address carries, all of them and the most of them. So `?page=mantle&view=declutter` marks the Declutter link, and a screen no link names falls back to the bare `?page=mantle` one.
+
+Below 782px, `LinchpinAdminNav` folds behind one control naming the open screen ("Menu: Security"), so the screen leads instead of a full-height menu above it. Choosing a screen or pressing Escape folds it again.
+
 The stylesheet must load after `wp-components`. Declare it as a dependency when enqueuing:
 
 ```php

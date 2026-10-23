@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 /**
@@ -43,7 +43,11 @@ describe( 'LinchpinAdminNav', () => {
 		expect(
 			screen.getByRole( 'link', { name: 'Security' } )
 		).toHaveAttribute( 'href', '?view=security' );
-		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 0 );
+		// The items are links. The one button is the narrow-screen toggle,
+		// which sits outside the list.
+		expect(
+			within( screen.getByRole( 'list' ) ).queryAllByRole( 'button' )
+		).toHaveLength( 0 );
 	} );
 
 	it( 'marks the current section with aria-current, which drives the styling', () => {
@@ -290,5 +294,64 @@ describe( 'LinchpinAdminLayout with a nav', () => {
 		expect( container.querySelector( '.lp-admin__body' ) ).toHaveClass(
 			'is-full-width'
 		);
+	} );
+} );
+
+describe( 'LinchpinAdminNav on a narrow screen', () => {
+	it( 'folds behind one control naming the open screen', async () => {
+		const { container } = render(
+			<Frame>
+				<LinchpinAdminNav items={ ITEMS } current="security" />
+			</Frame>
+		);
+
+		const toggle = screen.getByRole( 'button', { name: 'Menu: Security' } );
+		const nav = container.querySelector( '.lp-admin__nav' );
+
+		expect( toggle ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( nav ).not.toHaveClass( 'is-open' );
+
+		await userEvent.click( toggle );
+
+		expect( toggle ).toHaveAttribute( 'aria-expanded', 'true' );
+		expect( nav ).toHaveClass( 'is-open' );
+		expect(
+			document.getElementById( toggle.getAttribute( 'aria-controls' ) )
+		).toHaveClass( 'lp-admin__nav-list' );
+	} );
+
+	it( 'folds again on Escape and after choosing a screen', async () => {
+		const onNavigate = jest.fn();
+		const { container } = render(
+			<Frame>
+				<LinchpinAdminNav
+					items={ ITEMS }
+					current="dashboard"
+					onNavigate={ onNavigate }
+				/>
+			</Frame>
+		);
+
+		const toggle = screen.getByRole( 'button', {
+			name: 'Menu: Dashboard',
+		} );
+		const nav = container.querySelector( '.lp-admin__nav' );
+
+		await userEvent.click( toggle );
+		await userEvent.keyboard( '{Escape}' );
+
+		expect( nav ).not.toHaveClass( 'is-open' );
+		expect( toggle ).toHaveFocus();
+
+		await userEvent.click( toggle );
+		await userEvent.click(
+			screen.getByRole( 'link', { name: 'Security' } )
+		);
+
+		expect( onNavigate ).toHaveBeenCalledWith(
+			'security',
+			expect.anything()
+		);
+		expect( nav ).not.toHaveClass( 'is-open' );
 	} );
 } );
