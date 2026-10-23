@@ -562,6 +562,45 @@ $lp-aside-width: 300px;
 		min-width: 0;
 	}
 
+	/*
+	 * A data view across the page body (`PageFullBleed`). The region cancels
+	 * the body's inline padding, and DataViews' own 24px, which is core's
+	 * Page measure, comes back to the gutter: the table's search box, its
+	 * first column and its footer start where the page title does.
+	 *
+	 * DataViews paints itself the white of core's header, which sits on this
+	 * page's lighter panel as a second surface with a seam above it; here it
+	 * takes the panel's colour instead, and its sticky cells inherit it.
+	 */
+	&__full-bleed {
+		--wp-dataviews-color-background: var(--wpds-color-background-surface-neutral);
+		margin-inline: calc(-1 * var(--lp-admin-gutter));
+
+		.dataviews__view-actions,
+		.dataviews-filters__container,
+		.dataviews-footer {
+			padding-inline: var(--lp-admin-gutter);
+		}
+
+		// The filter row is only as wide as its chips and sticks to the left
+		// of the nearest scroller, which is the padded page body, so it sat a
+		// gutter right of the search box. Tables scroll inside DataViews' own
+		// layout container, so there is nothing here for it to stick against.
+		.dataviews-filters__container {
+			position: static;
+		}
+
+		.dataviews-view-table tr td:first-child,
+		.dataviews-view-table tr th:first-child {
+			padding-left: var(--lp-admin-gutter);
+		}
+
+		.dataviews-view-table tr td:last-child,
+		.dataviews-view-table tr th:last-child {
+			padding-right: var(--lp-admin-gutter);
+		}
+	}
+
 	&__aside {
 		display: flex;
 		flex-direction: column;

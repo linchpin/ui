@@ -142,6 +142,16 @@ function Declutter() {
 - The fills render through a portal, so they keep the screen's state and context. Outside a `LinchpinAdminPage` they render nothing.
 - `usePageSections` draws the sections as tabs. A plain click goes to `onSelect` and switches in place. With no `onSelect`, the tab is an `AdminLink`, so it stays on the screen under `AdminRouter` and is an ordinary link otherwise. An explicit `navigation` prop on the page wins.
 
+### Tables run full bleed
+
+A data view on a page goes in `PageFullBleed`. It spans the page body instead of sitting inside its padding, and DataViews' toolbar, first and last columns and footer are padded to the page gutter. The table then starts where the page title does, rather than 24px further in. Notices, empty states and sections beside it stay padded as usual.
+
+```jsx
+<PageFullBleed>
+	<DataViews data={ rows } fields={ fields } view={ view } onChangeView={ setView } />
+</PageFullBleed>
+```
+
 ### Settings screens: sections and one Save
 
 A settings screen sits on a page panel that is already a surface, so its sections are flat: `SettingsSection` draws a real heading (`h2` by default), a sentence on what the section is for, and its controls in a stacked column with the design system's large gap. Sections are set apart by space and a rule, not boxed. Pass `surface="card"` for the rare section that has to read as an object of its own. `SettingsCard` is now an alias of that card form, kept for screens written against it.
