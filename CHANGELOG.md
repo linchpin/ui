@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/linchpin/ui/compare/v0.3.2...v0.4.0) (2026-10-23)
+
+
+### Features ✨
+
+* **LINCHPIN-5897:** Add LinchpinNotice for React and PHP admin notices ([463cb9a](https://github.com/linchpin/ui/commit/463cb9aceec1c191b2b3a2a769e0950ceb5fc5da))
+* **LINCHPIN-5897:** Add LinchpinNotice for React and PHP admin notices ([b07bb08](https://github.com/linchpin/ui/commit/b07bb08c668a60e7319778d98480886beee7c37c))
+
 ## [0.3.2](https://github.com/linchpin/ui/compare/v0.3.1...v0.3.2) (2026-09-27)
 
 
