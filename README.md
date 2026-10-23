@@ -114,6 +114,34 @@ function App() {
 }
 ```
 
+### Let the screen fill its header
+
+The page header belongs to the page, but what goes in it belongs to the screen inside: its primary action, its state, its sections. A screen reaches it from anywhere in its own body, and whatever the page was given directly comes first.
+
+```jsx
+function Declutter() {
+	const [ section, setSection ] = useState( 'inventory' );
+
+	usePageSections( { sections: SECTIONS, current: section, onSelect: setSection } );
+
+	return (
+		<>
+			<PageHeaderBadges><Badge>Not recording</Badge></PageHeaderBadges>
+			<PageHeaderActions>
+				<Button variant="secondary" onClick={ startRecording }>Start recording</Button>
+			</PageHeaderActions>
+			<InventoryTable />
+		</>
+	);
+}
+```
+
+- `PageHeaderActions` goes after the page's own `actions`.
+- `PageHeaderBadges` goes after the page's `badges`. Pass `badges={ null }` to show only the screen's.
+- `PageHeaderSubTitle` replaces the page's `subTitle`.
+- The fills render through a portal, so they keep the screen's state and context. Outside a `LinchpinAdminPage` they render nothing.
+- `usePageSections` draws the sections as tabs. A plain click goes to `onSelect` and switches in place. With no `onSelect`, the tab is an `AdminLink`, so it stays on the screen under `AdminRouter` and is an ordinary link otherwise. An explicit `navigation` prop on the page wins.
+
 The stylesheet must load after `wp-components`. Declare it as a dependency when enqueuing:
 
 ```php
