@@ -58,7 +58,9 @@ export { default as DangerZone } from './components/danger-zone';
 
 export { sectionNavigation, currentSection } from './utils/navigation';
 export { adminUrl, isSameScreen } from './utils/admin-url';
+export { retitle, markCurrentMenuItem } from './utils/admin-chrome';
 
+export { default as useAdminChrome } from './hooks/use-admin-chrome';
 export {
 	default as usePlatformStatus,
 	statusLabel,
