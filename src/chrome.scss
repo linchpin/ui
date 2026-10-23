@@ -598,45 +598,56 @@ $lp-aside-width: 300px;
 	}
 
 	/*
-	 * A settings section. The heading and its sentence share the header with
-	 * any actions; the body spaces its controls from each other, which is
-	 * the part every screen was adding by hand.
+	 * A settings section. Flat ones sit straight on the page panel and are
+	 * set apart from the one before by space and a rule, which is all the
+	 * separation a section on an existing surface needs. Card ones are
+	 * `@wordpress/ui` cards, spaced like any run of cards.
 	 */
-	&__settings-card {
-
-		.components-card__header {
-			display: flex;
-			align-items: flex-start;
-			justify-content: space-between;
-			gap: var(--wpds-dimension-gap-md);
-		}
+	&__section.is-flat + &__section.is-flat {
+		border-block-start: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+		margin-block-start: var(--wpds-dimension-gap-2xl);
+		padding-block-start: var(--wpds-dimension-gap-2xl);
 	}
 
-	&__settings-card-heading {
+	&__section.is-card + &__section.is-card {
+		margin-block-start: var(--wpds-dimension-gap-lg);
+	}
+
+	&__section-header {
+		align-items: flex-start;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-md);
+		justify-content: space-between;
+	}
+
+	&__section-heading {
+		display: flex;
+		flex: 1 1 0;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-xs);
 		min-width: 0;
 	}
 
-	&__settings-card-title {
+	&__section-title,
+	&__section-description {
 		margin: 0;
-		font-size: var(--wpds-typography-font-size-md);
-		font-weight: var(--wpds-typography-font-weight-emphasis);
-		color: var(--wpds-color-foreground-content-neutral);
 	}
 
-	&__settings-card-description {
-		margin: 4px 0 0;
+	&__section-description {
 		color: var(--wpds-color-foreground-content-neutral-weak);
+		max-width: 72ch;
 	}
 
-	&__settings-card-actions {
+	&__section-actions {
 		display: flex;
-		flex: 0 0 auto;
+		flex: none;
 		flex-wrap: wrap;
 		gap: var(--wpds-dimension-gap-sm);
 	}
 
-	&__settings-card .components-card__body > * + * {
-		margin-top: 16px;
+	&__section.is-flat > &__section-header + &__section-body {
+		margin-block-start: var(--wpds-dimension-gap-lg);
 	}
 
 	&__about {
