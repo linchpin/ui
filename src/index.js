@@ -20,6 +20,10 @@ export { default as LinchpinAdminNav } from './components/admin-nav';
 export { default as LinchpinBreadcrumbs } from './components/breadcrumbs';
 export { default as LinchpinNotice } from './components/notice';
 export { default as LinchpinNotices } from './components/notices';
+export {
+	default as LinchpinGlobalNotices,
+	useSessionDismissals,
+} from './components/global-notices';
 export { default as LinchpinAdminFooter } from './components/admin-footer';
 export { default as LinchpinLogo } from './components/linchpin-logo';
 export { default as VersionBadge } from './components/version-badge';

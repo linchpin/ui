@@ -180,6 +180,17 @@
 }
 
 /*
+ * A banner runs the full width of the screen, so its text is often two lines
+ * and centring the actions on it leaves them floating away from the dismiss
+ * button in the corner. Top-align them instead, level with the dismiss, so
+ * everything the reader can do sits together at the top right.
+ */
+.lp-notice.is-banner .lp-notice__actions {
+	align-self: flex-start;
+	margin-block-start: -6px;
+}
+
+/*
  * A narrow notice — a phone, a sidebar, a modal — has no room for a column
  * of actions, so they drop beneath the content and line up with it.
  */
