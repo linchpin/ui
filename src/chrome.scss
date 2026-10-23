@@ -511,7 +511,10 @@ $lp-aside-width: 300px;
 		gap: var(--wpds-dimension-gap-lg);
 	}
 
+	// The compact card the aside column takes: the design system's card at
+	// the smaller padding the legacy card's `size="small"` gave it.
 	&__aside-card {
+		--wp-ui-card-padding: var(--wpds-dimension-padding-lg);
 
 		p {
 			margin: 0 0 12px;
@@ -839,35 +842,22 @@ $lp-aside-width: 300px;
 
 		// The strong error stroke at 2px, on all four sides: at 1px in the
 		// ordinary error colour this read as a card with a pink header
-		// rather than the one section that can destroy something.
+		// rather than the one section that can destroy something. The card
+		// clips its own corners, so the tinted head follows the radius.
 		border: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
+	}
 
-		.components-card__header {
-			background: var(--wpds-color-background-surface-error-weak);
-			border-bottom: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
-		}
+	&__danger-head {
+		background: var(--wpds-color-background-surface-error-weak);
+		border-block-end: var(--wpds-border-width-sm) solid var(--wpds-color-stroke-surface-error-strong);
+		padding-block: var(--wpds-dimension-padding-lg);
+	}
 
-		/*
-		 * Corners. The legacy `Card` draws its border as a 1px box-shadow
-		 * ring outside a 7px radius, which reads as 8px -- the design
-		 * system's `Card` radius. With a real border in place of the ring,
-		 * the panel rounds at that token directly and the ring goes, or it
-		 * showed as a grey line around the red one with tighter corners than
-		 * every card beside it. The head's top corners sit inside the border,
-		 * so they round by the radius less its width.
-		 *
-		 * Doubled up on `.components-card` because the runtime injects the
-		 * card's own rules after this stylesheet, and a tie would go to them.
-		 */
-		&.components-card {
-			border-radius: var(--wpds-border-radius-lg);
-			box-shadow: none;
-
-			.components-card__header:first-of-type {
-				border-start-start-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
-				border-start-end-radius: calc(var(--wpds-border-radius-lg) - var(--wpds-border-width-sm));
-			}
-		}
+	// The card runs its content straight on from its header, which with a
+	// tinted head and a rule under it put the first line against the rule.
+	&__danger-head + &__danger-body {
+		margin-block-start: 0;
+		padding-block-start: var(--wp-ui-card-padding);
 	}
 
 	&__danger-title {
@@ -891,7 +881,7 @@ $lp-aside-width: 300px;
 
 	// `Notice` carries no margin of its own inside a card, which left the
 	// warning touching the first control.
-	&__danger .components-notice {
+	&__danger-notice {
 		margin: 0 0 var(--wpds-dimension-gap-lg);
 	}
 

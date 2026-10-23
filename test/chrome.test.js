@@ -660,7 +660,9 @@ describe( 'the About Linchpin copy', () => {
 			screen.getByText( /We have been building on WordPress since 2008/ )
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole( 'link', { name: 'Work with Linchpin' } )
+			screen.getByRole( 'link', {
+				name: 'Work with Linchpin (opens in a new tab)',
+			} )
 		).toBeInTheDocument();
 	} );
 } );

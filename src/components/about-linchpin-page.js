@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Button, Card, CardBody, Icon } from '@wordpress/components';
+import { ButtonLink, Card, Icon } from '@wordpress/ui';
 import { check } from '@wordpress/icons';
 
 /**
@@ -32,8 +32,8 @@ export default function AboutLinchpinPage( { className } ) {
 				.filter( Boolean )
 				.join( ' ' ) }
 		>
-			<Card size="large">
-				<CardBody>
+			<Card.Root>
+				<Card.Content>
 					<a
 						className="lp-admin__about-logo"
 						href={ links?.linchpin }
@@ -64,25 +64,19 @@ export default function AboutLinchpinPage( { className } ) {
 					</ul>
 
 					<div className="lp-admin__about-actions">
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
+						<ButtonLink
+							variant="solid"
 							href={ links?.linchpin }
-							target="_blank"
-							rel="noreferrer"
+							openInNewTab
 						>
 							{ copy.cta }
-						</Button>
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							href={ links?.support }
-						>
+						</ButtonLink>
+						<ButtonLink variant="outline" href={ links?.support }>
 							{ copy.contact }
-						</Button>
+						</ButtonLink>
 					</div>
-				</CardBody>
-			</Card>
+				</Card.Content>
+			</Card.Root>
 		</div>
 	);
 }

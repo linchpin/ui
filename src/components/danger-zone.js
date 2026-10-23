@@ -1,14 +1,8 @@
 /**
  * WordPress dependencies
  */
-import {
-	Card,
-	CardBody,
-	CardHeader,
-	Icon,
-	Notice,
-} from '@wordpress/components';
 import { caution } from '@wordpress/icons';
+import { Card, Icon, Notice } from '@wordpress/ui';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -29,7 +23,7 @@ import { __ } from '@wordpress/i18n';
  * What it does *not* do is confirm on the plugin's behalf. Whether an action
  * needs a modal, a typed confirmation or nothing at all depends on what it
  * destroys, so the action goes in `actions` and the plugin owns the
- * consequences. Buttons there should carry `isDestructive`.
+ * consequences.
  *
  * @param {Object}         props               Props.
  * @param {string}         [props.title]       Heading. Defaults to `Danger zone`.
@@ -57,18 +51,18 @@ export default function DangerZone( {
 				__( 'These actions are permanent and cannot be undone.' ) );
 
 	return (
-		<Card
+		<Card.Root
 			className={ [ 'lp-admin__danger', className ]
 				.filter( Boolean )
 				.join( ' ' ) }
 		>
-			<CardHeader>
+			<Card.Header className="lp-admin__danger-head">
 				<h2 className="lp-admin__danger-title">
 					<Icon icon={ caution } size={ 20 } />
 					{ title ?? __( 'Danger zone' ) }
 				</h2>
-			</CardHeader>
-			<CardBody>
+			</Card.Header>
+			<Card.Content className="lp-admin__danger-body">
 				{ description && (
 					<p className="lp-admin__danger-description">
 						{ description }
@@ -77,19 +71,16 @@ export default function DangerZone( {
 
 				{ notice && (
 					/*
-					 * Rendered, not announced. `Notice` speaks its children
-					 * on mount and `error` speaks them assertively, but this
-					 * describes a risk rather than reporting an event. An
-					 * empty `spokenMessage` is core's way to opt out.
+					 * Rendered, not announced: it describes a risk rather
+					 * than reporting an event. `@wordpress/ui`'s `Notice`
+					 * says nothing on mount, which is the behaviour wanted.
 					 */
-					<Notice
-						status={ status }
-						isDismissible={ false }
-						politeness="polite"
-						spokenMessage=""
+					<Notice.Root
+						intent={ status }
+						className="lp-admin__danger-notice"
 					>
-						{ notice }
-					</Notice>
+						<Notice.Description>{ notice }</Notice.Description>
+					</Notice.Root>
 				) }
 
 				{ children && (
@@ -101,7 +92,7 @@ export default function DangerZone( {
 				{ actions && (
 					<div className="lp-admin__danger-actions">{ actions }</div>
 				) }
-			</CardBody>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 	);
 }
