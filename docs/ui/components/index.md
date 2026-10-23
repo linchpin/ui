@@ -13,6 +13,10 @@ Everything the package exports, and which part of the screen it owns.
 | `<LinchpinAdminPage>` | The page header and body — a wrapper around core's `Page`. | `title`, `subTitle`, `breadcrumbs`, `badges`, `visual`, `actions`, `navigation`, `headingLevel`, `hasPadding`, `components` |
 | `<LinchpinAdminNav>` | The vertical section menu down the left. Items may carry an icon and a badge. | `items`, `current`, `currentHref`, `onNavigate`, `linkComponent`, `header`, `footer`, `ariaLabel` |
 | `<LinchpinBreadcrumbs>` | The trail above a nested screen. | `items`, `headingLevel`, `linkComponent`, `ariaLabel` |
+| `<AdminRouter>` | Follows links within one screen without reloading it. | `onChange` |
+| `<AdminLink>` | An `<a>` that stays on the screen when it can. | `href`, `replace` |
+| `<StatTile>`, `<StatTiles>` | The counts above a list: filters, links or facts. | `value`, `label`, `detail`, `tone`, `href`, `onClick`, `isPressed`, `isLoading`, `footer` |
+| `<FactList>` | Read-only label and value pairs. | `items`, `layout` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<SettingsCard>` | A section of a settings screen: heading, one sentence, controls. | `title`, `description`, `headingLevel`, `actions`, `size` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
@@ -209,6 +213,127 @@ The columns a layout renders are the ones it is given. Below 1400px the help col
 first, because it is context rather than the work; below 782px the menu stacks above the
 screen rather than squeezing it.
 
+### A page per record, without a reload
+
+A screen that lists records — sites, clients, packages — eventually wants each record to have
+a page of its own: something to bookmark, paste into Slack, open in a second tab or link to
+from an alert email. In wp-admin that page is the same screen with the record in the query
+string: `admin.php?page=sites&site=35`. What is left is not reloading the whole of wp-admin on
+every click.
+
+`<AdminRouter>` does that and nothing else. There is no route table: the screen reads the
+query string and renders what it names, as it would on a full load, and the address bar stays
+the only state.
+
+```jsx
+import {
+	AdminLink,
+	AdminRouter,
+	adminUrl,
+	sectionNavigation,
+	useAdminLocation,
+} from '@linchpinagency/ui';
+
+function Sites() {
+	const location = useAdminLocation();
+	const site = location.query.get( 'site' );
+
+	if ( site ) {
+		return (
+			<LinchpinAdminPage
+				title={ null }
+				breadcrumbs={
+					<LinchpinBreadcrumbs
+						headingLevel={ 1 }
+						linkComponent={ AdminLink }
+						items={ [
+							{ label: 'Sites', href: adminUrl() },
+							{ label: hostname },
+						] }
+					/>
+				}
+				components={ { link: AdminLink } }
+				navigation={ sectionNavigation( {
+					sections: SITE_SECTIONS,
+					keep: [ 'site' ],
+					location,
+				} ) }
+			>
+				…
+			</LinchpinAdminPage>
+		);
+	}
+
+	return <SitesList renderItemLink={ ( { item, ...props } ) => (
+		<AdminLink href={ adminUrl( { site: item.id } ) } { ...props } />
+	) } />;
+}
+
+<LinchpinAdminFrame plugin={ PLUGIN }>
+	<AdminRouter onChange={ () => ( document.title = … ) }>
+		<Sites />
+	</AdminRouter>
+</LinchpinAdminFrame>
+```
+
+- **`adminUrl( args, { keep, path, from } )`** builds an address from the screen — its file and
+  its `page` — plus the arguments you name. It does **not** carry the rest of the current
+  address unless you ask (`keep: [ 'site' ]`, or `keep: true` for all of it), which is what
+  stops a search typed on one list arriving as a search on the next. `null`, `false` and `''`
+  remove an argument; `path` points at another wp-admin file.
+- **`useNavigate()`** follows an address: in place when it is the same screen (same file, same
+  `page`), as a normal page load when it is not, so a link to another menu item still gets
+  wp-admin's menu, capability check and scripts. `{ replace: true }` changes the address
+  without a history entry — recording a filter, say.
+- **`<AdminLink>`** is an `<a>` that does the same for a click. ⌘, Ctrl, Shift, Alt, the
+  middle button, `target` and `download` are left to the browser. It forwards its ref and
+  every prop, so it is the `components.link` for `<LinchpinAdminPage>`, the `linkComponent`
+  for the nav and the breadcrumbs, and the anchor for DataViews' `renderItemLink`.
+- **`useAdminLocation()`** is the current address, with `query` as `URLSearchParams`.
+  Components that read it re-render on every navigation, Back and Forward included.
+
+Without an `<AdminRouter>` above them, all four still work, as plain links and page loads.
+
+`sectionNavigation()` takes the same `keep`. Its default is still to carry every argument,
+which is right for a settings screen and wrong for sections that hold different lists.
+
+## Records
+
+### Stat tiles
+
+The counts above a list. `<StatTile>` is one of three things, and its props say which:
+
+| Props | It is | Renders |
+| --- | --- | --- |
+| `onClick`, `isPressed` | A filter on the list beneath it | A toggle button (`aria-pressed`) |
+| `href` | A way to the list it counts | An `<AdminLink>` |
+| neither | A fact | Text |
+
+`tone` is the number's reading, not decoration: `error` for something that needs a person
+now, `warning` for drift, `success` for good news, `brand` or `neutral` otherwise. `footer`
+sits outside the clickable part, for anything interactive of its own, such as a breakdown of
+the count into links. `isLoading` holds the tile's height with a placeholder.
+
+Wrap a row in `<StatTiles label="…">`: a named group that wraps to the width it is given.
+
+```jsx
+<StatTiles label="Site summary">
+	<StatTile value={ 73 } label="Total sites" detail="20 clients" onClick={ clear } isPressed={ ! filter } />
+	<StatTile value={ 39 } label="Needs updates" tone="warning" onClick={ toggle( 'needs_update' ) } isPressed={ filter === 'needs_update' } />
+	<StatTile value={ 9 } label="Not reporting" tone="error" href={ adminUrl( { filter: 'not_reporting' } ) } />
+</StatTiles>
+```
+
+### Facts
+
+`<FactList>` is read-only label and value pairs: a record's overview, a health check, the
+strip under a record's title. `layout="rows"` (the default) puts one fact per line;
+`layout="inline"` runs them along one wrapping line, label over value.
+
+Each item is `{ id, label, value, tone, help }`. `tone` is `ok` (a quiet mark before the
+value), `warning`, `error` or `info`. An item with no value is left out rather than drawn as
+an empty row.
+
 ## Notices
 
 `<LinchpinNotice>` is the one shape for every message a plugin raises, in its own screens and
@@ -331,7 +456,10 @@ unless the plugin sets them on its notices:
 | `linchpinLinks()` | The standard links, UTM-tagged with the plugin slug. |
 | `useAdminContext()` | Identity, brand and links from the nearest frame. |
 | `usePlatformStatus()` | Polls status.linchpin.com. Opt-in; any monitor down reads as `down`, and a failed request or a summary without a `down` count as `unknown`, never `down`. |
-| `sectionNavigation()` | Builds `Page`'s `navigation` config, varying one query argument and keeping the rest of the URL. |
+| `sectionNavigation()` | Builds `Page`'s `navigation` config, varying one query argument and keeping the rest of the URL, or only what `keep` names. |
 | `currentSection()` | Which section the URL asks for, falling back to the first. |
+| `adminUrl()` | An address on this screen (or another, with `path`) carrying only the arguments named. See [A page per record](#a-page-per-record-without-a-reload). |
+| `isSameScreen()` | Whether an address is the screen already loaded: same file, same `page`. |
+| `useAdminLocation()`, `useNavigate()` | The current address, and a function that follows one. Under `<AdminRouter>`, both stay on the screen when they can. |
 | `LINCHPIN_COLORS`, `colorVar()`, `colorVars()` | The agency palette, and the `--lp-color-*` properties that carry it. |
 | `aboutBlurb()`, `aboutPageCopy()` | The agency copy, read-only. |

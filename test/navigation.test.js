@@ -79,6 +79,21 @@ describe( 'sectionNavigation', () => {
 
 		expect( config ).toEqual( { items: [] } );
 	} );
+
+	it( 'carries only what it is told to keep, so one list’s search does not follow you into the next', () => {
+		const { items, currentHref } = sectionNavigation( {
+			sections: SECTIONS,
+			keep: [ 'site' ],
+			location: at( '?page=psst&site=35&q=acme&tab=health' ),
+		} );
+
+		expect( items[ 1 ].href ).toBe(
+			'/wp-admin/admin.php?page=psst&site=35&tab=secrets'
+		);
+		expect( currentHref ).toBe(
+			'/wp-admin/admin.php?page=psst&site=35&tab=health'
+		);
+	} );
 } );
 
 describe( 'currentSection', () => {

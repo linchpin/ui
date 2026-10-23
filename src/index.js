@@ -24,6 +24,15 @@ export { default as LinchpinAdminFooter } from './components/admin-footer';
 export { default as LinchpinLogo } from './components/linchpin-logo';
 export { default as VersionBadge } from './components/version-badge';
 
+export {
+	AdminRouter,
+	AdminLink,
+	useAdminLocation,
+	useNavigate,
+} from './components/admin-router';
+export { default as StatTile, StatTiles } from './components/stat-tile';
+export { default as FactList } from './components/fact-list';
+
 export { default as SettingsCard } from './components/cards/settings-card';
 export { default as HelpCard } from './components/cards/help-card';
 export { default as FeatureListCard } from './components/cards/feature-list-card';
@@ -32,6 +41,7 @@ export { default as AboutLinchpinPage } from './components/about-linchpin-page';
 export { default as DangerZone } from './components/danger-zone';
 
 export { sectionNavigation, currentSection } from './utils/navigation';
+export { adminUrl, isSameScreen } from './utils/admin-url';
 
 export {
 	default as usePlatformStatus,

@@ -9,22 +9,34 @@
  */
 
 /**
+ * Internal dependencies
+ */
+import { adminUrl } from './admin-url';
+
+/**
  * Build a `navigation` config from a screen's sections.
  *
  * Each section becomes a link to the current page with one query argument
  * changed, so the rest of the URL — `page`, a post ID, a filter — survives.
  *
+ * That is right for a settings screen, and wrong where the sections hold
+ * different lists: a search typed into one arrives as a search in the next.
+ * Pass `keep` to carry only the arguments the sections share — the record a
+ * set of sections belongs to, say — and drop the rest.
+ *
  * @param {Object}   options             Options.
  * @param {Array}    options.sections    `[ { name, label } ]` in display order.
  * @param {string}   [options.queryArg]  Query argument to vary. Defaults to `tab`.
+ * @param {string[]} [options.keep]      Arguments to carry besides `page`. Defaults to all of them.
  * @param {string}   [options.current]   Force the current section. Defaults to the URL's, then the first section.
  * @param {string}   [options.ariaLabel] Label for the navigation landmark.
- * @param {Location} [options.location]  Injectable for tests. Defaults to `window.location`.
+ * @param {Location} [options.location]  Defaults to `window.location`. Pass `useAdminLocation()` under a router, so the links follow it.
  * @return {Object} `{ items, currentHref, ariaLabel }` for `<LinchpinAdminPage navigation>`.
  */
 export function sectionNavigation( {
 	sections = [],
 	queryArg = 'tab',
+	keep,
 	current,
 	ariaLabel,
 	location = typeof window === 'undefined' ? undefined : window.location,
@@ -33,6 +45,13 @@ export function sectionNavigation( {
 	const search = location?.search ?? '';
 
 	const href = ( name ) => {
+		if ( keep ) {
+			return adminUrl(
+				{ [ queryArg ]: name },
+				{ keep, from: { pathname, search } }
+			);
+		}
+
 		const params = new URLSearchParams( search );
 		params.set( queryArg, name );
 
