@@ -10,6 +10,7 @@ import {
 	defineBrand,
 	LinchpinAdminFrame,
 	LinchpinAdminTopBar,
+	LinchpinGlobalNotices,
 	LinchpinNotice,
 } from '@linchpinagency/ui';
 
@@ -144,6 +145,47 @@ export const TintedBanner = {
 			on the Linchpin API, and are switched off until this site
 			reconnects.
 		</LinchpinNotice>
+	),
+};
+
+/**
+ * The install-wide strip: every banner under the top bar, each with its
+ * actions beside the dismiss button. Dismissing one hides it for the rest of
+ * the browser session.
+ */
+export const GlobalNoticesStrip = {
+	name: 'Global notices strip',
+	decorators: TintedBanner.decorators,
+	render: () => (
+		<LinchpinGlobalNotices
+			storageKey="storybook-dismissed-global-notices"
+			notices={ [
+				{
+					id: 'api-disconnected',
+					icon: <MantleMark />,
+					title: 'Mantle is not connected to the API',
+					message:
+						'Monitoring, client information, plugin reporting and licensing rely on the Linchpin API, and are switched off until this site reconnects. This site has no confirmed PIN, so reconnecting takes an extra step.',
+					actions: (
+						<Button variant="primary" __next40pxDefaultSize>
+							Reconnect this site
+						</Button>
+					),
+				},
+				{
+					id: 'license-lapsed',
+					icon: <MantleMark />,
+					tone: 'error',
+					title: 'The Mantle license has lapsed',
+					message: 'Updates stop until the license is renewed.',
+					actions: (
+						<Button variant="secondary" __next40pxDefaultSize>
+							Renew
+						</Button>
+					),
+				},
+			] }
+		/>
 	),
 };
 
