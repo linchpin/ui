@@ -489,7 +489,7 @@ describe( 'SettingsCard', () => {
 		);
 
 		expect(
-			container.querySelector( '.components-card__header' )
+			container.querySelector( '.lp-admin__section-header' )
 		).toBeNull();
 		expect( screen.getByText( 'body' ) ).toBeInTheDocument();
 	} );
@@ -502,7 +502,7 @@ describe( 'SettingsCard', () => {
 		);
 
 		expect(
-			container.querySelector( '.components-card__body' )
+			container.querySelector( '.lp-admin__section-body' )
 		).toBeNull();
 		expect(
 			screen.getByRole( 'heading', { name: 'Sign in page' } )

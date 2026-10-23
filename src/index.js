@@ -44,6 +44,11 @@ export { default as StatTile, StatTiles } from './components/stat-tile';
 export { default as FactList } from './components/fact-list';
 export { default as MenuButton } from './components/menu-button';
 
+export { default as SettingsSection } from './components/settings-section';
+export {
+	default as PageSaveAction,
+	useUnsavedChangesWarning,
+} from './components/page-save-action';
 export { default as SettingsCard } from './components/cards/settings-card';
 export { default as HelpCard } from './components/cards/help-card';
 export { default as FeatureListCard } from './components/cards/feature-list-card';
