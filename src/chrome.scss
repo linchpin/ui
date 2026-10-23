@@ -276,6 +276,24 @@ $lp-aside-width: 300px;
 		> :not([class*="__header"]) {
 			isolation: isolate;
 		}
+
+		/*
+		 * Core lays the title and the actions out in one row that never
+		 * wraps, and gives the actions `flex-shrink: 0`. Past two or three
+		 * buttons a narrow window runs them over the title, and the whole
+		 * page scrolls sideways. The row wraps instead, so the actions drop
+		 * under the title, and they wrap among themselves on a phone.
+		 */
+		[class*="__header-content"] {
+			flex-wrap: wrap;
+			row-gap: var(--wpds-dimension-gap-sm);
+		}
+
+		[class*="__header-actions"] {
+			flex-wrap: wrap;
+			flex-shrink: 1;
+			min-width: 0;
+		}
 	}
 
 	&__body {
