@@ -1,9 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { IconButton } from '@wordpress/ui';
 
 /**
  * Internal dependencies
@@ -120,10 +120,12 @@ export default function LinchpinNotice( {
 				) }
 			</div>
 			{ onDismiss && (
-				<Button
+				<IconButton
 					className="lp-notice__dismiss"
 					icon={ close }
 					label={ dismissLabel ?? __( 'Dismiss this notice' ) }
+					variant="minimal"
+					tone="neutral"
 					size="small"
 					onClick={ onDismiss }
 				/>

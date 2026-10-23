@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Button, Card, CardBody } from '@wordpress/components';
+import { Card, Link } from '@wordpress/ui';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -26,13 +26,12 @@ export default function AboutLinchpinCard( { className } ) {
 	const { plugin, links } = useAdminContext();
 
 	return (
-		<Card
+		<Card.Root
 			className={ [ 'lp-admin__aside-card', className ]
 				.filter( Boolean )
 				.join( ' ' ) }
-			size="small"
 		>
-			<CardBody>
+			<Card.Content>
 				<a
 					className="lp-admin__aside-logo"
 					href={ links?.linchpin }
@@ -43,16 +42,10 @@ export default function AboutLinchpinCard( { className } ) {
 					<LinchpinLogo tone="primary" />
 				</a>
 				<p>{ aboutBlurb( plugin?.name ) }</p>
-				<Button
-					__next40pxDefaultSize
-					variant="link"
-					href={ links?.linchpin }
-					target="_blank"
-					rel="noreferrer"
-				>
+				<Link href={ links?.linchpin } openInNewTab>
 					{ __( 'Work with Linchpin' ) }
-				</Button>
-			</CardBody>
-		</Card>
+				</Link>
+			</Card.Content>
+		</Card.Root>
 	);
 }

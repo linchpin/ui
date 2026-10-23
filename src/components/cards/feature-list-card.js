@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Card, CardBody, Icon } from '@wordpress/components';
+import { Card, Icon } from '@wordpress/ui';
 
 /**
  * An explainer card: a short list of what this thing does, each line with an
@@ -15,13 +15,12 @@ import { Card, CardBody, Icon } from '@wordpress/components';
  */
 export default function FeatureListCard( { title, items = [], className } ) {
 	return (
-		<Card
+		<Card.Root
 			className={ [ 'lp-admin__aside-card', className ]
 				.filter( Boolean )
 				.join( ' ' ) }
-			size="small"
 		>
-			<CardBody>
+			<Card.Content>
 				{ title && (
 					<h2 className="lp-admin__aside-title">{ title }</h2>
 				) }
@@ -40,7 +39,7 @@ export default function FeatureListCard( { title, items = [], className } ) {
 						</li>
 					) ) }
 				</ul>
-			</CardBody>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 	);
 }

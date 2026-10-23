@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Button, Card, CardBody, Icon } from '@wordpress/components';
+import { ButtonLink, Card, Icon, Link } from '@wordpress/ui';
 import { lifesaver } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -35,13 +35,12 @@ export default function HelpCard( {
 	const { links } = useAdminContext();
 
 	return (
-		<Card
+		<Card.Root
 			className={ [ 'lp-admin__aside-card', className ]
 				.filter( Boolean )
 				.join( ' ' ) }
-			size="small"
 		>
-			<CardBody>
+			<Card.Content>
 				<h2 className="lp-admin__aside-title">
 					<Icon icon={ lifesaver } size={ 20 } />
 					{ title ?? __( 'Need a hand?' ) }
@@ -55,26 +54,19 @@ export default function HelpCard( {
 				<div className="lp-admin__aside-actions">
 					{ children ?? (
 						<>
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
+							<ButtonLink
+								variant="outline"
 								href={ links?.support }
 							>
 								{ links?.supportEmail }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="link"
-								href={ links?.issues }
-								target="_blank"
-								rel="noreferrer"
-							>
+							</ButtonLink>
+							<Link href={ links?.issues } openInNewTab>
 								{ __( 'Open an issue on GitHub' ) }
-							</Button>
+							</Link>
 						</>
 					) }
 				</div>
-			</CardBody>
-		</Card>
+			</Card.Content>
+		</Card.Root>
 	);
 }
