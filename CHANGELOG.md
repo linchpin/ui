@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/linchpin/ui/compare/v0.4.0...v0.5.0) (2026-10-23)
+
+
+### Features ✨
+
+* **MANTLE-543:** Add an admin router, stat tiles and fact lists ([8817d32](https://github.com/linchpin/ui/commit/8817d32d889c40ab0a83e47177b64addf5994c9a))
+
+
+### Bug Fixes 🐛
+
+* **MANTLE-543:** Let the page header wrap on a narrow screen ([ac42e57](https://github.com/linchpin/ui/commit/ac42e576990e0a0fd44beb117bfd5abd6e63c013))
+
 ## [0.4.0](https://github.com/linchpin/ui/compare/v0.3.2...v0.4.0) (2026-10-23)
 
 
