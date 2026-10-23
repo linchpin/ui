@@ -142,6 +142,28 @@ function Declutter() {
 - The fills render through a portal, so they keep the screen's state and context. Outside a `LinchpinAdminPage` they render nothing.
 - `usePageSections` draws the sections as tabs. A plain click goes to `onSelect` and switches in place. With no `onSelect`, the tab is an `AdminLink`, so it stays on the screen under `AdminRouter` and is an ordinary link otherwise. An explicit `navigation` prop on the page wins.
 
+### One choice, one button
+
+`MenuButton` is for a decision with a few answers: record for 15 minutes, an hour or until stopped; clear every cache or one. As sibling buttons those read as separate actions; as one button, they read as the one choice they are. Put what the person needs to know to choose in `description`. It sits at the top of the menu, and the menu is described by it.
+
+```jsx
+<PageHeaderActions>
+	<MenuButton
+		label="Start recording"
+		description="Recording watches every admin page load, which costs a little each time."
+		options={ [
+			{ value: 15, label: 'For 15 minutes' },
+			{ value: 60, label: 'For 1 hour' },
+			{ type: 'separator' },
+			{ value: 0, label: 'Until I stop it' },
+		] }
+		onSelect={ startRecording }
+	/>
+</PageHeaderActions>
+```
+
+`MenuButton` is built on `Menu` and `Button` from `@wordpress/ui`, so the plugin needs `@wordpress/ui` 0.25 or later. `LinchpinAdminFrame` opts into `@wordpress/ui`'s compat overlay slot, so menus and popovers stack above core's `Page` even where `wp-components` isn't enqueued.
+
 The stylesheet must load after `wp-components`. Declare it as a dependency when enqueuing:
 
 ```php

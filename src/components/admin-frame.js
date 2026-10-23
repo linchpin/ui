@@ -4,6 +4,7 @@
 import { SlotFillProvider } from '@wordpress/components';
 import { useMemo } from '@wordpress/element';
 import { ThemeProvider } from '@wordpress/theme';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 
 /**
  * Internal dependencies
@@ -16,7 +17,7 @@ import { linchpinLinks } from '../brand/links';
 /**
  * The root of a Linchpin admin screen.
  *
- * Three jobs, all of which every plugin was doing for itself:
+ * Four jobs, all of which every plugin was doing for itself:
  *
  * 1. Seed the design system from the plugin's own brand rather than the
  *    WordPress admin colour scheme. The top bar is a fixed brand gradient, so
@@ -34,6 +35,11 @@ import { linchpinLinks } from '../brand/links';
  *    than as a child: it is the element the trick exists for, and having the
  *    frame place it keeps that in one file instead of in every plugin's
  *    stylesheet.
+ * 4. Opt into `@wordpress/ui`'s compat overlay slot, so its menus, popovers
+ *    and tooltips portal into one body-level layer above the page. WordPress
+ *    turns it on wherever `wp-components` is enqueued; turning it on here
+ *    means a frame stacks its overlays correctly without depending on that,
+ *    instead of rendering a menu underneath core's `Page`.
  *
  * @param {Object}  props                Props.
  * @param {Object}  props.plugin         Identity: `{ name, slug, version, logo }`.
@@ -61,6 +67,8 @@ export default function LinchpinAdminFrame( {
 			'LinchpinAdminFrame: plugin.slug is required — it identifies the screen and seeds every UTM link.'
 		);
 	}
+
+	useEnableWpCompatOverlaySlot();
 
 	const resolved = useMemo( () => {
 		const nextBrand = brand ?? defineBrand();
