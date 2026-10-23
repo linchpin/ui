@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.0](https://github.com/linchpin/ui/compare/v0.5.0...v1.0.0) (2026-10-23)
+
+
+### Features ✨
+
+* **MANTLE-558:** Add SettingsSection and the one Save a settings screen has ([c54f6ef](https://github.com/linchpin/ui/commit/c54f6efe5b097bc45f469693e19cbac203cc651b))
+* **MANTLE-558:** Add SettingsSection and the one Save a settings screen has ([77fae99](https://github.com/linchpin/ui/commit/77fae99b84ddb2a32cc643b2ac5a968c43ddf481))
+* **MANTLE-559:** Add MenuButton, one button for a choice with a few answers ([6efcfb6](https://github.com/linchpin/ui/commit/6efcfb691a2bdf2ac7ba78c34ce2083c5cf3d881))
+* **MANTLE-559:** Add MenuButton, one button for a choice with a few answers ([6fdfb8f](https://github.com/linchpin/ui/commit/6fdfb8f2e5d6389f8f0f86fff9d7d789ec9c160c))
+* **MANTLE-562:** Fold the menu on narrow screens and follow the open screen in WordPress's chrome ([bb3d60a](https://github.com/linchpin/ui/commit/bb3d60a1889b85d1b1676ba1d9a0c54696096da4))
+* **MANTLE-562:** Fold the menu on narrow screens and follow the open screen in WordPress's chrome ([6021090](https://github.com/linchpin/ui/commit/602109033a5acd5dac4dd1b44403b7e02a5d1b4a))
+
+
+### Miscellaneous Chores 🧹
+
+* **MANTLE-563:** Release 1.0.0 with the page contract documented ([bb24ad3](https://github.com/linchpin/ui/commit/bb24ad3ac062f72139c7650f8482d59f97977566))
+* **MANTLE-563:** Release 1.0.0 with the page contract documented ([59ce930](https://github.com/linchpin/ui/commit/59ce9300c733f4aae5c86f5ffddcd060466b565d))
+
+
+### Changes to Existing Features 💅
+
+* **MANTLE-560:** Rebuild the library's cards on @wordpress/ui ([da7c7de](https://github.com/linchpin/ui/commit/da7c7deeadaa4ce31c7b48d218527a734332943c))
+* **MANTLE-560:** Rebuild the library's cards on @wordpress/ui ([45a36ea](https://github.com/linchpin/ui/commit/45a36eafbb704ca3c94b1dcf0902a50134925729))
+
 ## [0.5.0](https://github.com/linchpin/ui/compare/v0.4.0...v0.5.0) (2026-10-23)
 
 
