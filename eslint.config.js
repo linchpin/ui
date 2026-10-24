@@ -46,6 +46,20 @@ export default [
 		},
 	},
 	{
+		/*
+		 * Stories import the package by its own name, as a plugin does, so
+		 * they review the built artifact. That name resolves to
+		 * build-module/, which CI lints before it builds.
+		 */
+		files: [ 'stories/**' ],
+		rules: {
+			'import/no-unresolved': [
+				'error',
+				{ ignore: [ '^@linchpinagency/ui$' ] },
+			],
+		},
+	},
+	{
 		// Build scripts are run from a terminal and report to it.
 		files: [ 'scripts/**/*.mjs' ],
 		rules: { 'no-console': 'off' },
