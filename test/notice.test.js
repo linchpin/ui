@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 /**
@@ -161,7 +162,7 @@ describe( 'LinchpinNotice', () => {
 	} );
 
 	it( 'dismisses through its own button, which reserves its corner', () => {
-		const onDismiss = jest.fn();
+		const onDismiss = vi.fn();
 		const { container } = render(
 			<LinchpinNotice title="Dismissible" onDismiss={ onDismiss } />
 		);

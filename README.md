@@ -264,7 +264,7 @@ per plugin.
 ```bash
 npm install
 npm run build          # babel to build-module/, sass to build-style/
-npm test               # jest + @testing-library/react
+npm test               # vitest + @testing-library/react
 npm run lint:js
 npm run lint:css
 npm run storybook      # the components, rendered

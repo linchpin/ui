@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -30,7 +31,7 @@ const renderButton = ( props = {} ) =>
 			label="Start recording"
 			description={ DESCRIPTION }
 			options={ OPTIONS }
-			onSelect={ jest.fn() }
+			onSelect={ vi.fn() }
 			{ ...props }
 		/>
 	);
@@ -69,7 +70,7 @@ describe( 'MenuButton', () => {
 	} );
 
 	it( 'hands back the chosen value and closes', async () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		renderButton( { onSelect } );
 
 		await userEvent.click(
@@ -86,7 +87,7 @@ describe( 'MenuButton', () => {
 	} );
 
 	it( 'does not choose a disabled option', async () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		renderButton( { onSelect } );
 
 		await userEvent.click(

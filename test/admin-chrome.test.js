@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { afterEach, describe, expect, it } from 'vitest';
 import { render } from '@testing-library/react';
 
 /**

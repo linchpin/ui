@@ -5,7 +5,7 @@ title: Development
 ```bash
 npm install
 npm run build          # babel to build-module/, sass to build-style/
-npm test               # jest + @testing-library/react
+npm test               # vitest + @testing-library/react
 npm run lint:js
 npm run lint:css
 npm run storybook      # builds first, then serves
@@ -62,9 +62,21 @@ so rather than rename every component to suit one tool, the stories import
 
 ## Tests
 
-Jest with the WordPress preset and Testing Library. `@wordpress/theme` and `uuid` ship ESM
-only, so `jest.config.js` names them in `transformIgnorePatterns` and adds an `.mjs`
-transform; without that the whole suite fails to load rather than failing a test.
+Vitest and Testing Library, run by `wp-scripts test-unit-js` with `vitest.config.mjs`.
+WordPress publishes no Vitest preset, so what the retired Jest preset supplied lives in
+that config and `test/setup.js`:
+
+- the jsdom environment, and a small plugin that parses `.js` in `src/` and `test/` as JSX;
+- jest-dom's matchers, and Testing Library's cleanup after each test;
+- the console contract: **any console output fails the test**. A test that expects output
+  takes the setup file's spy with `vi.spyOn( console, 'error' )`, asserts on it, and
+  `mockClear()`s it.
+
+Import the test APIs from `vitest` (`import { describe, expect, it, vi } from 'vitest';`);
+there are no globals.
+
+`@wordpress/use-recommended-components` runs on `src/` with `allowUseWithCaution`: a legacy
+`@wordpress/components` import where `@wordpress/ui` has the replacement fails lint.
 
 ## Release
 

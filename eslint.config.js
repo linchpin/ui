@@ -30,6 +30,36 @@ export default [
 		},
 	},
 	{
+		/*
+		 * The library is built on @wordpress/ui. A legacy
+		 * @wordpress/components import where ui has the replacement fails
+		 * lint, so none creeps back in. `allowUseWithCaution` because the
+		 * library's own building blocks (Button, Menu, IconButton,
+		 * ButtonLink) are still marked use-with-caution upstream.
+		 */
+		files: [ 'src/**/*.js' ],
+		rules: {
+			'@wordpress/use-recommended-components': [
+				'error',
+				{ allowUseWithCaution: true },
+			],
+		},
+	},
+	{
+		/*
+		 * Stories import the package by its own name, as a plugin does, so
+		 * they review the built artifact. That name resolves to
+		 * build-module/, which CI lints before it builds.
+		 */
+		files: [ 'stories/**' ],
+		rules: {
+			'import/no-unresolved': [
+				'error',
+				{ ignore: [ '^@linchpinagency/ui$' ] },
+			],
+		},
+	},
+	{
 		// Build scripts are run from a terminal and report to it.
 		files: [ 'scripts/**/*.mjs' ],
 		rules: { 'no-console': 'off' },

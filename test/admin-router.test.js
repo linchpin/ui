@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 /**
@@ -21,7 +22,7 @@ beforeEach( () => {
 	window.history.replaceState( null, '', SCREEN );
 
 	// jsdom does not implement scrolling.
-	window.scrollTo = jest.fn();
+	window.scrollTo = vi.fn();
 } );
 
 /**
@@ -158,7 +159,7 @@ describe( 'AdminRouter', () => {
 	} );
 
 	it( 'tells the screen when the address changes', () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 
 		render(
 			<AdminRouter onChange={ onChange }>

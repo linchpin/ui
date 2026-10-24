@@ -1,13 +1,8 @@
 /**
  * WordPress dependencies
  */
-import {
-	Button,
-	Card,
-	CardBody,
-	ToggleControl,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Card, CardBody, ToggleControl } from '@wordpress/components';
+import { Stack } from '@wordpress/ui';
 import {
 	cog,
 	grid,
@@ -122,10 +117,10 @@ export default {
 };
 
 /**
- * @param {Object}  props          Props.
- * @param {string}  [props.start]  The section to open on.
- * @param {boolean} [props.aside]  Render the help column as well.
- * @param {Object}  [props.brand]  The plugin's brand. Omit for Linchpin's own.
+ * @param {Object}  props         Props.
+ * @param {string}  [props.start] The section to open on.
+ * @param {boolean} [props.aside] Render the help column as well.
+ * @param {Object}  [props.brand] The plugin's brand. Omit for Linchpin's own.
  * @return {Element} The screen.
  */
 function Screen( { start = 'security', aside = false, brand } ) {
@@ -169,7 +164,11 @@ function Screen( { start = 'security', aside = false, brand } ) {
 							{ /* `__nextHasNoMarginBottom` removes the legacy
 							     margin, so the gap between controls is the
 							     screen's to set. */ }
-							<VStack spacing={ 4 } alignment="left">
+							<Stack
+								direction="column"
+								gap="lg"
+								align="flex-start"
+							>
 								<ToggleControl
 									__nextHasNoMarginBottom
 									label="Enable Security Features"
@@ -187,7 +186,7 @@ function Screen( { start = 'security', aside = false, brand } ) {
 								<Button __next40pxDefaultSize variant="primary">
 									Save Settings
 								</Button>
-							</VStack>
+							</Stack>
 						</CardBody>
 					</Card>
 				</LinchpinAdminPage>
