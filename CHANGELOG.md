@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/linchpin/ui/compare/v1.0.0...v1.1.0) (2026-10-23)
+
+
+### Features ✨
+
+* **MANTLE-568:** Add PageFullBleed so a data view lines up with the page title ([4ea0b89](https://github.com/linchpin/ui/commit/4ea0b893ebb543ecc69cd3fbd1e19f8b80c97edf))
+* **MANTLE-568:** Add PageFullBleed so a data view lines up with the page title ([b0822c0](https://github.com/linchpin/ui/commit/b0822c041788f98cf0b581ad86ffc76207533429))
+
+
+### Miscellaneous Chores 🧹
+
+* **MANTLE-563:** Stop pinning the release version now 1.0.0 is out ([cca0049](https://github.com/linchpin/ui/commit/cca0049d2a13325c0fb5157af33d10f946f35878))
+* **MANTLE-563:** Stop pinning the release version now 1.0.0 is out ([f03b637](https://github.com/linchpin/ui/commit/f03b637cd12c8c6eb76e2d7f8f37fa7e1af74dfd))
+
 ## [1.0.0](https://github.com/linchpin/ui/compare/v0.5.0...v1.0.0) (2026-10-23)
 
 
