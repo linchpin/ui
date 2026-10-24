@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { beforeAll, describe, expect, it } from 'vitest';
 import { transformSync } from '@babel/core';
 import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -111,12 +112,12 @@ describe( 'LinchpinGlobalNotices', () => {
 	} );
 
 	it( 'still renders when session storage is unavailable', async () => {
-		const getItem = jest
+		const getItem = vi
 			.spyOn( Storage.prototype, 'getItem' )
 			.mockImplementation( () => {
 				throw new Error( 'blocked' );
 			} );
-		const setItem = jest
+		const setItem = vi
 			.spyOn( Storage.prototype, 'setItem' )
 			.mockImplementation( () => {
 				throw new Error( 'blocked' );

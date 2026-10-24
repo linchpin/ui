@@ -30,6 +30,22 @@ export default [
 		},
 	},
 	{
+		/*
+		 * The library is built on @wordpress/ui. A legacy
+		 * @wordpress/components import where ui has the replacement fails
+		 * lint, so none creeps back in. `allowUseWithCaution` because the
+		 * library's own building blocks (Button, Menu, IconButton,
+		 * ButtonLink) are still marked use-with-caution upstream.
+		 */
+		files: [ 'src/**/*.js' ],
+		rules: {
+			'@wordpress/use-recommended-components': [
+				'error',
+				{ allowUseWithCaution: true },
+			],
+		},
+	},
+	{
 		// Build scripts are run from a terminal and report to it.
 		files: [ 'scripts/**/*.mjs' ],
 		rules: { 'no-console': 'off' },

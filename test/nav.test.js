@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -99,7 +100,7 @@ describe( 'LinchpinAdminNav', () => {
 	} );
 
 	it( 'routes in-app on a plain click', async () => {
-		const onNavigate = jest.fn();
+		const onNavigate = vi.fn();
 		const user = userEvent.setup();
 
 		render(
@@ -121,7 +122,7 @@ describe( 'LinchpinAdminNav', () => {
 	} );
 
 	it( 'leaves a modified click to the browser, so the href stays honest', async () => {
-		const onNavigate = jest.fn();
+		const onNavigate = vi.fn();
 		const user = userEvent.setup();
 
 		// Hash hrefs: a modified click is *meant* to reach the browser, and
@@ -156,7 +157,7 @@ describe( 'LinchpinAdminNav', () => {
 	} );
 
 	it( 'does not navigate from a disabled item', async () => {
-		const onNavigate = jest.fn();
+		const onNavigate = vi.fn();
 		const user = userEvent.setup();
 
 		render(
@@ -321,7 +322,7 @@ describe( 'LinchpinAdminNav on a narrow screen', () => {
 	} );
 
 	it( 'folds again on Escape and after choosing a screen', async () => {
-		const onNavigate = jest.fn();
+		const onNavigate = vi.fn();
 		const { container } = render(
 			<Frame>
 				<LinchpinAdminNav
