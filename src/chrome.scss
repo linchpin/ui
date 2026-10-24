@@ -212,9 +212,12 @@ $lp-aside-width: 300px;
 	 * No padding, because the page panel inside it is the screen: a gutter
 	 * here left a band of admin grey between the brand bar and the panel's
 	 * top edge, and on every other side it added itself to the inset the
-	 * panel already has. A screen that composes the layout *outside* the page
-	 * — a menu beside the panel, as Mantle does — has no panel against those
-	 * edges, so that one takes the gutter itself, below.
+	 * panel already has. The same holds for a layout that sets a menu or a
+	 * help column beside the page, as Mantle does: the page meets the bar
+	 * and the edges, and the columns beside it take the gutter, which is
+	 * also the space between them and the page. The row stretches, and the
+	 * page with it, so a short screen's panel runs down beside the menu
+	 * rather than stopping partway with grey beneath it.
 	 *
 	 * No max-width, because an admin screen is not an article: the person
 	 * reading it came to change a setting, and a 1240px cap on a 1800px
@@ -223,7 +226,17 @@ $lp-aside-width: 300px;
 	 * handles it.
 	 */
 	&__shell > &__body {
-		padding: var(--lp-admin-gutter);
+		align-items: stretch;
+		gap: 0;
+
+		> .lp-admin__nav,
+		> .lp-admin__aside {
+			padding: var(--lp-admin-gutter);
+		}
+
+		> .lp-admin__main > * {
+			flex: 1 0 auto;
+		}
 	}
 
 	/*
