@@ -349,6 +349,16 @@ $lp-aside-width: 300px;
 		}
 	}
 
+	/*
+	 * A section opens in place, so the link that was clicked keeps focus,
+	 * and @wordpress/ui's Link rings every focus but a press. After a click
+	 * the ring stayed round the open section and read as its selected style,
+	 * which is core's bold label. Keyboard focus is still ringed.
+	 */
+	&__section-link:focus:not(:focus-visible) {
+		outline: none;
+	}
+
 	&__body {
 		display: grid;
 
