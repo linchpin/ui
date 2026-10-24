@@ -710,8 +710,11 @@ $lp-aside-width: 300px;
 		min-width: 0;
 	}
 
+	// A heading for the outline, set as emphasised body text: the section
+	// or card it sits in has the heading above it.
 	&__feature-title {
 		margin: 0;
+		font-weight: var(--wpds-typography-font-weight-emphasis);
 	}
 
 	&__feature-text {

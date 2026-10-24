@@ -52,7 +52,7 @@ export default function FeatureList( {
 					<span className="lp-admin__feature-body">
 						{ item.title && (
 							<Text
-								variant="heading-sm"
+								variant="body-md"
 								render={ <Heading /> }
 								className="lp-admin__feature-title"
 							>
