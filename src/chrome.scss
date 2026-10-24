@@ -668,6 +668,59 @@ $lp-aside-width: 300px;
 		}
 	}
 
+	/*
+	 * A feature list: icon, name, sentence. No tile around a line and no
+	 * rule between them -- the icon column is what lines them up -- so the
+	 * list can sit inside a card without a surface inside the surface.
+	 */
+	&__feature-list {
+		display: grid;
+		gap: var(--wpds-dimension-gap-lg);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		&.is-columns {
+			grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+			column-gap: var(--wpds-dimension-gap-xl);
+		}
+	}
+
+	&__feature {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--wpds-dimension-gap-md);
+		margin: 0;
+	}
+
+	&__feature-icon {
+		display: inline-flex;
+		flex: 0 0 auto;
+		color: var(--wpds-color-foreground-interactive-brand);
+
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__feature-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--wpds-dimension-gap-xs);
+		min-width: 0;
+	}
+
+	// A heading for the outline, set as emphasised body text: the section
+	// or card it sits in has the heading above it.
+	&__feature-title {
+		margin: 0;
+		font-weight: var(--wpds-typography-font-weight-emphasis);
+	}
+
+	&__feature-text {
+		color: var(--wpds-color-foreground-content-neutral-weak);
+	}
+
 	&__aside-actions {
 		display: flex;
 		flex-direction: column;
