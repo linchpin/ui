@@ -302,7 +302,7 @@ const isModifiedClick = ( event ) =>
  * `render` prop and passes a ref.
  */
 export const SectionLink = forwardRef( function RoutedSectionLink(
-	{ href, onClick, ...props },
+	{ href, onClick, className, ...props },
 	ref
 ) {
 	const header = useContext( PageHeaderContext );
@@ -334,6 +334,9 @@ export const SectionLink = forwardRef( function RoutedSectionLink(
 		<AdminLink
 			ref={ ref }
 			href={ href }
+			className={ [ 'lp-admin__section-link', className ]
+				.filter( Boolean )
+				.join( ' ' ) }
 			{ ...props }
 			onClick={ handleClick }
 		/>
