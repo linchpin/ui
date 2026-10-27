@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 /**
@@ -12,9 +13,9 @@ import { speak } from '@wordpress/a11y';
  * `speak()` writes to a live region, which is the thing under test for the
  * danger zone's standing warning: it should not be announced at all.
  */
-jest.mock( '@wordpress/a11y', () => ( {
-	...jest.requireActual( '@wordpress/a11y' ),
-	speak: jest.fn(),
+vi.mock( '@wordpress/a11y', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	speak: vi.fn(),
 } ) );
 
 beforeEach( () => {
@@ -121,13 +122,17 @@ describe( 'LinchpinAdminFrame', () => {
 	} );
 
 	it( 'refuses to mount without a slug, which every link is built from', () => {
+		const error = vi.spyOn( console, 'error' );
+
 		expect( () =>
 			render( <LinchpinAdminFrame plugin={ { name: 'Nameless' } } /> )
 		).toThrow( /plugin.slug is required/ );
 
-		// React reports the throw before it reaches us; @wordpress/jest-console
-		// fails the test on an unclaimed console.error, so claim it.
-		expect( console ).toHaveErrored();
+		// React reports the throw before it reaches us, and the console
+		// contract (test/setup.js) fails a test on unclaimed output, so claim
+		// it.
+		expect( error ).toHaveBeenCalled();
+		error.mockClear();
 	} );
 } );
 
@@ -660,8 +665,11 @@ describe( 'the About Linchpin copy', () => {
 			screen.getByText( /We have been building on WordPress since 2008/ )
 		).toBeInTheDocument();
 		expect(
+			// The new-tab hint is visually hidden text after the label; whether
+			// a space separates them depends on the hint's computed display,
+			// which jsdom resolves differently once the real styles load.
 			screen.getByRole( 'link', {
-				name: 'Work with Linchpin (opens in a new tab)',
+				name: /^Work with Linchpin\s*\(opens in a new tab\)$/,
 			} )
 		).toBeInTheDocument();
 	} );

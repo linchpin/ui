@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -11,7 +12,7 @@ import { StatTile, StatTiles } from '../src';
 
 describe( 'StatTile', () => {
 	it( 'is a toggle when it filters, and says whether it is on', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 
 		render(
 			<StatTile

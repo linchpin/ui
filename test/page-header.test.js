@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -218,7 +219,7 @@ describe( 'usePageSections', () => {
 				title="Declutter"
 				badges={ null }
 			>
-				<Sectioned onSelect={ jest.fn() } />
+				<Sectioned onSelect={ vi.fn() } />
 			</LinchpinAdminPage>
 		);
 
@@ -233,7 +234,7 @@ describe( 'usePageSections', () => {
 	} );
 
 	it( 'hands a plain click to the screen and switches in place', async () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 
 		render(
 			<LinchpinAdminPage
@@ -257,7 +258,7 @@ describe( 'usePageSections', () => {
 	} );
 
 	it( 'leaves a modified click to the browser', () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 
 		render(
 			<LinchpinAdminPage

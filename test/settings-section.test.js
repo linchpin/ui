@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -157,7 +158,7 @@ describe( 'PageSaveAction', () => {
 	}
 
 	it( 'is disabled until something changes', async () => {
-		render( <Screen onSave={ jest.fn() } /> );
+		render( <Screen onSave={ vi.fn() } /> );
 
 		const save = screen.getByRole( 'button', { name: 'Save' } );
 
@@ -169,7 +170,7 @@ describe( 'PageSaveAction', () => {
 	} );
 
 	it( 'saves, says so, and is disabled again', async () => {
-		const onSave = jest.fn().mockResolvedValue();
+		const onSave = vi.fn().mockResolvedValue();
 		render( <Screen onSave={ onSave } /> );
 
 		await userEvent.type( screen.getByLabelText( 'Name' ), 's' );
@@ -185,7 +186,7 @@ describe( 'PageSaveAction', () => {
 	} );
 
 	it( 'reports a failed save and keeps the changes', async () => {
-		const onSave = jest
+		const onSave = vi
 			.fn()
 			.mockRejectedValue( new Error( 'The site could not be reached.' ) );
 		render( <Screen onSave={ onSave } /> );
@@ -202,7 +203,7 @@ describe( 'PageSaveAction', () => {
 	} );
 
 	it( 'asks before leaving with unsaved changes, and only then', async () => {
-		render( <Screen onSave={ jest.fn() } /> );
+		render( <Screen onSave={ vi.fn() } /> );
 
 		const leave = () => {
 			const event = new Event( 'beforeunload', { cancelable: true } );
