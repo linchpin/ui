@@ -231,6 +231,9 @@ describe( 'usePageSections', () => {
 		expect( inventory.getAttribute( 'href' ) ).toContain( 'tab=inventory' );
 		expect( ignored.getAttribute( 'href' ) ).toContain( 'tab=ignored' );
 		expect( inventory ).toHaveAttribute( 'aria-current', 'page' );
+
+		// The class that keeps a clicked section from wearing a focus ring.
+		expect( inventory ).toHaveClass( 'lp-admin__section-link' );
 	} );
 
 	it( 'hands a plain click to the screen and switches in place', async () => {
