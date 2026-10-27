@@ -17,6 +17,7 @@ Everything the package exports, and which part of the screen it owns.
 | `<AdminLink>` | An `<a>` that stays on the screen when it can. | `href`, `replace` |
 | `<StatTile>`, `<StatTiles>` | The counts above a list: filters, links or facts. | `value`, `label`, `detail`, `tone`, `href`, `onClick`, `isPressed`, `isLoading`, `footer` |
 | `<FactList>` | Read-only label and value pairs. | `items`, `layout` |
+| `<FeatureList>` | What something does: icon, name and sentence per line, with no tile around each. | `items`, `columns`, `headingLevel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<SettingsCard>` | A section of a settings screen: heading, one sentence, controls. | `title`, `description`, `headingLevel`, `actions`, `size` |
 | `<DangerZone>` | The panel that holds irreversible controls. | `title`, `description`, `warning`, `status`, `actions` |
@@ -333,6 +334,17 @@ strip under a record's title. `layout="rows"` (the default) puts one fact per li
 Each item is `{ id, label, value, tone, help }`. `tone` is `ok` (a quiet mark before the
 value), `warning`, `error` or `info`. An item with no value is left out rather than drawn as
 an empty row.
+
+### Features
+
+`<FeatureList>` says what something does, a line each: an icon, a name and a sentence. It has
+no card and no tile around a line, so it can sit on a page or inside a card -- the welcome
+screen's grid of bordered tiles is the surface-in-a-surface it replaces. `columns` lays the
+lines out in a grid that fills the width it is given; without it they stack.
+
+Each item is `{ key, icon, title, text }`. The icon is decoration, hidden from assistive
+technology, so the name has to say what the line is. Titles are `h3` unless `headingLevel`
+says otherwise. `<FeatureListCard>` is the short single-column explainer for a sidebar.
 
 ## Notices
 
