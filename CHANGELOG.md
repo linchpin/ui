@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0](https://github.com/linchpin/ui/compare/v1.1.0...v1.2.0) (2026-10-27)
+
+
+### Features ✨
+
+* **MANTLE-579:** Add FeatureList, a feature list with no tile around a line ([bf90842](https://github.com/linchpin/ui/commit/bf908420a4e6c3f6c6e22e65f73565bf914bd66b))
+* **MANTLE-579:** Add FeatureList, a feature list with no tile around a line ([e5c3f0b](https://github.com/linchpin/ui/commit/e5c3f0b93da9a93bf019f54fc73992bf9e5693fd))
+* **MANTLE-584:** Move to wp-scripts 37 and lint for legacy components ([7e92655](https://github.com/linchpin/ui/commit/7e9265589d4c6c708b60140910e4d81d897d9152))
+* **MANTLE-584:** Move to wp-scripts 37 and lint for legacy components ([670b9f4](https://github.com/linchpin/ui/commit/670b9f410c36712d58efabd9facca66783b95037))
+
+
+### Bug Fixes 🐛
+
+* **MANTLE-568:** Let a layout's page meet the frame's edges, and ring a clicked tab only for keyboard focus ([0d50a60](https://github.com/linchpin/ui/commit/0d50a60c59b15a40453cd29fffe1fd8259a10474))
+* **MANTLE-568:** Ring a section tab only for keyboard focus ([7e4b680](https://github.com/linchpin/ui/commit/7e4b68020e3e5efe359d0d1aa0ecadee97154180))
+* **MANTLE-579:** Set a feature's name as emphasised body text ([cc27afc](https://github.com/linchpin/ui/commit/cc27afc3fd58fdd9e741c75c9b08ed6bffeb1c8a))
+* **MANTLE-584:** Let the stories import the package before it is built ([760b84c](https://github.com/linchpin/ui/commit/760b84ccb69ef9c6779f4f86b0db3bad79dd9e54))
+* **NO-TASK:** Keep the version pill readable on any brand bar ([345603d](https://github.com/linchpin/ui/commit/345603d3553d6fd4dbbf938cccbac253dcc5ba9f))
+* **NO-TASK:** Keep the version pill readable on any brand bar ([20478dd](https://github.com/linchpin/ui/commit/20478dd772861adf0ccdbf0b449094a643dea0d7))
+
 ## [1.1.0](https://github.com/linchpin/ui/compare/v1.0.0...v1.1.0) (2026-10-23)
 
 
