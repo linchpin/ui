@@ -151,9 +151,11 @@ $lp-aside-width: 300px;
 		font-weight: var(--wpds-typography-font-weight-emphasis);
 		letter-spacing: 0.02em;
 
-		// On the brand gradient, where the bar itself is the only safe surface.
+		// On the brand gradient. The pill tints the bar with the inverse of
+		// its ink -- darker under white, lighter under black -- so the 11px
+		// label gains contrast on either kind of bar rather than losing it.
 		&.is-on-brand {
-			background: color-mix(in srgb, var(--lp-brand-on-brand, #fff) 14%, transparent);
+			background: rgb(from var(--lp-brand-on-brand, #fff) calc(255 - r) calc(255 - g) calc(255 - b) / 22%);
 			color: var(--lp-brand-on-brand, #fff);
 		}
 
