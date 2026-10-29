@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/linchpin/ui/compare/v1.2.0...v1.2.1) (2026-10-29)
+
+
+### Bug Fixes 🐛
+
+* **NO-TASK:** Import Vitest's test APIs in FeatureList's test so the release can publish ([fc2aba6](https://github.com/linchpin/ui/commit/fc2aba6c29f2584f81f98b598fb5638529e2ba37))
+* **NO-TASK:** Import Vitest's test APIs in FeatureList's test so the release can publish ([745f7b6](https://github.com/linchpin/ui/commit/745f7b64035f2536f5cac8f17f051cab546464c2))
+
 ## [1.2.0](https://github.com/linchpin/ui/compare/v1.1.0...v1.2.0) (2026-10-27)
 
 
