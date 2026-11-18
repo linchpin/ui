@@ -1283,3 +1283,277 @@ $lp-aside-width: 300px;
 		aspect-ratio: 1;
 	}
 }
+
+/*
+ * Status badges. The pill itself is @wordpress/ui's Badge, which paints its
+ * own tone; this adds only what it lacks. Top level rather than under
+ * `.lp-admin`, because a badge in a modal renders in a portal outside the
+ * frame, and it should still dim, grow or pulse there.
+ */
+.lp-admin__status-badge {
+	white-space: nowrap;
+
+	&.is-quiet {
+		opacity: 0.6;
+	}
+
+	&.is-large {
+		font-size: var(--wpds-typography-font-size-lg);
+		line-height: var(--wpds-typography-line-height-lg);
+		padding: var(--wpds-dimension-padding-xs) var(--wpds-dimension-padding-md);
+	}
+
+	// Something in progress: a dot before the label that breathes.
+	&.is-going::before {
+		content: "";
+		display: inline-block;
+		width: 0.5em;
+		height: 0.5em;
+		margin-inline-end: 0.4em;
+		border-radius: 50%;
+		background: currentcolor;
+		vertical-align: 0.1em;
+		animation: lp-admin-status-going 1.6s ease-in-out infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+}
+
+@keyframes lp-admin-status-going {
+
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.25;
+	}
+}
+
+// Focusable only when it has a description to show; the ring is the
+// design system's, so keyboard users can see where they are.
+.lp-admin__status-badge-trigger {
+	display: inline-flex;
+	border-radius: var(--wpds-border-radius-lg);
+
+	&:focus-visible {
+		outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+		outline-offset: 1px;
+	}
+}
+
+.lp-admin__status-badge-empty {
+	color: var(--wpds-color-foreground-content-neutral-weak);
+}
+
+.lp-admin__status-badges {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-xs);
+}
+
+/*
+ * Checklists: a status marker, then a label, what was found and what to do,
+ * ruled off row by row with no box around each. Top level for the same reason
+ * as the badges: a checklist in a modal renders outside the frame.
+ */
+.lp-admin__checklist {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wpds-dimension-gap-lg);
+}
+
+.lp-admin__checklist-summary,
+.lp-admin__checklist-empty,
+.lp-admin__checklist-group-description {
+	margin: 0;
+	color: var(--wpds-color-foreground-content-neutral-weak);
+}
+
+.lp-admin__checklist-group-title {
+	margin: 0 0 var(--wpds-dimension-gap-xs);
+	font-size: var(--wpds-typography-font-size-sm);
+	font-weight: var(--wpds-typography-font-weight-emphasis);
+	color: var(--wpds-color-foreground-content-neutral-weak);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.lp-admin__checklist-items {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	// Sub-steps sit under their step's body, indented by the body itself.
+	.lp-admin__checklist-items {
+		margin-top: var(--wpds-dimension-gap-sm);
+	}
+}
+
+.lp-admin__checklist-item {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: start;
+	gap: var(--wpds-dimension-gap-md);
+	margin: 0;
+	padding: var(--wpds-dimension-padding-sm) 0;
+	border-bottom: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral-weak);
+
+	&:last-child {
+		border-bottom: 0;
+	}
+
+	&.is-quiet .lp-admin__checklist-label,
+	&.is-quiet .lp-admin__checklist-detail {
+		color: var(--wpds-color-foreground-content-neutral-weak);
+		font-weight: var(--wpds-typography-font-weight-default);
+	}
+
+	&.is-current .lp-admin__checklist-label {
+		color: var(--wpds-color-foreground-interactive-brand);
+	}
+}
+
+// Badges line up in one column across the list, as wide as its widest word:
+// the rows share the list's grid, so a long status doesn't push its own row's
+// text out of line with the rest. The floor keeps the groups of one checklist
+// in line with each other for the usual words.
+.lp-admin__checklist.is-marker-badge .lp-admin__checklist-items {
+	display: grid;
+	grid-template-columns: minmax(7.5em, max-content) 1fr;
+	column-gap: var(--wpds-dimension-gap-md);
+
+	> .lp-admin__checklist-item {
+		grid-column: 1 / -1;
+		grid-template-columns: subgrid;
+	}
+}
+
+.lp-admin__checklist-marker {
+	display: flex;
+	align-items: center;
+	min-height: var(--wpds-typography-line-height-md);
+}
+
+.lp-admin__checklist-body {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.lp-admin__checklist-label {
+	font-weight: var(--wpds-typography-font-weight-emphasis);
+	color: var(--wpds-color-foreground-content-neutral);
+}
+
+.lp-admin__checklist-detail {
+	color: var(--wpds-color-foreground-content-neutral);
+}
+
+.lp-admin__checklist-meta {
+	color: var(--wpds-color-foreground-content-neutral-weak);
+	font-size: var(--wpds-typography-font-size-sm);
+}
+
+.lp-admin__checklist-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-sm);
+	margin-top: var(--wpds-dimension-gap-xs);
+}
+
+.lp-admin__checklist-action-text {
+	color: var(--wpds-color-foreground-content-neutral-weak);
+}
+
+// A finished step that can be reopened: the label is the button.
+.lp-admin__checklist-select {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	text-align: start;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+		outline-offset: 2px;
+	}
+}
+
+// The round marker: an icon, or a number for a step not yet done.
+.lp-admin__checklist-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	border: var(--wpds-border-width-xs) solid var(--wpds-color-stroke-surface-neutral);
+	background: var(--wpds-color-background-surface-neutral);
+	color: var(--wpds-color-foreground-content-neutral-weak);
+	font-size: var(--wpds-typography-font-size-sm);
+	font-weight: var(--wpds-typography-font-weight-emphasis);
+	font-variant-numeric: tabular-nums;
+
+	svg {
+		fill: currentcolor;
+	}
+
+	&.is-success {
+		border-color: transparent;
+		background: var(--wpds-color-background-surface-success);
+		color: var(--wpds-color-foreground-content-success);
+	}
+
+	&.is-error {
+		border-color: transparent;
+		background: var(--wpds-color-background-surface-error);
+		color: var(--wpds-color-foreground-content-error);
+	}
+
+	&.is-warning,
+	&.is-caution {
+		border-color: transparent;
+		background: var(--wpds-color-background-surface-warning);
+		color: var(--wpds-color-foreground-content-warning);
+	}
+
+	&.is-info {
+		border-color: transparent;
+		background: var(--wpds-color-background-surface-info);
+		color: var(--wpds-color-foreground-content-info);
+	}
+
+	&.is-quiet {
+		opacity: 0.6;
+	}
+
+	&.is-going {
+		animation: lp-admin-status-going 1.6s ease-in-out infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+}
+
+.lp-admin__checklist-item.is-current .lp-admin__checklist-icon {
+	border-color: var(--wpds-color-stroke-focus);
+	box-shadow: 0 0 0 3px var(--wpds-color-background-surface-brand);
+	color: var(--wpds-color-foreground-interactive-brand);
+}
+
+.lp-admin__checklist-placeholder {
+	width: 100%;
+	height: var(--wpds-typography-line-height-md);
+}
