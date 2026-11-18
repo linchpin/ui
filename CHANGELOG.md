@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0](https://github.com/linchpin/ui/compare/v1.2.1...v1.3.0) (2026-11-18)
+
+
+### Features ✨
+
+* **MANTLE-675:** Add StatusBadge and Checklist ([88b9d98](https://github.com/linchpin/ui/commit/88b9d9822934c955b63763b5b54eb2b063699155))
+* **MANTLE-676:** Add StatusBadge, one toned status pill for every plugin ([a948872](https://github.com/linchpin/ui/commit/a948872189813177f13710e6108600e498b5b2bf))
+* **MANTLE-677:** Add Checklist, a list of things to check led by their status ([02a3e34](https://github.com/linchpin/ui/commit/02a3e34071f40ff4847b8edb00a2fbfcabc2ccd7))
+
 ## [1.2.1](https://github.com/linchpin/ui/compare/v1.2.0...v1.2.1) (2026-10-29)
 
 
