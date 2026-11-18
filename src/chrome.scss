@@ -1283,3 +1283,75 @@ $lp-aside-width: 300px;
 		aspect-ratio: 1;
 	}
 }
+
+/*
+ * Status badges. The pill itself is @wordpress/ui's Badge, which paints its
+ * own tone; this adds only what it lacks. Top level rather than under
+ * `.lp-admin`, because a badge in a modal renders in a portal outside the
+ * frame, and it should still dim, grow or pulse there.
+ */
+.lp-admin__status-badge {
+	white-space: nowrap;
+
+	&.is-quiet {
+		opacity: 0.6;
+	}
+
+	&.is-large {
+		font-size: var(--wpds-typography-font-size-lg);
+		line-height: var(--wpds-typography-line-height-lg);
+		padding: var(--wpds-dimension-padding-xs) var(--wpds-dimension-padding-md);
+	}
+
+	// Something in progress: a dot before the label that breathes.
+	&.is-going::before {
+		content: "";
+		display: inline-block;
+		width: 0.5em;
+		height: 0.5em;
+		margin-inline-end: 0.4em;
+		border-radius: 50%;
+		background: currentcolor;
+		vertical-align: 0.1em;
+		animation: lp-admin-status-going 1.6s ease-in-out infinite;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+}
+
+@keyframes lp-admin-status-going {
+
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.25;
+	}
+}
+
+// Focusable only when it has a description to show; the ring is the
+// design system's, so keyboard users can see where they are.
+.lp-admin__status-badge-trigger {
+	display: inline-flex;
+	border-radius: var(--wpds-border-radius-lg);
+
+	&:focus-visible {
+		outline: var(--wpds-border-width-focus) solid var(--wpds-color-stroke-focus);
+		outline-offset: 1px;
+	}
+}
+
+.lp-admin__status-badge-empty {
+	color: var(--wpds-color-foreground-content-neutral-weak);
+}
+
+.lp-admin__status-badges {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wpds-dimension-gap-xs);
+}

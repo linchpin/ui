@@ -44,6 +44,12 @@ export {
 export { default as StatTile, StatTiles } from './components/stat-tile';
 export { default as FactList } from './components/fact-list';
 export { default as FeatureList } from './components/feature-list';
+export {
+	default as StatusBadge,
+	StatusBadges,
+	STATUS_TONES,
+	statusTone,
+} from './components/status-badge';
 export { default as MenuButton } from './components/menu-button';
 
 export { default as SettingsSection } from './components/settings-section';

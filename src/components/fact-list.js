@@ -15,9 +15,9 @@
  * - **`inline`** — the facts in a single wrapping line, each label above its
  *   value. The strip under a record's title: client, environment, last report.
  *
- * A fact's `tone` is how it reads, not how it looks: `ok` puts a quiet mark
- * before the value, `warning` and `error` colour it, `info` and none leave it
- * plain. A fact with no value is left out, rather than drawn as an empty row
+ * A fact's `tone` is how it reads, not how it looks: `ok` (or `success`) puts
+ * a quiet mark before the value, `warning` and `error` colour it, `info` and
+ * none leave it plain. A fact with no value is left out, rather than drawn as an empty row
  * a reader has to work out the meaning of.
  *
  * @param {Object} props             Props.
@@ -26,6 +26,16 @@
  * @param {string} [props.className] Extra class names.
  * @return {Element|null} The list, or nothing when no fact has a value.
  */
+/**
+ * Tone names FactList also answers to, so the vocabulary StatusBadge and
+ * StatTile use (`success`, `danger`) lands on the same marks as its own.
+ */
+const TONE_ALIASES = {
+	success: 'ok',
+	danger: 'error',
+	problem: 'error',
+};
+
 export default function FactList( { items = [], layout = 'rows', className } ) {
 	const shown = items.filter(
 		( item ) =>
@@ -51,7 +61,9 @@ export default function FactList( { items = [], layout = 'rows', className } ) {
 					key={ item.id ?? item.label }
 					className={ [
 						'lp-admin__fact',
-						item.tone ? `is-${ item.tone }` : '',
+						item.tone
+							? `is-${ TONE_ALIASES[ item.tone ] || item.tone }`
+							: '',
 					]
 						.filter( Boolean )
 						.join( ' ' ) }

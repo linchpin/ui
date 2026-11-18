@@ -87,4 +87,29 @@ describe( 'FactList', () => {
 			screen.getByText( 'Pulled 17 minutes ago' ).closest( 'dd' )
 		).toHaveTextContent( '31 minutes ago' );
 	} );
+
+	it( 'answers to success and danger as well as ok and error', () => {
+		const { container } = render(
+			<FactList
+				items={ [
+					{
+						id: 'a',
+						label: 'Reporting',
+						value: 'Yes',
+						tone: 'success',
+					},
+					{
+						id: 'b',
+						label: 'Security',
+						value: '2 issues',
+						tone: 'danger',
+					},
+				] }
+			/>
+		);
+		const facts = container.querySelectorAll( '.lp-admin__fact' );
+
+		expect( facts[ 0 ] ).toHaveClass( 'is-ok' );
+		expect( facts[ 1 ] ).toHaveClass( 'is-error' );
+	} );
 } );
