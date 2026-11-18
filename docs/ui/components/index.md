@@ -351,6 +351,7 @@ so every plugin says the same thing in the same colour:
 | `warning` | Going wrong: late, degraded | `medium` |
 | `error` | Broken or unsafe: failed, vulnerable, silent | `high` |
 | `neutral` | No judgement: unknown, not applicable, paused | `draft` |
+| `outline` | No judgement, outlined rather than filled: a state not read yet | `none` |
 
 `ok`, `danger` and `problem` are accepted as aliases. `description` says why: it shows in a
 tooltip on hover and keyboard focus and is read with the label, so it replaces a `title`

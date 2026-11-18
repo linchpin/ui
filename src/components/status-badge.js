@@ -15,6 +15,9 @@ import { Badge, Tooltip, VisuallyHidden } from '@wordpress/ui';
  * - `warning`: something going wrong. Late, degraded.
  * - `error`: broken or unsafe. Failed, vulnerable, silent.
  * - `neutral`: no judgement. Unknown, not applicable, paused.
+ * - `outline`: no judgement, drawn as an outline rather than a fill, for a
+ *   state that hasn't been read yet and shouldn't read as settled (Mantle's
+ *   monitor with no answer).
  */
 export const STATUS_TONES = {
 	success: 'stable',
@@ -23,6 +26,7 @@ export const STATUS_TONES = {
 	warning: 'medium',
 	error: 'high',
 	neutral: 'draft',
+	outline: 'none',
 };
 
 /**
