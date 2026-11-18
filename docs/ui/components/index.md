@@ -393,7 +393,8 @@ for a label alone. `actions` takes more than one.
 
 - `marker="badge"` (the default) leads with a StatusBadge in a column of its own;
   `marker="icon"` with a round icon.
-- `ordered` makes it an `<ol>`, and with the icon marker numbers the steps not done yet. A
+- `ordered` makes it an `<ol>`, and with the icon marker numbers the steps still to do (neutral
+  or info); a step that passed, failed or warned keeps its icon. A
   `current` item is the step being worked on (`aria-current="step"`), `onSelect` makes an
   item's label a button (reopening a finished step), and `items` nests sub-steps.
 - `groups` (`[ { id, title, description } ]`) splits the list under headings at

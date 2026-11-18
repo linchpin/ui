@@ -180,7 +180,7 @@ function ChecklistAction( { action } ) {
 
 /**
  * The marker that leads a row: the status as a badge, or a round icon (a
- * number in place of the icon for a step not yet done in an ordered list).
+ * number in place of the icon for a step still to do in an ordered list).
  *
  * @param {Object} props             Props.
  * @param {Object} props.status      Resolved status.
@@ -204,7 +204,11 @@ function ChecklistMarker( { status, marker, number, description } ) {
 	}
 
 	const icon = TONE_ICONS[ status.tone ];
-	const showNumber = number > 0 && 'success' !== status.tone;
+	// Only a step still to do (no judgement yet, or under way) shows its
+	// number. A step that passed, failed or warned shows its icon, so a
+	// failure in an ordered run still reads as one.
+	const showNumber =
+		number > 0 && [ 'neutral', 'info' ].includes( status.tone );
 
 	return (
 		<span
