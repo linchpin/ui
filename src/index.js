@@ -50,6 +50,12 @@ export {
 	STATUS_TONES,
 	statusTone,
 } from './components/status-badge';
+export {
+	default as Checklist,
+	CHECKLIST_STATUSES,
+	checklistSummary,
+	sortChecklistItems,
+} from './components/checklist';
 export { default as MenuButton } from './components/menu-button';
 
 export { default as SettingsSection } from './components/settings-section';

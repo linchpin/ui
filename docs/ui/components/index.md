@@ -17,6 +17,8 @@ Everything the package exports, and which part of the screen it owns.
 | `<AdminLink>` | An `<a>` that stays on the screen when it can. | `href`, `replace` |
 | `<StatTile>`, `<StatTiles>` | The counts above a list: filters, links or facts. | `value`, `label`, `detail`, `tone`, `href`, `onClick`, `isPressed`, `isLoading`, `footer` |
 | `<FactList>` | Read-only label and value pairs. | `items`, `layout` |
+| `<StatusBadge>`, `<StatusBadges>` | A status as a toned pill: one vocabulary for every plugin. | `tone`, `description`, `quiet`, `size`, `isGoing` |
+| `<Checklist>` | Things to check, each leading with its status: what was found and what to do. | `items`, `statuses`, `marker`, `ordered`, `groups`, `sortByStatus`, `summary`, `isLoading` |
 | `<FeatureList>` | What something does: icon, name and sentence per line, with no tile around each. | `items`, `columns`, `headingLevel` |
 | `<LinchpinAdminLayout>` | The body: up to three columns — menu, work, help. | `nav`, `sidebar`, `label` |
 | `<SettingsCard>` | A section of a settings screen: heading, one sentence, controls. | `title`, `description`, `headingLevel`, `actions`, `size` |
@@ -331,9 +333,89 @@ Wrap a row in `<StatTiles label="…">`: a named group that wraps to the width i
 strip under a record's title. `layout="rows"` (the default) puts one fact per line;
 `layout="inline"` runs them along one wrapping line, label over value.
 
-Each item is `{ id, label, value, tone, help }`. `tone` is `ok` (a quiet mark before the
-value), `warning`, `error` or `info`. An item with no value is left out rather than drawn as
-an empty row.
+Each item is `{ id, label, value, tone, help }`. `tone` is `ok` or `success` (a quiet mark
+before the value), `warning`, `error` or `info`. An item with no value is left out rather than
+drawn as an empty row.
+
+### Status badges
+
+`<StatusBadge>` is the state of something as a short toned pill: whether a site is reporting,
+a run passed, a check is missing. It is `@wordpress/ui`'s `Badge` with one tone vocabulary,
+so every plugin says the same thing in the same colour:
+
+| `tone` | For | Badge intent |
+| --- | --- | --- |
+| `success` | Fine: up to date, passing, reporting | `stable` |
+| `info` | Worth knowing, nothing to do: scheduled, running | `informational` |
+| `caution` | Something to get to: an update waiting | `low` |
+| `warning` | Going wrong: late, degraded | `medium` |
+| `error` | Broken or unsafe: failed, vulnerable, silent | `high` |
+| `neutral` | No judgement: unknown, not applicable, paused | `draft` |
+
+`ok`, `danger` and `problem` are accepted as aliases. `description` says why: it shows in a
+tooltip on hover and keyboard focus and is read with the label, so it replaces a `title`
+attribute (the badge is focusable only when it has one). `quiet` dims a status that is shown
+but not held against anything, `size="lg"` is for a headline such as a grade, and `isGoing`
+adds a breathing dot for work in progress. With no label it renders a muted dash.
+
+Use it for states, not categories: a license type, an environment or a version is a label,
+not a judgement. And an ordinary state may read better as plain text than as a column of
+green pills that drowns the ones that matter. `<StatusBadges label="…">` is the wrapping row
+for more than one.
+
+```jsx
+<StatusBadges label="Site status">
+	<StatusBadge tone="error" description="Silent for 5 days">Not reporting</StatusBadge>
+	<StatusBadge tone="caution">2 updates</StatusBadge>
+	<StatusBadge tone="info" isGoing>Nightly run</StatusBadge>
+</StatusBadges>
+```
+
+### Checklists
+
+`<Checklist>` is the other half of a status screen. A FactList says what is true; a checklist
+says what is done, what isn't and what to do about it: a site's setup audit, a plugin's health
+checks, an access gate, a setup wizard's steps. Each row is a status marker, then the label,
+then what was found (`detail`), a muted line (`meta`) and the action that fixes it.
+
+Each item is `{ id, status, label, detail, meta, action, actions, children, group, tone,
+statusLabel, description, isGoing, current, onSelect, items }`. `status` is a key into
+`statuses`, a map of the caller's own words to `{ label, tone, quiet, isGoing }` with StatusBadge
+tones; it defaults to `CHECKLIST_STATUSES` (`fail`, `warning`, `running`, `pending`, `unknown`,
+`pass`, `na`), and its key order is the order `sortByStatus` puts rows in. An item can override
+its `tone` or `statusLabel` (a recommended check failing is a caution, not an error) and carry a
+`description` for the badge's tooltip.
+
+An `action` is a node, or `{ label, href, onClick, primary, external }`: a button for `onClick`,
+an `AdminLink` for an address on this site, a new tab for one that leaves it, and plain text
+for a label alone. `actions` takes more than one.
+
+- `marker="badge"` (the default) leads with a StatusBadge in a column of its own;
+  `marker="icon"` with a round icon.
+- `ordered` makes it an `<ol>`, and with the icon marker numbers the steps not done yet. A
+  `current` item is the step being worked on (`aria-current="step"`), `onSelect` makes an
+  item's label a button (reopening a finished step), and `items` nests sub-steps.
+- `groups` (`[ { id, title, description } ]`) splits the list under headings at
+  `headingLevel`; items name theirs with `group`.
+- `summary` adds "n of m done", leaving out statuses that are `quiet`, or shows a node of your
+  own. `isLoading` shows placeholders, and `emptyMessage` stands in for an empty list.
+
+```jsx
+<Checklist
+	statuses={ { fail: { label: 'Missing', tone: 'error' }, pass: { label: 'Pass', tone: 'success' } } }
+	sortByStatus
+	groups={ [ { id: 'baseline', title: 'Baseline' }, { id: 'recommended', title: 'Recommended' } ] }
+	items={ checks.map( ( check ) => ( {
+		id: check.key,
+		group: check.tier,
+		status: check.status,
+		tone: 'recommended' === check.tier && 'fail' === check.status ? 'caution' : undefined,
+		label: check.label,
+		detail: check.detail,
+		action: check.fix && { label: check.fix.text, href: check.fix.url },
+	} ) ) }
+/>
+```
 
 ### Features
 
