@@ -172,8 +172,33 @@ describe( 'Checklist', () => {
 			screen.getByRole( 'img', { name: 'To do' } )
 		).toHaveTextContent( '3' );
 		expect(
+			screen.getByRole( 'img', { name: 'In progress' } )
+		).toHaveTextContent( '2' );
+		expect(
 			screen.getByText( 'Client info' ).closest( 'li' )
 		).toHaveAttribute( 'aria-current', 'step' );
+	} );
+
+	it( 'keeps a failed step’s icon in an ordered run instead of its number', () => {
+		render(
+			<Checklist
+				ordered
+				marker="icon"
+				items={ [
+					{ id: 'preflight', status: 'pass', label: 'Preflight' },
+					{ id: 'sync', status: 'fail', label: 'Sync' },
+					{ id: 'deploy', status: 'pending', label: 'Deploy' },
+				] }
+			/>
+		);
+
+		const failed = screen.getByRole( 'img', { name: 'Fail' } );
+
+		expect( failed ).not.toHaveTextContent( '2' );
+		expect( failed.querySelector( 'svg' ) ).toBeInTheDocument();
+		expect(
+			screen.getByRole( 'img', { name: 'To do' } )
+		).toHaveTextContent( '3' );
 	} );
 
 	it( 'makes a step selectable and nests its sub-steps', async () => {

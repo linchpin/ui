@@ -27,6 +27,7 @@ describe( 'StatusBadge', () => {
 			warning: 'medium',
 			error: 'high',
 			neutral: 'draft',
+			outline: 'none',
 		} );
 	} );
 
@@ -35,6 +36,7 @@ describe( 'StatusBadge', () => {
 		expect( statusTone( 'problem' ) ).toBe( 'error' );
 		expect( statusTone( 'danger' ) ).toBe( 'error' );
 		expect( statusTone( 'caution' ) ).toBe( 'caution' );
+		expect( statusTone( 'outline' ) ).toBe( 'outline' );
 		expect( statusTone( 'needs-update' ) ).toBe( 'neutral' );
 		expect( statusTone( undefined ) ).toBe( 'neutral' );
 

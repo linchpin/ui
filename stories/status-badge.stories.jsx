@@ -49,6 +49,7 @@ export default {
 				'warning',
 				'error',
 				'neutral',
+				'outline',
 			],
 		},
 		size: { control: 'inline-radio', options: [ 'md', 'lg' ] },
@@ -70,6 +71,7 @@ export const Tones = {
 				<StatusBadge tone="warning">Late</StatusBadge>
 				<StatusBadge tone="error">Not reporting</StatusBadge>
 				<StatusBadge tone="neutral">Unknown</StatusBadge>
+				<StatusBadge tone="outline">Not checked</StatusBadge>
 			</StatusBadges>
 		</SettingsCard>
 	),

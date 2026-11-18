@@ -351,6 +351,7 @@ so every plugin says the same thing in the same colour:
 | `warning` | Going wrong: late, degraded | `medium` |
 | `error` | Broken or unsafe: failed, vulnerable, silent | `high` |
 | `neutral` | No judgement: unknown, not applicable, paused | `draft` |
+| `outline` | No judgement, outlined rather than filled: a state not read yet | `none` |
 
 `ok`, `danger` and `problem` are accepted as aliases. `description` says why: it shows in a
 tooltip on hover and keyboard focus and is read with the label, so it replaces a `title`
@@ -392,7 +393,8 @@ for a label alone. `actions` takes more than one.
 
 - `marker="badge"` (the default) leads with a StatusBadge in a column of its own;
   `marker="icon"` with a round icon.
-- `ordered` makes it an `<ol>`, and with the icon marker numbers the steps not done yet. A
+- `ordered` makes it an `<ol>`, and with the icon marker numbers the steps still to do (neutral
+  or info); a step that passed, failed or warned keeps its icon. A
   `current` item is the step being worked on (`aria-current="step"`), `onSelect` makes an
   item's label a button (reopening a finished step), and `items` nests sub-steps.
 - `groups` (`[ { id, title, description } ]`) splits the list under headings at
